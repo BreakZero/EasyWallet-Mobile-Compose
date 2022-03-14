@@ -17,14 +17,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.assets.presentation.assets.MainUIEvent
 import com.easy.assets.presentation.assets.WalletPagerScreen
+import com.easy.assets.presentation.assets.components.BottomMenuItem
+import com.easy.assets.presentation.routers.AssetRouter
 import com.easy.core.common.Navigator
-import com.easy.core.common.navigator
+import com.easy.core.common.parameter
 import com.easy.core.ui.GlobalRouter
 import com.easy.core.ui.R
 import com.easy.core.ui.common.QRCodeGenerate
 import com.easy.dapp.ui.DAppPagerScreen
-import com.easy.assets.presentation.assets.components.BottomMenuItem
-import com.easy.assets.presentation.routers.AssetRouter
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -61,10 +61,12 @@ fun MainScreen(
                 is MainUIEvent.OnScanClick -> onNavigateTo.invoke(Navigator(router = GlobalRouter.GLOBAL_SCAN))
                 is MainUIEvent.OnItemClicked -> {
                     onNavigateTo.invoke(
-                        navigator(router = AssetRouter.ASSET_DETAIL) {
-                            add { "String" to event.assetInfo.slug }
-                            add { "String" to event.assetInfo.symbol }
-                            add { "String" to event.assetInfo.contractAddress }
+                        Navigator(router = AssetRouter.ASSET_DETAIL) {
+                            parameter {
+                                "String" to event.assetInfo.slug
+                                "String" to event.assetInfo.symbol
+                                "String" to event.assetInfo.contractAddress
+                            }
                         }
                     )
                 }

@@ -9,5 +9,6 @@ data class AssetInfo(
     val decimal: Int,
     val icon: String,
     val contractAddress: String?,
-    val tag: String? = null
+    val tag: String? = null,
+    val balance: String
 )

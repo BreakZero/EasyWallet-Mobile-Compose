@@ -1,8 +1,8 @@
 package com.easy.assets.data
 
+import com.easy.core.ext.clearHexPrefix
+import org.junit.Assert.assertEquals
 import org.junit.Test
-
-import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -12,6 +12,8 @@ import org.junit.Assert.*
 class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
+        val num = "0x00000000000000000000000000000000000000000000000031a771b165d5d6c7"
+        println(num.clearHexPrefix().toBigInteger(16))
         assertEquals(4, 2 + 2)
     }
 }
