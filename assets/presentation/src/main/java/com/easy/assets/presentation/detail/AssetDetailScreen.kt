@@ -26,12 +26,12 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.easy.assets.presentation.di.ViewModelFactoryProvider
 import com.easy.assets.domain.model.Transaction
+import com.easy.assets.presentation.di.ViewModelFactoryProvider
 import com.easy.assets.presentation.routers.AssetRouter
 import com.easy.core.TimeUtils
 import com.easy.core.common.Navigator
-import com.easy.core.common.navigator
+import com.easy.core.common.parameter
 import com.easy.core.ui.components.EasyAppBar
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -181,11 +181,12 @@ fun AssetDetailScreen(
                     modifier = Modifier
                         .weight(1f),
                     onClick = {
-                        onNavigateTo.invoke(navigator(AssetRouter.ASSET_RECEIVE) {
-                            add {
-                                "String" to viewModel.address()
-                            }
-                        })
+                        onNavigateTo.invoke(
+                            Navigator(router = AssetRouter.ASSET_RECEIVE) {
+                                parameter {
+                                    "String" to viewModel.address()
+                                }
+                            })
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
                 ) {
@@ -194,8 +195,7 @@ fun AssetDetailScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
                     onClick = {
-                        onNavigateTo.invoke(navigator(router = "send-flow-1") {
-                        })
+                        onNavigateTo.invoke(Navigator(router = "send-flow-1"))
                     }, modifier = Modifier
                         .weight(1f),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)

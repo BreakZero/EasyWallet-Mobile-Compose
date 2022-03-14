@@ -7,10 +7,9 @@ data class Navigator(
     val router: String
 ) {
     private val params: MutableList<KeyPair> = mutableListOf()
-    fun add(lambda: () -> Pair<String, String?>) {
-        with(lambda()) {
-            params.add(KeyPair(first, second))
-        }
+
+    internal fun addParameter(type: String, value: String?) {
+        params.add(KeyPair(type, value))
     }
 
     fun router(): String {
@@ -27,10 +26,16 @@ data class Navigator(
     }
 }
 
-fun navigator(router: String, lambda: Navigator.() -> Unit): Navigator {
-    val navigator = Navigator(router)
-    navigator.apply(lambda)
-    return navigator
+fun Navigator(router: String, init: Navigator.() -> Unit): Navigator {
+    return Navigator(router).apply(init)
+}
+
+class _Parameter(private val navigator: Navigator) {
+    infix fun String.to(that: String?) = navigator.addParameter(this, that)
+}
+
+fun Navigator.parameter(block: _Parameter.() -> Unit) {
+    _Parameter(this).apply(block)
 }
 
 private data class KeyPair(

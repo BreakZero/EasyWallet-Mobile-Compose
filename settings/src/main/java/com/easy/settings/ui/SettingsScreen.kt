@@ -3,7 +3,9 @@ package com.easy.settings.ui
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -50,12 +52,15 @@ fun SettingsScreen(
         }
     ) {
         Column(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp)
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp)
+                .verticalScroll(rememberScrollState())
         ) {
             Image(
                 painter = painterResource(id = R.mipmap.avatar_generic_1),
                 contentDescription = null,
                 modifier = Modifier
+                    .padding(top = 16.dp)
                     .align(Alignment.CenterHorizontally)
                     .size(56.dp)
             )
@@ -91,7 +96,61 @@ fun SettingsScreen(
                     }
                 }
             }
-            Text(text = "About EasyWallet", fontSize = 12.sp, color = Color.Gray)
+            Text(
+                text = "Support",
+                fontSize = 12.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    MenuItemView(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = "Help Center"
+                    ) {
+
+                    }
+                    Divider(modifier = Modifier
+                        .fillMaxWidth()
+                        .height(0.2.dp))
+                    MenuItemView(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = "New to DeFi"
+                    ) {
+
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(0.2.dp)
+                    )
+                    MenuItemView(modifier = Modifier.fillMaxWidth(), title = "Join Community") {
+
+                    }
+                    Divider(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(0.2.dp)
+                    )
+                    MenuItemView(
+                        modifier = Modifier.fillMaxWidth(),
+                        title = "Give Feedback"
+                    ) {
+
+                    }
+                }
+            }
+            Text(
+                text = "About EasyWallet",
+                fontSize = 12.sp,
+                color = Color.Gray,
+                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
+            )
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
@@ -140,8 +199,9 @@ fun SettingsScreen(
                     ) {
 
                     }
-                    }
                 }
+            }
+            Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }

@@ -12,7 +12,7 @@ import com.easy.core.consts.ChainId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import logcat.logcat
 
 class AssetDetailViewModel @AssistedInject constructor(
@@ -57,22 +57,24 @@ class AssetDetailViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            /*val balance = ethereumRepositoryImpl.balance(
-                "0x81080a7e991bcdddba8c2302a70f45d6bd369ab5",
-                ChainId.ETHEREUM,
-                tokenParam.contractAddress
-            )*/
-            logcat {
-                "===== $tokenParam"
+            val balance = async {
+                assetsUseCases.balance(
+                    "0x81080a7e991bcdddba8c2302a70f45d6bd369ab5",
+                    ChainId.ETHEREUM,
+                    tokenParam.contractAddress
+                )
             }
-            val txList = assetsUseCases.transactions(
-                "0x81080a7e991bcdddba8c2302a70f45d6bd369ab5",
-                ChainId.ETHEREUM,
-                offset = 0,
-                limit = 10,
-                contractAddress = tokenParam.contractAddress
-            )
-            state = state.copy(isLoading = false, result = txList, balance = Result.success("0.2333"))
+
+            val txList = async {
+                assetsUseCases.transactions(
+                    "0x81080a7e991bcdddba8c2302a70f45d6bd369ab5",
+                    ChainId.ETHEREUM,
+                    offset = 20,
+                    limit = 10,
+                    contractAddress = tokenParam.contractAddress
+                )
+            }
+            state = state.copy(isLoading = false, result = txList.await(), balance = Result.success(balance.await().toString()))
         }
     }
 

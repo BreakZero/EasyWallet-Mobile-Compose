@@ -27,7 +27,6 @@ import com.easy.assets.presentation.routers.AssetRouter
 import com.easy.assets.presentation.send.SendInfo
 import com.easy.assets.presentation.send.SendInfoHolder
 import com.easy.core.common.Navigator
-import com.easy.core.common.navigator
 import com.easy.core.ui.LocalSpacing
 import com.google.accompanist.insets.statusBarsPadding
 import logcat.logcat
@@ -148,9 +147,7 @@ fun NormalSendAddressScreen(
                             logcat {
                                 "====== ${SendInfoHolder.info()}"
                             }
-                            onNavigateTo(navigator(AssetRouter.SEND_SECOND) {
-
-                            })
+                            onNavigateTo(Navigator(router = AssetRouter.SEND_SECOND))
                         },
                         modifier = Modifier
                             .fillMaxWidth()

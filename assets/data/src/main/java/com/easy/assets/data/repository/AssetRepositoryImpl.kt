@@ -2,6 +2,9 @@ package com.easy.assets.data.repository
 
 import com.easy.assets.data.mapper.toAsset
 import com.easy.assets.data.mapper.toTransaction
+import com.easy.assets.data.remote.BaseRpcRequest
+import com.easy.assets.data.remote.CallBalance
+import com.easy.assets.data.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.remote.dto.CoinConfigResponseDto
 import com.easy.assets.data.remote.dto.EthTxResponseDto
 import com.easy.assets.domain.model.AssetInfo
@@ -12,12 +15,14 @@ import com.easy.core.GlobalHolder
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.consts.ChainId
+import com.easy.core.ext.clearHexPrefix
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import logcat.logcat
 import wallet.core.jni.CoinType
 import java.math.BigInteger
 import javax.inject.Inject
@@ -41,7 +46,37 @@ class AssetRepositoryImpl @Inject constructor(
         chainId: ChainId,
         contractAddress: String
     ): BigInteger {
-        return BigInteger.ZERO
+        return try {
+            val reqBody = if (contractAddress.isEmpty() || contractAddress == "null") {
+                BaseRpcRequest(
+                    id = 1,
+                    jsonrpc = "2.0",
+                    method = "eth_getBalance",
+                    params = listOf(address, "latest")
+                )
+            } else {
+                BaseRpcRequest(
+                    id = 1,
+                    jsonrpc = "2.0",
+                    method = "eth_call",
+                    params = listOf(
+                        CallBalance(
+                            from = address,
+                            to = contractAddress,
+                            data = "0x70a0823100000000000000000000000081080a7e991bcdddba8c2302a70f45d6bd369ab5"
+                        ), "latest"
+                    )
+                )
+            }
+            val response = ktorClient
+                .post<HttpResponse>("https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}") {
+                    body = reqBody
+                }
+            response.receive<BaseRpcResponseDto<String>>().result.clearHexPrefix().toBigInteger(16)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            BigInteger.ZERO
+        }
     }
 
     private suspend fun transactionsFromNetwork(
@@ -58,7 +93,7 @@ class AssetRepositoryImpl @Inject constructor(
                 module=account
                 &action=txlist
                 &address=$address
-                &page=0
+                &page=1
                 &offset=$offset
                 &sort=desc
                 &apikey=${BuildConfig.ETHERSCAN_APIKEY}
