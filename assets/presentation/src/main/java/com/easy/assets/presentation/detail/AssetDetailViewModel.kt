@@ -7,10 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.repository.AssetRepository
-import com.easy.assets.domain.use_case.AssetBalance
-import com.easy.assets.domain.use_case.AssetTransactions
-import com.easy.assets.domain.use_case.Assets
-import com.easy.assets.domain.use_case.AssetsUseCases
+import com.easy.assets.domain.use_case.*
 import com.easy.core.consts.ChainId
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -23,6 +20,7 @@ class AssetDetailViewModel @AssistedInject constructor(
     @Assisted private val tokenParam: AssetBundle
 ) : ViewModel() {
     private val assetsUseCases = AssetsUseCases(
+        address = CoinAddress(assetRepository),
         balance = AssetBalance(assetRepository),
         transactions = AssetTransactions(assetRepository),
         assets = Assets(assetRepository)
@@ -76,5 +74,9 @@ class AssetDetailViewModel @AssistedInject constructor(
             )
             state = state.copy(isLoading = false, result = txList, balance = Result.success("0.2333"))
         }
+    }
+
+    fun address(): String {
+        return assetsUseCases.address(tokenParam.slug, false)
     }
 }

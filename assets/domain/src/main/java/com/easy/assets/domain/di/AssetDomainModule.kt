@@ -18,6 +18,7 @@ object AssetDomainModule {
         assetRepository: AssetRepository
     ): AssetsUseCases {
         return AssetsUseCases(
+            address = CoinAddress(assetRepository),
             assets = Assets(assetRepository),
             balance = AssetBalance(assetRepository),
             transactions = AssetTransactions(assetRepository)

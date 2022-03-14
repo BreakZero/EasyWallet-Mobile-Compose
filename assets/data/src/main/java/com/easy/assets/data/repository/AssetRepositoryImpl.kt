@@ -8,6 +8,7 @@ import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.repository.AssetRepository
 import com.easy.core.BuildConfig
+import com.easy.core.GlobalHolder
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.consts.ChainId
@@ -17,21 +18,29 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import wallet.core.jni.CoinType
 import java.math.BigInteger
 import javax.inject.Inject
 
 class AssetRepositoryImpl @Inject constructor(
     private val ktorClient: HttpClient
 ) : AssetRepository {
-    override fun address(legacy: Boolean): String {
-        return "mock address"
+    override fun address(slug: String, legacy: Boolean): String {
+        return when (slug) {
+            "bitcoin" -> GlobalHolder.hdWallet.getAddressForCoin(CoinType.BITCOIN)
+            else -> GlobalHolder.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
+        }
     }
 
-    override suspend fun signTransaction(): String {
+    override suspend fun signTransaction(slug: String): String {
         TODO("Not yet implemented")
     }
 
-    override suspend fun balance(address: String, chainId: ChainId, contractAddress: String): BigInteger {
+    override suspend fun balance(
+        address: String,
+        chainId: ChainId,
+        contractAddress: String
+    ): BigInteger {
         return BigInteger.ZERO
     }
 

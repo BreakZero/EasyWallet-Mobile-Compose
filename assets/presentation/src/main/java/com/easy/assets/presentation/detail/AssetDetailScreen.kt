@@ -28,6 +28,7 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.easy.assets.presentation.di.ViewModelFactoryProvider
 import com.easy.assets.domain.model.Transaction
+import com.easy.assets.presentation.routers.AssetRouter
 import com.easy.core.TimeUtils
 import com.easy.core.common.Navigator
 import com.easy.core.common.navigator
@@ -180,7 +181,11 @@ fun AssetDetailScreen(
                     modifier = Modifier
                         .weight(1f),
                     onClick = {
-                        onNavigateTo.invoke(Navigator(router = "asset-receive"))
+                        onNavigateTo.invoke(navigator(AssetRouter.ASSET_RECEIVE) {
+                            add {
+                                "String" to viewModel.address()
+                            }
+                        })
                     },
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
                 ) {
