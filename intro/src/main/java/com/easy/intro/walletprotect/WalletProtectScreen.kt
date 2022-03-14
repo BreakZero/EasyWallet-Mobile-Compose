@@ -88,7 +88,7 @@ fun WalletProtectScreen(
             viewModel.uiEvent.collect { event ->
                 when (event) {
                     is UiEvent.Success -> {
-                        onNavigate.invoke(Navigator(IntroRouter.ROUTER_ASSETS_INDEX))
+                        onNavigate.invoke(Navigator(IntroRouter.ROUTER_MAIN))
                     }
                     is UiEvent.ShowSnackbar -> {
                         Toast.makeText(context, event.message.asString(context), Toast.LENGTH_SHORT)

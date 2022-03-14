@@ -9,11 +9,12 @@ import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.repository.AssetRepository
 import com.easy.assets.domain.use_case.*
 import com.easy.core.consts.ChainId
+import com.easy.core.ext.byDecimal
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.*
-import logcat.logcat
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 
 class AssetDetailViewModel @AssistedInject constructor(
     assetRepository: AssetRepository,
@@ -59,7 +60,7 @@ class AssetDetailViewModel @AssistedInject constructor(
         viewModelScope.launch {
             val balance = async {
                 assetsUseCases.balance(
-                    "0x81080a7e991bcdddba8c2302a70f45d6bd369ab5",
+                    assetsUseCases.address(tokenParam.slug),
                     ChainId.ETHEREUM,
                     tokenParam.contractAddress
                 )
@@ -67,14 +68,17 @@ class AssetDetailViewModel @AssistedInject constructor(
 
             val txList = async {
                 assetsUseCases.transactions(
-                    "0x81080a7e991bcdddba8c2302a70f45d6bd369ab5",
+                    assetsUseCases.address(tokenParam.slug),
                     ChainId.ETHEREUM,
                     offset = 20,
                     limit = 10,
                     contractAddress = tokenParam.contractAddress
                 )
             }
-            state = state.copy(isLoading = false, result = txList.await(), balance = Result.success(balance.await().toString()))
+            state = state.copy(
+                isLoading = false, result = txList.await(),
+                balance = Result.success(balance.await().byDecimal(8, 8))
+            )
         }
     }
 

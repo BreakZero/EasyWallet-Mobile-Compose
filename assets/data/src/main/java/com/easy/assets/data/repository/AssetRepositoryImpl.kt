@@ -15,14 +15,13 @@ import com.easy.core.GlobalHolder
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.consts.ChainId
+import com.easy.core.ext.byDecimal
 import com.easy.core.ext.clearHexPrefix
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import logcat.logcat
+import kotlinx.coroutines.*
 import wallet.core.jni.CoinType
 import java.math.BigInteger
 import javax.inject.Inject
@@ -46,36 +45,39 @@ class AssetRepositoryImpl @Inject constructor(
         chainId: ChainId,
         contractAddress: String
     ): BigInteger {
-        return try {
-            val reqBody = if (contractAddress.isEmpty() || contractAddress == "null") {
-                BaseRpcRequest(
-                    id = 1,
-                    jsonrpc = "2.0",
-                    method = "eth_getBalance",
-                    params = listOf(address, "latest")
-                )
-            } else {
-                BaseRpcRequest(
-                    id = 1,
-                    jsonrpc = "2.0",
-                    method = "eth_call",
-                    params = listOf(
-                        CallBalance(
-                            from = address,
-                            to = contractAddress,
-                            data = "0x70a0823100000000000000000000000081080a7e991bcdddba8c2302a70f45d6bd369ab5"
-                        ), "latest"
+        return withContext(Dispatchers.IO) {
+            try {
+                val reqBody = if (contractAddress.isEmpty() || contractAddress == "null") {
+                    BaseRpcRequest(
+                        id = 1,
+                        jsonrpc = "2.0",
+                        method = "eth_getBalance",
+                        params = listOf(address, "latest")
                     )
-                )
-            }
-            val response = ktorClient
-                .post<HttpResponse>("https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}") {
-                    body = reqBody
+                } else {
+                    BaseRpcRequest(
+                        id = 1,
+                        jsonrpc = "2.0",
+                        method = "eth_call",
+                        params = listOf(
+                            CallBalance(
+                                from = address,
+                                to = contractAddress,
+                                data = "0x70a08231000000000000000000000000${address.clearHexPrefix()}"
+                            ), "latest"
+                        )
+                    )
                 }
-            response.receive<BaseRpcResponseDto<String>>().result.clearHexPrefix().toBigInteger(16)
-        } catch (e: Exception) {
-            e.printStackTrace()
-            BigInteger.ZERO
+                val response = ktorClient
+                    .post<HttpResponse>("https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}") {
+                        body = reqBody
+                    }
+                response.receive<BaseRpcResponseDto<String>>().result.clearHexPrefix()
+                    .toBigInteger(16)
+            } catch (e: Exception) {
+                e.printStackTrace()
+                BigInteger.ZERO
+            }
         }
     }
 
@@ -106,17 +108,19 @@ class AssetRepositoryImpl @Inject constructor(
     }
 
     override suspend fun transactions(address: String, chainId: ChainId, offset: Int, limit: Int, contractAddress: String): Result<List<Transaction>> {
-        val networkTxs = transactionsFromNetwork(
-            address = address,
-            chainId = chainId,
-            offset = offset,
-            limit = limit,
-            contractAddress = contractAddress
-        )
-        return when(networkTxs) {
-            is NetworkResponse.Success -> Result.success(networkTxs.data.result.map { it.toTransaction() })
-            is NetworkResponse.Error -> Result.failure(IllegalArgumentException(networkTxs.code.toString()))
-            else -> Result.failure(UnknownError())
+        return withContext(Dispatchers.IO) {
+            val networkTxs = transactionsFromNetwork(
+                address = address,
+                chainId = chainId,
+                offset = offset,
+                limit = limit,
+                contractAddress = contractAddress
+            )
+            when (networkTxs) {
+                is NetworkResponse.Success -> Result.success(networkTxs.data.result.map { it.toTransaction() })
+                is NetworkResponse.Error -> Result.failure(IllegalArgumentException(networkTxs.code.toString()))
+                else -> Result.failure(UnknownError())
+            }
         }
     }
 
@@ -127,8 +131,27 @@ class AssetRepositoryImpl @Inject constructor(
             }.onFailure {
                 it.printStackTrace()
             }.getOrNull()?.let { it ->
-                Result.success(it.result.map {
-                    it.toAsset()
+                val balances = mutableListOf<Deferred<Pair<String, BigInteger>>>()
+                coroutineScope {
+                    for (item in it.result) {
+                        val balance = async {
+                            Pair(
+                                item.coinSlug,
+                                balance(
+                                    address(item.coinSlug, false),
+                                    ChainId.ETHEREUM,
+                                    item.contractAddress.orEmpty()
+                                )
+                            )
+                        }
+                        balances.add(balance)
+                    }
+                }
+                val balanceList = balances.awaitAll()
+                Result.success(it.result.map { item ->
+                    val sureBalance =
+                        balanceList.find { it.first == item.coinSlug }?.second ?: BigInteger.ZERO
+                    item.toAsset(sureBalance.byDecimal(item.decimal, 8))
                 }.groupBy { it.symbol })
             } ?: Result.failure(Exception())
         }

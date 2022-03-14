@@ -124,7 +124,7 @@ fun NavGraphBuilder.introGraph(navController: NavController, scaffoldState: Scaf
                     navController.navigateUp()
                 },
                 onNavigateToAssets = {
-                    navController.navigate(route = IntroRouter.ROUTER_ASSETS_INDEX) {
+                    navController.navigate(route = IntroRouter.ROUTER_MAIN) {
                         popUpTo(IntroRouter.ROUTER_INTRO) {
                             inclusive = true
                         }
@@ -153,7 +153,7 @@ fun NavGraphBuilder.introGraph(navController: NavController, scaffoldState: Scaf
                     navController.navigateUp()
                 },
                 onNavigate = {
-                    if (it.router == IntroRouter.ROUTER_ASSETS_INDEX) {
+                    if (it.router == IntroRouter.ROUTER_MAIN) {
                         navController.navigate(it.router()) {
                             popUpTo(IntroRouter.ROUTER_INTRO) {
                                 inclusive = true

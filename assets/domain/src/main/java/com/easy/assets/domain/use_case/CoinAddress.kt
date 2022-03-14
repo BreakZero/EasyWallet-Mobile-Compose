@@ -5,7 +5,7 @@ import com.easy.assets.domain.repository.AssetRepository
 class CoinAddress(
     private val assetRepository: AssetRepository
 ) {
-    operator fun invoke(slug: String, isLegacy: Boolean): String {
+    operator fun invoke(slug: String, isLegacy: Boolean = false): String {
         return assetRepository.address(slug, isLegacy)
     }
 }

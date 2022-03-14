@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
+import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.presentation.assets.components.CollapsableToolbar
 import com.easy.core.ui.components.EasyActionBar
 
@@ -109,57 +110,8 @@ fun WalletPagerScreen(
                             items(items = tokenMapper.keys.toList()) { item ->
                                 val tokens = tokenMapper[item]
                                 tokens?.first()?.let {
-                                    Card(
-                                        modifier = Modifier
-                                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                                            .height(56.dp)
-                                            .clickable {
-                                                viewModel.onEvent(AssetEvent.OnItemClick(it))
-                                            },
-                                        shape = RoundedCornerShape(8.dp),
-                                        elevation = 2.dp
-                                    ) {
-                                        Row(
-                                            modifier = Modifier
-                                                .fillMaxWidth()
-                                                .padding(start = 8.dp),
-                                            verticalAlignment = Alignment.CenterVertically
-                                        ) {
-                                            Image(
-                                                modifier = Modifier.size(40.dp),
-                                                painter = rememberImagePainter(
-                                                    data = it.icon,
-                                                    builder = {
-                                                        transformations(CircleCropTransformation())
-                                                    }
-                                                ),
-                                                contentScale = ContentScale.FillWidth,
-                                                contentDescription = null
-                                            )
-                                            Text(
-                                                text = item,
-                                                modifier = Modifier.padding(start = 8.dp)
-                                            )
-                                            if (!it.tag.isNullOrEmpty()) {
-                                                Text(
-                                                    text = it.tag!!,
-                                                    modifier = Modifier
-                                                        .padding(start = 8.dp)
-                                                        .background(
-                                                            shape = RoundedCornerShape(12.dp),
-                                                            color = Color(0xFF4FC3F7)
-                                                        )
-                                                        .padding(
-                                                            start = 4.dp,
-                                                            end = 4.dp,
-                                                            top = 2.dp,
-                                                            bottom = 2.dp
-                                                        ),
-                                                    fontSize = 8.sp,
-                                                    textAlign = TextAlign.Center
-                                                )
-                                            }
-                                        }
+                                    AssetItemView(data = it) {
+                                        viewModel.onEvent(AssetEvent.OnItemClick(it))
                                     }
                                 }
                             }
@@ -188,6 +140,71 @@ fun WalletPagerScreen(
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+private fun AssetItemView(
+    data: AssetInfo,
+    onItemClick: (AssetInfo) -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .padding(horizontal = 16.dp, vertical = 4.dp)
+            .height(56.dp)
+            .clickable {
+                onItemClick.invoke(data)
+            },
+        shape = RoundedCornerShape(8.dp),
+        elevation = 2.dp
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Image(
+                    modifier = Modifier.size(40.dp),
+                    painter = rememberImagePainter(
+                        data = data.icon,
+                        builder = {
+                            transformations(CircleCropTransformation())
+                        }
+                    ),
+                    contentScale = ContentScale.FillWidth,
+                    contentDescription = null
+                )
+                Text(
+                    text = data.symbol,
+                    modifier = Modifier.padding(start = 8.dp)
+                )
+                if (!data.tag.isNullOrEmpty()) {
+                    Text(
+                        text = data.tag!!,
+                        modifier = Modifier
+                            .padding(start = 8.dp)
+                            .background(
+                                shape = RoundedCornerShape(12.dp),
+                                color = Color(0xFF4FC3F7)
+                            )
+                            .padding(
+                                start = 4.dp,
+                                end = 4.dp,
+                                top = 2.dp,
+                                bottom = 2.dp
+                            ),
+                        fontSize = 8.sp,
+                        textAlign = TextAlign.Center
+                    )
+                }
+            }
+            Text(text = "${data.balance} ${data.symbol}")
         }
     }
 }
