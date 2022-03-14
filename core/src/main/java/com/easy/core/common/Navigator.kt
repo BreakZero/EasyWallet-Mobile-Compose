@@ -34,7 +34,7 @@ class _Parameter(private val navigator: Navigator) {
     infix fun String.to(that: String?) = navigator.addParameter(this, that)
 }
 
-fun Navigator.parameter(block: _Parameter.() -> Unit) {
+inline fun Navigator.parameter(block: _Parameter.() -> Unit) {
     _Parameter(this).apply(block)
 }
 
