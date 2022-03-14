@@ -1,0 +1,4 @@
+<resources>
+    <string name="text_receive_upper_start">Receive</string>
+    <string name="text_send_upper_start">Send</string>
+</resources>

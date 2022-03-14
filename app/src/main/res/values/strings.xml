@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">EWallet</string>
+
+    <string name="text_receive_upper_start">Receive</string>
+    <string name="text_send_upper_start">Send</string>
+
+    <string name="prompt_info_title">Sample App Authentication \n</string>
+    <string name="prompt_info_subtitle">Please login to get access</string>
+    <string name="prompt_info_description">Sample App is using Android biometric authentication</string>
+    <string name="prompt_info_use_app_password">Use app password</string>
+</resources>
