@@ -5,6 +5,7 @@ import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.remote.BaseRpcRequest
 import com.easy.assets.data.remote.CallBalance
 import com.easy.assets.data.remote.dto.BaseRpcResponseDto
+import com.easy.assets.data.remote.dto.CoinConfigDto
 import com.easy.assets.data.remote.dto.CoinConfigResponseDto
 import com.easy.assets.data.remote.dto.EthTxResponseDto
 import com.easy.assets.domain.model.AssetInfo
@@ -29,6 +30,8 @@ import javax.inject.Inject
 class AssetRepositoryImpl @Inject constructor(
     private val ktorClient: HttpClient
 ) : AssetRepository {
+    private val _CoinConfigs = mutableListOf<CoinConfigDto>()
+
     override fun address(slug: String, legacy: Boolean): String {
         return when (slug) {
             "bitcoin" -> GlobalHolder.hdWallet.getAddressForCoin(CoinType.BITCOIN)
@@ -43,11 +46,11 @@ class AssetRepositoryImpl @Inject constructor(
     override suspend fun balance(
         address: String,
         chainId: ChainId,
-        contractAddress: String
+        contractAddress: String?
     ): BigInteger {
         return withContext(Dispatchers.IO) {
             try {
-                val reqBody = if (contractAddress.isEmpty() || contractAddress == "null") {
+                val reqBody = if (contractAddress.isNullOrEmpty()) {
                     BaseRpcRequest(
                         id = 1,
                         jsonrpc = "2.0",
@@ -86,11 +89,10 @@ class AssetRepositoryImpl @Inject constructor(
         chainId: ChainId,
         offset: Int,
         limit: Int,
-        contractAddress: String
+        contractAddress: String?
     ): NetworkResponse<EthTxResponseDto> {
-        return try {
-            val response = ktorClient.get<HttpResponse>(
-                """
+        val url = if (contractAddress.isNullOrEmpty()) {
+            """
                 https://api.etherscan.io/api?
                 module=account
                 &action=txlist
@@ -100,14 +102,28 @@ class AssetRepositoryImpl @Inject constructor(
                 &sort=desc
                 &apikey=${BuildConfig.ETHERSCAN_APIKEY}
                 """.trimIndent()
-            )
+        } else {
+            """
+                https://api.etherscan.io/api?
+                module=account
+                &action=tokentx
+                &contractaddress=$contractAddress
+                &address=$address
+                &page=1
+                &offset=$offset
+                &sort=desc
+                &apikey=${BuildConfig.ETHERSCAN_APIKEY}
+            """.trimIndent()
+        }
+        return try {
+            val response = ktorClient.get<HttpResponse>(url)
             NetworkResponse.Success(response.receive())
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
     }
 
-    override suspend fun transactions(address: String, chainId: ChainId, offset: Int, limit: Int, contractAddress: String): Result<List<Transaction>> {
+    override suspend fun transactions(address: String, chainId: ChainId, offset: Int, limit: Int, contractAddress: String?): Result<List<Transaction>> {
         return withContext(Dispatchers.IO) {
             val networkTxs = transactionsFromNetwork(
                 address = address,
@@ -124,16 +140,40 @@ class AssetRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun assets(): Result<Map<String, List<AssetInfo>>> {
+    override suspend fun assets(): List<AssetInfo> {
+        return withContext(Dispatchers.IO) {
+            if (_CoinConfigs.isEmpty()) {
+                kotlin.runCatching {
+                    ktorClient.get<CoinConfigResponseDto>("http://45.153.130.249:8080/currencies")
+                }.onFailure {
+                    it.printStackTrace()
+                }.map { it.result }.getOrNull()?.let { it ->
+                    _CoinConfigs.clear()
+                    _CoinConfigs.addAll(it)
+                    it.map { item ->
+                        item.toAsset()
+                    }
+                } ?: emptyList()
+            } else {
+                _CoinConfigs.map { item ->
+                    item.toAsset()
+                }
+            }
+        }
+    }
+
+    override suspend fun assetsWithBalance(): Result<List<AssetInfo>> {
         return withContext(Dispatchers.IO) {
             kotlin.runCatching {
                 ktorClient.get<CoinConfigResponseDto>("http://45.153.130.249:8080/currencies")
             }.onFailure {
                 it.printStackTrace()
-            }.getOrNull()?.let { it ->
+            }.getOrNull()?.result?.let { it ->
+                _CoinConfigs.clear()
+                _CoinConfigs.addAll(it)
                 val balances = mutableListOf<Deferred<Pair<String, BigInteger>>>()
                 coroutineScope {
-                    for (item in it.result) {
+                    for (item in it) {
                         val balance = async {
                             Pair(
                                 item.coinSlug,
@@ -148,11 +188,11 @@ class AssetRepositoryImpl @Inject constructor(
                     }
                 }
                 val balanceList = balances.awaitAll()
-                Result.success(it.result.map { item ->
-                    val sureBalance =
-                        balanceList.find { it.first == item.coinSlug }?.second ?: BigInteger.ZERO
+                Result.success(it.map { item ->
+                    val sureBalance = balanceList.find { it.first == item.coinSlug }?.second
+                        ?: BigInteger.ZERO
                     item.toAsset(sureBalance.byDecimal(item.decimal, 8))
-                }.groupBy { it.symbol })
+                })
             } ?: Result.failure(Exception())
         }
     }

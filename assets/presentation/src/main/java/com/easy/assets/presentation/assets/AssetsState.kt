@@ -5,7 +5,7 @@ import com.easy.assets.domain.model.AssetInfo
 
 @Keep
 data class AssetState(
-    val tokenResult: Result<Map<String,List<AssetInfo>>> = Result.success(mapOf()),
+    val tokenResult: Result<List<AssetInfo>> = Result.success(emptyList()),
     val isLoading: Boolean = false,
     val balances: HashMap<String, String> = hashMapOf()
 )

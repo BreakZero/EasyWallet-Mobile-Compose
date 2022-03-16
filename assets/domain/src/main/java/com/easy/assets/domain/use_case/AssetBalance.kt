@@ -8,7 +8,7 @@ class AssetBalance(
     private val repository: AssetRepository
 ) {
     suspend operator fun invoke(
-        address: String, chainId: ChainId, contractAddress: String
+        address: String, chainId: ChainId, contractAddress: String?
     ): BigInteger {
         return repository.balance(address, chainId, contractAddress)
     }

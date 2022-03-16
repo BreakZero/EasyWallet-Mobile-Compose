@@ -12,6 +12,23 @@ data class Navigator(
         params.add(KeyPair(type, value))
     }
 
+    fun routerWithParameter(): String {
+        return params.let {
+            // /${info.contractAddress}/${info.symbol}
+            buildString {
+                append(router)
+                append("?")
+                it.forEach {
+                    append(it.key)
+                    append("=")
+                    append(it.value)
+                    append("&")
+                }
+                dropLast(1)
+            }
+        }
+    }
+
     fun router(): String {
         return params.let {
             // /${info.contractAddress}/${info.symbol}
@@ -39,6 +56,6 @@ inline fun Navigator.parameter(block: _Parameter.() -> Unit) {
 }
 
 private data class KeyPair(
-    val type: String,
-    val value: String?
+    val key: String,
+    val value: Any?
 )

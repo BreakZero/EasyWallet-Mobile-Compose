@@ -18,29 +18,28 @@ import kotlinx.coroutines.launch
 
 class AssetDetailViewModel @AssistedInject constructor(
     assetRepository: AssetRepository,
-    @Assisted private val tokenParam: AssetBundle
+    @Assisted private val slug: String
 ) : ViewModel() {
     private val assetsUseCases = AssetsUseCases(
         address = CoinAddress(assetRepository),
         balance = AssetBalance(assetRepository),
+        assetsWithBalance = AssetsWithBalance(assetRepository),
         transactions = AssetTransactions(assetRepository),
         assets = Assets(assetRepository)
     )
     @AssistedFactory
     interface Factory {
-        fun create(
-            tokenParam: AssetBundle
-        ): AssetDetailViewModel
+        fun create(slug: String): AssetDetailViewModel
     }
 
     @Suppress("UNCHECKED_CAST")
     companion object {
         fun provideFactory(
             assistedFactory: Factory,
-            tokenParam: AssetBundle
+            slug: String
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(tokenParam) as T
+                return assistedFactory.create(slug) as T
             }
         }
     }
@@ -49,40 +48,43 @@ class AssetDetailViewModel @AssistedInject constructor(
         AssetDetailState(
             isLoading = true,
             result = Result.success(emptyList()),
-            balance = Result.success("--"),
-            icon = "https://s3-ap-southeast-1.amazonaws.com/monaco-cointrack-production/uploads/coin/colorful_logo/5f647d8d97713d009777e1cd/UNI_4x.png",
-            symbol = tokenParam.symbol
+            balance = Result.success("--")
         )
     )
         private set
 
     init {
         viewModelScope.launch {
-            val balance = async {
-                assetsUseCases.balance(
-                    assetsUseCases.address(tokenParam.slug),
-                    ChainId.ETHEREUM,
-                    tokenParam.contractAddress
-                )
-            }
+            val currAsset = assetsUseCases.assets().find { it.slug == slug }
+            currAsset?.let {
+                state = state.copy(assetInfo = it)
+                val balance = async {
+                    assetsUseCases.balance(
+                        assetsUseCases.address(it.slug),
+                        ChainId.ETHEREUM,
+                        it.contractAddress
+                    )
+                }
 
-            val txList = async {
-                assetsUseCases.transactions(
-                    assetsUseCases.address(tokenParam.slug),
-                    ChainId.ETHEREUM,
-                    offset = 20,
-                    limit = 10,
-                    contractAddress = tokenParam.contractAddress
+                val txList = async {
+                    assetsUseCases.transactions(
+                        assetsUseCases.address(it.slug),
+                        ChainId.ETHEREUM,
+                        offset = 20,
+                        limit = 10,
+                        contractAddress = it.contractAddress
+                    )
+                }
+                state = state.copy(
+                    assetInfo = it,
+                    isLoading = false, result = txList.await(),
+                    balance = Result.success(balance.await().byDecimal(8, 8))
                 )
             }
-            state = state.copy(
-                isLoading = false, result = txList.await(),
-                balance = Result.success(balance.await().byDecimal(8, 8))
-            )
         }
     }
 
     fun address(): String {
-        return assetsUseCases.address(tokenParam.slug, false)
+        return assetsUseCases.address(slug, false)
     }
 }

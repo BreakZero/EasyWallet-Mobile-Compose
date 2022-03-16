@@ -42,7 +42,7 @@ import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun assetDetailViewModel(
-    tokenParam: AssetBundle
+    slug: String
 ): AssetDetailViewModel {
     val factory = EntryPointAccessors.fromActivity(
         LocalContext.current as Activity,
@@ -52,7 +52,7 @@ fun assetDetailViewModel(
     return viewModel(
         factory = AssetDetailViewModel.provideFactory(
             factory,
-            tokenParam
+            slug
         )
     )
 }
@@ -60,12 +60,8 @@ fun assetDetailViewModel(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
 @Composable
 fun AssetDetailScreen(
-    contractAddress: String,
-    symbol: String,
     slug: String,
-    viewModel: AssetDetailViewModel = assetDetailViewModel(
-        AssetBundle(symbol = symbol, contractAddress = contractAddress, slug = slug)
-    ),
+    viewModel: AssetDetailViewModel = assetDetailViewModel(slug),
     navigateUp: () -> Unit,
     onNavigateTo: (Navigator) -> Unit
 ) {
@@ -73,6 +69,7 @@ fun AssetDetailScreen(
     LaunchedEffect(key1 = true) {
         systemUIController.setStatusBarColor(Color.White, true)
     }
+    val state = viewModel.state
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -82,13 +79,13 @@ fun AssetDetailScreen(
             EasyAppBar(
                 navIcon = Icons.Filled.ArrowBack,
                 backgroundColor = Color.White,
-                title = symbol
+                title = state.assetInfo?.symbol
             ) {
                 navigateUp.invoke()
             }
         }
     ) {
-        val state = viewModel.state
+
         Column(modifier = Modifier.fillMaxSize()) {
             SwipeRefresh(
                 modifier = Modifier
@@ -108,8 +105,8 @@ fun AssetDetailScreen(
                                 .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 12.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Column() {
-                                Row {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row() {
                                     Text(
                                         text = state.balance.getOrNull() ?: "--",
                                         style = MaterialTheme.typography.h4,
@@ -117,7 +114,7 @@ fun AssetDetailScreen(
                                     )
                                     Text(
                                         textAlign = TextAlign.Justify,
-                                        text = state.symbol,
+                                        text = state.assetInfo?.symbol.orEmpty(),
                                         style = MaterialTheme.typography.body2,
                                         modifier = Modifier
                                             .padding(start = 4.dp)
@@ -134,7 +131,7 @@ fun AssetDetailScreen(
                                 modifier = Modifier.size(40.dp),
                                 contentScale = ContentScale.FillWidth,
                                 painter = rememberImagePainter(
-                                    data = state.icon,
+                                    data = state.assetInfo?.icon,
                                     builder = {
                                         transformations(CircleCropTransformation())
                                     }

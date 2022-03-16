@@ -21,6 +21,7 @@ object AssetDomainModule {
             address = CoinAddress(assetRepository),
             assets = Assets(assetRepository),
             balance = AssetBalance(assetRepository),
+            assetsWithBalance = AssetsWithBalance(assetRepository),
             transactions = AssetTransactions(assetRepository)
         )
     }

@@ -19,17 +19,12 @@ import com.google.accompanist.navigation.animation.navigation
 fun NavGraphBuilder.assetsGraph(navController: NavController) {
     navigation(startDestination = AssetRouter.ASSET_DETAIL, route = AssetRouter.ASSET_ASSETS) {
         composable(
-            AssetRouter.ASSET_DETAIL + "/{slug}/{symbol}/{contract}",
+            AssetRouter.ASSET_DETAIL + "/{slug}",
             arguments = listOf(
-                navArgument("symbol") {
-                    type = NavType.StringType
-                },
                 navArgument("slug") {
                     type = NavType.StringType
-                },
-                navArgument("contract") {
-                    type = NavType.StringType
-                }),
+                }
+            ),
             enterTransition = {
                 fadeIn(animationSpec = tween(700))
             },
@@ -42,12 +37,8 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
             }) {
-            val symbol = it.arguments?.getString("symbol")!!
             val slug = it.arguments?.getString("slug")!!
-            val contract = it.arguments?.getString("contract")!!
             AssetDetailScreen(
-                contractAddress = contract,
-                symbol = symbol,
                 slug = slug,
                 navigateUp = {
                     navController.navigateUp()
