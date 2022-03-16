@@ -11,7 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.material.icons.outlined.ArrowCircleDown
+import androidx.compose.material.icons.outlined.ArrowCircleUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import com.easy.assets.presentation.routers.AssetRouter
 import com.easy.core.TimeUtils
 import com.easy.core.common.Navigator
 import com.easy.core.common.parameter
+import com.easy.core.ext.byDecimal
 import com.easy.core.ui.components.EasyAppBar
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -42,7 +44,7 @@ import dagger.hilt.android.EntryPointAccessors
 
 @Composable
 fun assetDetailViewModel(
-    tokenParam: AssetBundle
+    slug: String
 ): AssetDetailViewModel {
     val factory = EntryPointAccessors.fromActivity(
         LocalContext.current as Activity,
@@ -52,7 +54,7 @@ fun assetDetailViewModel(
     return viewModel(
         factory = AssetDetailViewModel.provideFactory(
             factory,
-            tokenParam
+            slug
         )
     )
 }
@@ -60,12 +62,8 @@ fun assetDetailViewModel(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
 @Composable
 fun AssetDetailScreen(
-    contractAddress: String,
-    symbol: String,
     slug: String,
-    viewModel: AssetDetailViewModel = assetDetailViewModel(
-        AssetBundle(symbol = symbol, contractAddress = contractAddress, slug = slug)
-    ),
+    viewModel: AssetDetailViewModel = assetDetailViewModel(slug),
     navigateUp: () -> Unit,
     onNavigateTo: (Navigator) -> Unit
 ) {
@@ -73,6 +71,7 @@ fun AssetDetailScreen(
     LaunchedEffect(key1 = true) {
         systemUIController.setStatusBarColor(Color.White, true)
     }
+    val state = viewModel.state
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -82,13 +81,13 @@ fun AssetDetailScreen(
             EasyAppBar(
                 navIcon = Icons.Filled.ArrowBack,
                 backgroundColor = Color.White,
-                title = symbol
+                title = state.assetInfo?.symbol
             ) {
                 navigateUp.invoke()
             }
         }
     ) {
-        val state = viewModel.state
+
         Column(modifier = Modifier.fillMaxSize()) {
             SwipeRefresh(
                 modifier = Modifier
@@ -96,7 +95,7 @@ fun AssetDetailScreen(
                     .weight(1f),
                 state = rememberSwipeRefreshState(isRefreshing = state.isLoading),
                 onRefresh = {
-
+                    viewModel.onEvent(AssetDetailEvent.OnRefresh)
                 }) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
@@ -108,8 +107,8 @@ fun AssetDetailScreen(
                                 .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 12.dp),
                             horizontalArrangement = Arrangement.SpaceBetween
                         ) {
-                            Column() {
-                                Row {
+                            Column(modifier = Modifier.weight(1f)) {
+                                Row() {
                                     Text(
                                         text = state.balance.getOrNull() ?: "--",
                                         style = MaterialTheme.typography.h4,
@@ -117,7 +116,7 @@ fun AssetDetailScreen(
                                     )
                                     Text(
                                         textAlign = TextAlign.Justify,
-                                        text = state.symbol,
+                                        text = state.assetInfo?.symbol.orEmpty(),
                                         style = MaterialTheme.typography.body2,
                                         modifier = Modifier
                                             .padding(start = 4.dp)
@@ -134,7 +133,7 @@ fun AssetDetailScreen(
                                 modifier = Modifier.size(40.dp),
                                 contentScale = ContentScale.FillWidth,
                                 painter = rememberImagePainter(
-                                    data = state.icon,
+                                    data = state.assetInfo?.icon,
                                     builder = {
                                         transformations(CircleCropTransformation())
                                     }
@@ -156,7 +155,10 @@ fun AssetDetailScreen(
                     }
                     state.result.getOrNull()?.let {
                         items(it) {
-                            TransactionItemView(transactionInfo = it) {
+                            TransactionItemView(
+                                transactionInfo = it,
+                                state.assetInfo?.decimal ?: 0
+                            ) {
 
                             }
                             Divider(
@@ -184,7 +186,7 @@ fun AssetDetailScreen(
                         onNavigateTo.invoke(
                             Navigator(router = AssetRouter.ASSET_RECEIVE) {
                                 parameter {
-                                    "String" to viewModel.address()
+                                    "address" to viewModel.address()
                                 }
                             })
                     },
@@ -195,7 +197,11 @@ fun AssetDetailScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
                     onClick = {
-                        onNavigateTo.invoke(Navigator(router = "send-flow-1"))
+                        onNavigateTo.invoke(Navigator(router = AssetRouter.SEND_FIRST) {
+                            parameter {
+                                "slug" to viewModel.state.assetInfo?.slug
+                            }
+                        })
                     }, modifier = Modifier
                         .weight(1f),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
@@ -208,7 +214,7 @@ fun AssetDetailScreen(
 }
 
 @Composable
-fun TransactionItemView(transactionInfo: Transaction, click: (Transaction) -> Unit) {
+fun TransactionItemView(transactionInfo: Transaction, decimal: Int, click: (Transaction) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -220,17 +226,33 @@ fun TransactionItemView(transactionInfo: Transaction, click: (Transaction) -> Un
     ) {
         Row(modifier = Modifier) {
             Icon(
-                imageVector = Icons.Outlined.ArrowDropDown,
-                contentDescription = null
+                imageVector = if (transactionInfo.isReceive) Icons.Outlined.ArrowCircleDown
+                else Icons.Outlined.ArrowCircleUp,
+                tint = if (transactionInfo.isReceive) Color.Green else Color.Red,
+                contentDescription = null,
             )
-            Text(text = "Received")
+            Text(
+                text = if (transactionInfo.isReceive) "Received" else "Send",
+                color = if (transactionInfo.isReceive) Color.Green else Color.Red
+            )
         }
         Column(
             modifier = Modifier
-                .padding(start = 8.dp)
+                .padding(start = 8.dp),
+            horizontalAlignment = Alignment.End
         ) {
-            Text(text = transactionInfo.value, overflow = TextOverflow.Ellipsis)
-            Text(text = TimeUtils.timestampToString(transactionInfo.timeStamp.toLong()))
+            Text(
+                textAlign = TextAlign.End,
+                text = "${if (transactionInfo.isReceive) "+" else "-"} ${
+                    transactionInfo.value.toBigInteger().byDecimal(decimal, 8)
+                }",
+                color = if (transactionInfo.isReceive) Color.Green else Color.Red,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                textAlign = TextAlign.End,
+                text = TimeUtils.timestampToString(transactionInfo.timeStamp.toLong())
+            )
         }
     }
 }

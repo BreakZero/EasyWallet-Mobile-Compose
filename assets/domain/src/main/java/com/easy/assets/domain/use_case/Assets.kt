@@ -2,11 +2,13 @@ package com.easy.assets.domain.use_case
 
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.domain.repository.AssetRepository
+import com.easy.assets.domain.repository.CoinRepository
+import javax.inject.Inject
 
-class Assets(
-    private val assetRepository: AssetRepository
+class Assets @Inject constructor(
+    private val coinRepository: CoinRepository
 ) {
-    suspend operator fun invoke():Result<Map<String, List<AssetInfo>>> {
-        return assetRepository.assets()
+    suspend operator fun invoke(): List<AssetInfo> {
+        return coinRepository.assets()
     }
 }

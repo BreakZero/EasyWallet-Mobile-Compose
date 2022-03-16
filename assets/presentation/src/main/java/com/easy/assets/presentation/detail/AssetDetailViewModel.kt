@@ -6,41 +6,36 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.easy.assets.domain.repository.AssetRepository
-import com.easy.assets.domain.use_case.*
+import com.easy.assets.domain.model.AssetInfo
+import com.easy.assets.domain.use_case.AssetsUseCases
 import com.easy.core.consts.ChainId
 import com.easy.core.ext.byDecimal
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class AssetDetailViewModel @AssistedInject constructor(
-    assetRepository: AssetRepository,
-    @Assisted private val tokenParam: AssetBundle
+    private val assetsUseCases: AssetsUseCases,
+    @Assisted private val slug: String
 ) : ViewModel() {
-    private val assetsUseCases = AssetsUseCases(
-        address = CoinAddress(assetRepository),
-        balance = AssetBalance(assetRepository),
-        transactions = AssetTransactions(assetRepository),
-        assets = Assets(assetRepository)
-    )
+    private var currAsset: AssetInfo? = null
+
     @AssistedFactory
     interface Factory {
-        fun create(
-            tokenParam: AssetBundle
-        ): AssetDetailViewModel
+        fun create(slug: String): AssetDetailViewModel
     }
 
     @Suppress("UNCHECKED_CAST")
     companion object {
         fun provideFactory(
             assistedFactory: Factory,
-            tokenParam: AssetBundle
+            slug: String
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
             override fun <T : ViewModel?> create(modelClass: Class<T>): T {
-                return assistedFactory.create(tokenParam) as T
+                return assistedFactory.create(slug) as T
             }
         }
     }
@@ -49,40 +44,64 @@ class AssetDetailViewModel @AssistedInject constructor(
         AssetDetailState(
             isLoading = true,
             result = Result.success(emptyList()),
-            balance = Result.success("--"),
-            icon = "https://s3-ap-southeast-1.amazonaws.com/monaco-cointrack-production/uploads/coin/colorful_logo/5f647d8d97713d009777e1cd/UNI_4x.png",
-            symbol = tokenParam.symbol
+            balance = Result.success("--")
         )
     )
         private set
 
     init {
         viewModelScope.launch {
-            val balance = async {
-                assetsUseCases.balance(
-                    assetsUseCases.address(tokenParam.slug),
-                    ChainId.ETHEREUM,
-                    tokenParam.contractAddress
-                )
-            }
+            currAsset = assetsUseCases.assets().find { it.slug == slug }
+            currAsset?.let {
+                state = state.copy(assetInfo = it)
+                val balance = async {
+                    assetsUseCases.balance(
+                        assetsUseCases.address(it.slug),
+                        ChainId.ETHEREUM,
+                        it.contractAddress
+                    )
+                }
 
-            val txList = async {
-                assetsUseCases.transactions(
-                    assetsUseCases.address(tokenParam.slug),
-                    ChainId.ETHEREUM,
-                    offset = 20,
-                    limit = 10,
-                    contractAddress = tokenParam.contractAddress
+                val txList = async {
+                    assetsUseCases.transactions(
+                        assetsUseCases.address(it.slug),
+                        ChainId.ETHEREUM,
+                        offset = 20,
+                        limit = 10,
+                        contractAddress = it.contractAddress
+                    )
+                }
+                state = state.copy(
+                    assetInfo = it,
+                    isLoading = false, result = txList.await(),
+                    balance = Result.success(balance.await().byDecimal(it.decimal, 8))
                 )
             }
-            state = state.copy(
-                isLoading = false, result = txList.await(),
-                balance = Result.success(balance.await().byDecimal(8, 8))
-            )
+        }
+    }
+
+    fun onEvent(event: AssetDetailEvent) {
+        when (event) {
+            is AssetDetailEvent.OnRefresh -> {
+                state = state.copy(isLoading = true)
+                viewModelScope.launch(Dispatchers.IO) {
+                    currAsset?.let {
+                        val txList = assetsUseCases.transactions(
+                            assetsUseCases.address(it.slug),
+                            ChainId.ETHEREUM,
+                            offset = 20,
+                            limit = 10,
+                            contractAddress = it.contractAddress
+                        )
+                        state = state.copy(result = txList, isLoading = false)
+                    }
+                }
+            }
+            else -> Unit
         }
     }
 
     fun address(): String {
-        return assetsUseCases.address(tokenParam.slug, false)
+        return assetsUseCases.address(slug)
     }
 }

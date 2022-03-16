@@ -63,9 +63,7 @@ fun MainScreen(
                     onNavigateTo.invoke(
                         Navigator(router = AssetRouter.ASSET_DETAIL) {
                             parameter {
-                                "String" to event.assetInfo.slug
-                                "String" to event.assetInfo.symbol
-                                "String" to event.assetInfo.contractAddress
+                                "slug" to event.assetInfo.slug
                             }
                         }
                     )

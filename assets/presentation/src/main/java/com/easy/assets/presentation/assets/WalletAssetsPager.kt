@@ -106,13 +106,10 @@ fun WalletPagerScreen(
                                     )
                                 )
                         ) {
-                            val tokenMapper = state.tokenResult.getOrElse { mapOf() }
-                            items(items = tokenMapper.keys.toList()) { item ->
-                                val tokens = tokenMapper[item]
-                                tokens?.first()?.let {
-                                    AssetItemView(data = it) {
-                                        viewModel.onEvent(AssetEvent.OnItemClick(it))
-                                    }
+                            val assets = state.tokenResult.getOrElse { emptyList() }
+                            items(items = assets) {
+                                AssetItemView(data = it) {
+                                    viewModel.onEvent(AssetEvent.OnItemClick(it))
                                 }
                             }
                         }

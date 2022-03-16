@@ -4,7 +4,7 @@ import com.easy.assets.data.remote.dto.CoinConfigDto
 import com.easy.assets.domain.model.AssetInfo
 
 fun CoinConfigDto.toAsset(
-    balance: String
+    balance: String = "0.0"
 ): AssetInfo {
     return AssetInfo(
         slug = this.coinSlug,

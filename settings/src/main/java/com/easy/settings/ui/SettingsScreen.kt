@@ -1,26 +1,27 @@
 package com.easy.settings.ui
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.easy.core.ext.toast
 import com.easy.core.ui.R
 import com.easy.core.ui.components.EasyAppBar
+import com.easy.settings.components.MenuBlockView
+import com.easy.settings.model.MenuItem
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -51,6 +52,7 @@ fun SettingsScreen(
             }
         }
     ) {
+        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
@@ -69,171 +71,51 @@ fun SettingsScreen(
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
-            Text(text = "Security", fontSize = 12.sp, color = Color.Gray)
-            Card(
-                modifier = Modifier.padding(top = 8.dp),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Column {
-                    MenuItemView(
-                        modifier = Modifier.fillMaxWidth(),
+            MenuBlockView(
+                modifier = Modifier.fillMaxWidth(), header = "Security", menus = listOf(
+                    MenuItem(
                         title = "Protect Your Wallet",
                         subTitle = "Passcode, Biometrics and 2FA"
-                    ) {
-
-                    }
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(0.2.dp)
-                    )
-                    MenuItemView(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = "Recovery Phrase",
-                        subTitle = "My Wallet"
-                    ) {
-
-                    }
-                }
-            }
-            Text(
-                text = "Support",
-                fontSize = 12.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-            )
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+                    ),
+                    MenuItem(title = "Recovery Phrase", subTitle = "Wallet Name")
+                )
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    MenuItemView(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = "Help Center"
-                    ) {
-
-                    }
-                    Divider(modifier = Modifier
-                        .fillMaxWidth()
-                        .height(0.2.dp))
-                    MenuItemView(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = "New to DeFi"
-                    ) {
-
-                    }
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(0.2.dp)
-                    )
-                    MenuItemView(modifier = Modifier.fillMaxWidth(), title = "Join Community") {
-
-                    }
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(0.2.dp)
-                    )
-                    MenuItemView(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = "Give Feedback"
-                    ) {
-
-                    }
+                val msg = when (it) {
+                    0 -> "protect"
+                    else -> "recovery"
                 }
+                context.toast(msg)
             }
-            Text(
-                text = "About EasyWallet",
-                fontSize = 12.sp,
-                color = Color.Gray,
-                modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
-            )
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(8.dp)
+            MenuBlockView(
+                modifier = Modifier.fillMaxWidth(), header = "Account", menus = listOf(
+                    MenuItem(title = "Display Currency", endValue = "$ USD"),
+                    MenuItem(title = "Network Settings", endValue = "Mainnet")
+                )
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .defaultMinSize(minHeight = 56.dp)
-                            .padding(start = 12.dp, end = 12.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(text = "Version")
-                        Text(text = "1.29.0-st", color = Color.Gray)
-                    }
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(0.2.dp)
-                    )
-                    MenuItemView(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = "Terms of Service"
-                    ) {
+                context.toast("click: $it")
+            }
+            MenuBlockView(
+                modifier = Modifier.fillMaxWidth(), header = "Support", menus = listOf(
+                    MenuItem(title = "Help Center"),
+                    MenuItem(title = "New to DeFi"),
+                    MenuItem(title = "Join Community"),
+                    MenuItem(title = "Give Feedback")
+                )
+            ) {
 
-                    }
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(0.2.dp)
-                    )
-                    MenuItemView(modifier = Modifier.fillMaxWidth(), title = "Privacy Notice") {
+            }
+            MenuBlockView(
+                modifier = Modifier.fillMaxWidth(), header = "About EasyWallet", menus = listOf(
+                    MenuItem(title = "Version", endValue = "v1.0.0", showIcon = false),
+                    MenuItem(title = "Terms of Service"),
+                    MenuItem(title = "Privacy Notice"),
+                    MenuItem(title = "Visit our website")
+                )
+            ) {
 
-                    }
-                    Divider(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(0.2.dp)
-                    )
-                    MenuItemView(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = "Visit our website"
-                    ) {
-
-                    }
-                }
             }
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
 
-@Composable
-private fun MenuItemView(
-    modifier: Modifier = Modifier,
-    title: String,
-    subTitle: String? = null,
-    action: () -> Unit
-) {
-    Row(
-        modifier = modifier
-            .clickable {
-                action.invoke()
-            }
-            .padding(start = 12.dp, end = 12.dp)
-            .defaultMinSize(minHeight = 56.dp),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
-    ) {
-        Column(
-            modifier = Modifier
-        ) {
-            Text(text = title)
-            subTitle?.let {
-                Text(text = subTitle, fontSize = 12.sp, color = Color.Gray)
-            }
-        }
-        Icon(
-            imageVector = Icons.Filled.ArrowRight,
-            contentDescription = null
-        )
-    }
-}
