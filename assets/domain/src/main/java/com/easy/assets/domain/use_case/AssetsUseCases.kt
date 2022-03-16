@@ -1,6 +1,8 @@
 package com.easy.assets.domain.use_case
 
-data class AssetsUseCases(
+import javax.inject.Inject
+
+class AssetsUseCases @Inject constructor(
     val address: CoinAddress,
     val assets: Assets,
     val assetsWithBalance: AssetsWithBalance,

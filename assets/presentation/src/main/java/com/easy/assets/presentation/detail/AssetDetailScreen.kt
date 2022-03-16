@@ -186,7 +186,7 @@ fun AssetDetailScreen(
                         onNavigateTo.invoke(
                             Navigator(router = AssetRouter.ASSET_RECEIVE) {
                                 parameter {
-                                    "String" to viewModel.address()
+                                    "address" to viewModel.address()
                                 }
                             })
                     },
@@ -197,7 +197,11 @@ fun AssetDetailScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
                     onClick = {
-                        onNavigateTo.invoke(Navigator(router = "send-flow-1"))
+                        onNavigateTo.invoke(Navigator(router = AssetRouter.SEND_FIRST) {
+                            parameter {
+                                "slug" to viewModel.state.assetInfo?.slug
+                            }
+                        })
                     }, modifier = Modifier
                         .weight(1f),
                     colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)

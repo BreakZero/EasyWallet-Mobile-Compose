@@ -1,5 +1,7 @@
 package com.easy.assets.presentation.send.address
 
+import android.app.Activity
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,22 +20,47 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
+import com.easy.assets.presentation.detail.AssetDetailViewModel
+import com.easy.assets.presentation.di.ViewModelFactoryProvider
 import com.easy.assets.presentation.routers.AssetRouter
 import com.easy.assets.presentation.send.SendInfo
 import com.easy.assets.presentation.send.SendInfoHolder
 import com.easy.core.common.Navigator
 import com.easy.core.ui.LocalSpacing
 import com.google.accompanist.insets.statusBarsPadding
+import dagger.hilt.android.EntryPointAccessors
 import logcat.logcat
 
 @Composable
+fun assetSendAddressViewModel(
+    slug: String
+): SendAddressViewModel {
+    val factory = EntryPointAccessors.fromActivity(
+        LocalContext.current as Activity,
+        ViewModelFactoryProvider::class.java
+    ).assetSendAddressViewModelFactory()
+
+    return viewModel(
+        factory = SendAddressViewModel.provideFactory(
+            factory,
+            slug
+        )
+    )
+}
+
+@Composable
 fun NormalSendAddressScreen(
-    sendViewModel: SendAddressViewModel = hiltViewModel(),
+    slug: String,
+    sendViewModel: SendAddressViewModel = assetSendAddressViewModel(slug),
     navigateUp: () -> Unit,
     onNavigateTo: (Navigator) -> Unit
 ) {
@@ -88,13 +115,18 @@ fun NormalSendAddressScreen(
                     .clickable { },
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Icon(
-                    imageVector = Icons.Filled.Send,
+                Image(
+                    painter = rememberImagePainter(
+                        data = sendViewModel.sendFlowState.assetInfo?.icon,
+                        builder = {
+                            transformations(CircleCropTransformation())
+                        }
+                    ),
                     contentDescription = null,
                     modifier = Modifier
                 )
                 Text(
-                    text = "ETH",
+                    text = sendViewModel.sendFlowState.assetInfo?.symbol.orEmpty(),
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -127,7 +159,7 @@ fun NormalSendAddressScreen(
                                 )
                             }
                             .padding(top = 4.dp, bottom = 4.dp),
-                        value = sendViewModel.address,
+                        value = sendViewModel.sendFlowState.toAddress.orEmpty(),
                         onValueChange = {
                             sendViewModel.onAddressChanged(it)
                         },
@@ -143,7 +175,7 @@ fun NormalSendAddressScreen(
                     )
                     Button(
                         onClick = {
-                            SendInfoHolder.submitField(SendInfo.Field.ADDRESS, sendViewModel.address)
+                            SendInfoHolder.submitField(SendInfo.Field.ADDRESS, sendViewModel.sendFlowState.toAddress.orEmpty())
                             logcat {
                                 "====== ${SendInfoHolder.info()}"
                             }

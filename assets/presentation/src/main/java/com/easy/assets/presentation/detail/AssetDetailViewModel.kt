@@ -7,8 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.model.AssetInfo
-import com.easy.assets.domain.repository.AssetRepository
-import com.easy.assets.domain.use_case.*
+import com.easy.assets.domain.use_case.AssetsUseCases
 import com.easy.core.consts.ChainId
 import com.easy.core.ext.byDecimal
 import dagger.assisted.Assisted
@@ -19,16 +18,9 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class AssetDetailViewModel @AssistedInject constructor(
-    assetRepository: AssetRepository,
+    private val assetsUseCases: AssetsUseCases,
     @Assisted private val slug: String
 ) : ViewModel() {
-    private val assetsUseCases = AssetsUseCases(
-        address = CoinAddress(assetRepository),
-        balance = AssetBalance(assetRepository),
-        assetsWithBalance = AssetsWithBalance(assetRepository),
-        transactions = AssetTransactions(assetRepository),
-        assets = Assets(assetRepository)
-    )
     private var currAsset: AssetInfo? = null
 
     @AssistedFactory

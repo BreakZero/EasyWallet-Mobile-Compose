@@ -70,7 +70,12 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
                 navController.navigateUp()
             }
         }
-        composable(route = AssetRouter.SEND_FIRST,
+        composable(
+            route = AssetRouter.SEND_FIRST + "/{slug}",
+            arguments = listOf(
+                navArgument("slug") {
+                    type = NavType.StringType
+                }),
             enterTransition = {
                 fadeIn(animationSpec = tween(700))
             },
@@ -83,7 +88,9 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
             }) {
+            val slug = it.arguments?.getString("slug")!!
             NormalSendAddressScreen(
+                slug = slug,
                 navigateUp = {
                     navController.navigateUp()
                 }
