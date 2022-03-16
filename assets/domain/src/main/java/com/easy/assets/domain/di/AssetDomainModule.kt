@@ -1,6 +1,7 @@
 package com.easy.assets.domain.di
 
 import com.easy.assets.domain.repository.AssetRepository
+import com.easy.assets.domain.repository.CoinRepository
 import com.easy.assets.domain.use_case.*
 import dagger.Module
 import dagger.Provides
@@ -15,13 +16,14 @@ object AssetDomainModule {
     @Provides
     @ViewModelScoped
     fun provideAssetsUseCases(
-        assetRepository: AssetRepository
+        assetRepository: AssetRepository,
+        coinRepository: CoinRepository
     ): AssetsUseCases {
         return AssetsUseCases(
-            address = CoinAddress(assetRepository),
-            assets = Assets(assetRepository),
+            address = CoinAddress(coinRepository),
+            assets = Assets(coinRepository),
             balance = AssetBalance(assetRepository),
-            assetsWithBalance = AssetsWithBalance(assetRepository),
+            assetsWithBalance = AssetsWithBalance(coinRepository, assetRepository),
             transactions = AssetTransactions(assetRepository)
         )
     }

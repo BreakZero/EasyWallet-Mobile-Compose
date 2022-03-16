@@ -102,6 +102,6 @@ class AssetDetailViewModel @AssistedInject constructor(
     }
 
     fun address(): String {
-        return assetsUseCases.address(slug, false)
+        return assetsUseCases.address(slug)
     }
 }

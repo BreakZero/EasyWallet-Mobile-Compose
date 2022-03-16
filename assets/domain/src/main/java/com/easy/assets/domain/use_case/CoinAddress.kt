@@ -1,12 +1,12 @@
 package com.easy.assets.domain.use_case
 
-import com.easy.assets.domain.repository.AssetRepository
+import com.easy.assets.domain.repository.CoinRepository
 import javax.inject.Inject
 
 class CoinAddress @Inject constructor(
-    private val assetRepository: AssetRepository
+    private val coinRepository: CoinRepository
 ) {
-    operator fun invoke(slug: String, isLegacy: Boolean = false): String {
-        return assetRepository.address(slug, isLegacy)
+    operator fun invoke(slug: String): String {
+        return coinRepository.address(slug)
     }
 }
