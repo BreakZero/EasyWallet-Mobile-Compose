@@ -9,5 +9,6 @@ data class Transaction(
     val from: String,
     val to: String,
     val timeStamp: String,
+    val isReceive: Boolean,
     val inputData: String
 )

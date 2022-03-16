@@ -11,7 +11,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material.icons.outlined.ArrowDropDown
+import androidx.compose.material.icons.outlined.ArrowCircleDown
+import androidx.compose.material.icons.outlined.ArrowCircleUp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -32,6 +33,7 @@ import com.easy.assets.presentation.routers.AssetRouter
 import com.easy.core.TimeUtils
 import com.easy.core.common.Navigator
 import com.easy.core.common.parameter
+import com.easy.core.ext.byDecimal
 import com.easy.core.ui.components.EasyAppBar
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
@@ -93,7 +95,7 @@ fun AssetDetailScreen(
                     .weight(1f),
                 state = rememberSwipeRefreshState(isRefreshing = state.isLoading),
                 onRefresh = {
-
+                    viewModel.onEvent(AssetDetailEvent.OnRefresh)
                 }) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
@@ -153,7 +155,10 @@ fun AssetDetailScreen(
                     }
                     state.result.getOrNull()?.let {
                         items(it) {
-                            TransactionItemView(transactionInfo = it) {
+                            TransactionItemView(
+                                transactionInfo = it,
+                                state.assetInfo?.decimal ?: 0
+                            ) {
 
                             }
                             Divider(
@@ -205,7 +210,7 @@ fun AssetDetailScreen(
 }
 
 @Composable
-fun TransactionItemView(transactionInfo: Transaction, click: (Transaction) -> Unit) {
+fun TransactionItemView(transactionInfo: Transaction, decimal: Int, click: (Transaction) -> Unit) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -217,17 +222,33 @@ fun TransactionItemView(transactionInfo: Transaction, click: (Transaction) -> Un
     ) {
         Row(modifier = Modifier) {
             Icon(
-                imageVector = Icons.Outlined.ArrowDropDown,
-                contentDescription = null
+                imageVector = if (transactionInfo.isReceive) Icons.Outlined.ArrowCircleDown
+                else Icons.Outlined.ArrowCircleUp,
+                tint = if (transactionInfo.isReceive) Color.Green else Color.Red,
+                contentDescription = null,
             )
-            Text(text = "Received")
+            Text(
+                text = if (transactionInfo.isReceive) "Received" else "Send",
+                color = if (transactionInfo.isReceive) Color.Green else Color.Red
+            )
         }
         Column(
             modifier = Modifier
-                .padding(start = 8.dp)
+                .padding(start = 8.dp),
+            horizontalAlignment = Alignment.End
         ) {
-            Text(text = transactionInfo.value, overflow = TextOverflow.Ellipsis)
-            Text(text = TimeUtils.timestampToString(transactionInfo.timeStamp.toLong()))
+            Text(
+                textAlign = TextAlign.End,
+                text = "${if (transactionInfo.isReceive) "+" else "-"} ${
+                    transactionInfo.value.toBigInteger().byDecimal(decimal, 8)
+                }",
+                color = if (transactionInfo.isReceive) Color.Green else Color.Red,
+                overflow = TextOverflow.Ellipsis
+            )
+            Text(
+                textAlign = TextAlign.End,
+                text = TimeUtils.timestampToString(transactionInfo.timeStamp.toLong())
+            )
         }
     }
 }

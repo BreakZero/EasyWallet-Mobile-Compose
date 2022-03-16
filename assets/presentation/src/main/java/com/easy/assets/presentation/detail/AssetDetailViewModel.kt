@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.domain.repository.AssetRepository
 import com.easy.assets.domain.use_case.*
 import com.easy.core.consts.ChainId
@@ -13,6 +14,7 @@ import com.easy.core.ext.byDecimal
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -27,6 +29,8 @@ class AssetDetailViewModel @AssistedInject constructor(
         transactions = AssetTransactions(assetRepository),
         assets = Assets(assetRepository)
     )
+    private var currAsset: AssetInfo? = null
+
     @AssistedFactory
     interface Factory {
         fun create(slug: String): AssetDetailViewModel
@@ -55,7 +59,7 @@ class AssetDetailViewModel @AssistedInject constructor(
 
     init {
         viewModelScope.launch {
-            val currAsset = assetsUseCases.assets().find { it.slug == slug }
+            currAsset = assetsUseCases.assets().find { it.slug == slug }
             currAsset?.let {
                 state = state.copy(assetInfo = it)
                 val balance = async {
@@ -78,9 +82,30 @@ class AssetDetailViewModel @AssistedInject constructor(
                 state = state.copy(
                     assetInfo = it,
                     isLoading = false, result = txList.await(),
-                    balance = Result.success(balance.await().byDecimal(8, 8))
+                    balance = Result.success(balance.await().byDecimal(it.decimal, 8))
                 )
             }
+        }
+    }
+
+    fun onEvent(event: AssetDetailEvent) {
+        when (event) {
+            is AssetDetailEvent.OnRefresh -> {
+                state = state.copy(isLoading = true)
+                viewModelScope.launch(Dispatchers.IO) {
+                    currAsset?.let {
+                        val txList = assetsUseCases.transactions(
+                            assetsUseCases.address(it.slug),
+                            ChainId.ETHEREUM,
+                            offset = 20,
+                            limit = 10,
+                            contractAddress = it.contractAddress
+                        )
+                        state = state.copy(result = txList, isLoading = false)
+                    }
+                }
+            }
+            else -> Unit
         }
     }
 

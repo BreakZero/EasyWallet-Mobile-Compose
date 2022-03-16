@@ -133,7 +133,7 @@ class AssetRepositoryImpl @Inject constructor(
                 contractAddress = contractAddress
             )
             when (networkTxs) {
-                is NetworkResponse.Success -> Result.success(networkTxs.data.result.map { it.toTransaction() })
+                is NetworkResponse.Success -> Result.success(networkTxs.data.result.map { it.toTransaction(address) })
                 is NetworkResponse.Error -> Result.failure(IllegalArgumentException(networkTxs.code.toString()))
                 else -> Result.failure(UnknownError())
             }
