@@ -7,7 +7,9 @@
 
 ## Noted
 if you want to run-up the project, you need 2 api keys, one from infura, and one from etherscan.io
-```aidl
+insert the content format as below into file `configs.properties` in the keystore folder.
+more detail please check the gradle script.
+```properties
 apikey.infura="a9db************2ad2ee7"
 apikey.etherscan="XWNI**********YP4F6"
 ```
