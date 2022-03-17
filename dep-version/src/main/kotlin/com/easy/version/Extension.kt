@@ -38,7 +38,6 @@ fun DependencyHandlerScope.composeUI() {
     "implementation"(Compose.Accompanist.uiController)
     "implementation"(Compose.Accompanist.permission)
     "implementation"(Compose.Accompanist.navigation)
-    "implementation"(Compose.Accompanist.webview)
     "implementation"(Compose.Accompanist.swiperefresh)
     "implementation"(Compose.Accompanist.navigationAnimation)
     "implementation"(Compose.Accompanist.pager)

@@ -6,5 +6,7 @@ import androidx.annotation.Keep
 data class DAppInfo(
     val url: String,
     val name: String,
-    val icon: String
+    val icon: String,
+    val chain: Int,
+    val rpc: String
 )

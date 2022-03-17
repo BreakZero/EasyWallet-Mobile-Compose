@@ -27,7 +27,6 @@ object Compose {
     object Accompanist {
         private const val version = "0.24.1-alpha"
         const val windowInsets = "com.google.accompanist:accompanist-insets:$version"
-        const val webview = "com.google.accompanist:accompanist-webview:$version"
         const val uiController = "com.google.accompanist:accompanist-systemuicontroller:$version"
         const val permission = "com.google.accompanist:accompanist-permissions:$version"
         const val navigation = "com.google.accompanist:accompanist-navigation-material:$version"

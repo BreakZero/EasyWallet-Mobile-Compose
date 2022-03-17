@@ -131,7 +131,9 @@ fun MainScreen(
                         })
                     }
                     1 -> {
-                        DAppPagerScreen()
+                        DAppPagerScreen {
+                            onNavigateTo.invoke(it)
+                        }
                     }
                     else -> Unit
                 }
