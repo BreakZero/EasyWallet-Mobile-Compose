@@ -19,10 +19,10 @@ import com.easy.assets.presentation.routers.assetsGraph
 import com.easy.core.ui.globalGraph
 import com.easy.intro.IntroRouter
 import com.easy.intro.introGraph
+import com.easy.settings.settingsGraph
 import com.easy.wallet.ui.main.MainScreen
 import com.easy.wallet.ui.splash.SplashScreen
 import com.easy.wallet.ui.theme.EasyTheme
-import com.easy.settings.settingsGraph
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable

@@ -30,6 +30,8 @@
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core-ui" />
             <option value="$PROJECT_DIR$/dapp" />
+            <option value="$PROJECT_DIR$/dapp/dapp_domain" />
+            <option value="$PROJECT_DIR$/dapp/dapp_presentation" />
             <option value="$PROJECT_DIR$/dep-version" />
             <option value="$PROJECT_DIR$/intro" />
             <option value="$PROJECT_DIR$/settings" />

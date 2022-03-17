@@ -24,7 +24,7 @@ import com.easy.core.common.parameter
 import com.easy.core.ui.GlobalRouter
 import com.easy.core.ui.R
 import com.easy.core.ui.common.QRCodeGenerate
-import com.easy.dapp.ui.DAppPagerScreen
+import com.easy.dapp.presentation.list.DAppPagerScreen
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
