@@ -6,9 +6,7 @@ import com.easy.version.unitTestDependencies
 dependencies {
   implementation(project(":core"))
   implementation(project(":core-ui"))
-  api(project(":dapp:dapp_domain"))
-
-  implementation("androidx.constraintlayout:constraintlayout-compose:1.0.0")
+  implementation(project(":dapp:dapp_domain"))
 
   composeUI()
   hiltDependencies()

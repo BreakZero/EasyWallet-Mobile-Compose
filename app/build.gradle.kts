@@ -93,6 +93,7 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":core-ui"))
     implementation(project(":intro"))
+    implementation(project(":dapp:dapp_domain"))
     implementation(project(":dapp:dapp_presentation"))
     implementation(project(":assets:domain"))
     implementation(project(":assets:data"))
