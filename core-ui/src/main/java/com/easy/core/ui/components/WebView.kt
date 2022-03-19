@@ -58,6 +58,7 @@ fun DAppWebView(
     modifier: Modifier = Modifier,
     captureBackPresses: Boolean = true,
     navigator: WebViewNavigator = rememberWebViewNavigator(),
+    startScript: WebView.() -> Unit = {},
     onCreated: (WebView) -> Unit = {},
     onError: (request: WebResourceRequest?, error: WebResourceError?) -> Unit = { _, _ -> }
 ) {
@@ -73,26 +74,6 @@ fun DAppWebView(
 
     AndroidView(
         factory = { context ->
-            val providerJs =
-                context.resources.openRawResource(R.raw.trust_min_new)
-                    .bufferedReader().use {
-                        it.readText()
-                    }
-            val initJs =
-                """
-        (function() {
-            var config = {
-                chainId: 1,
-                rpcUrl: "https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}",
-                isDebug: true
-            };
-            window.ethereum = new trustwallet.Provider(config);
-            window.web3 = new trustwallet.Web3(window.ethereum);
-            trustwallet.postMessage = (json) => {
-                window._tw_.postMessage(JSON.stringify(json));
-            }
-        })();
-        """
             WebView(context).apply {
                 onCreated(this)
 
@@ -122,12 +103,7 @@ fun DAppWebView(
                 webViewClient = object : WebViewClient() {
                     override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
                         super.onPageStarted(view, url, favicon)
-                        view?.evaluateJavascript(providerJs, null)
-                        view?.evaluateJavascript(initJs, null)
-                        val script = "window.ethereum.request({method: \"eth_requestAccounts\"})"
-                        view?.evaluateJavascript(script) {
-                            logcat {  "======== $it" }
-                        }
+                        view?.apply(startScript)
                         state.loadingState = LoadingState.Loading(0.0f)
                         state.errorsForCurrentRequest.clear()
                         state.pageTitle = null
