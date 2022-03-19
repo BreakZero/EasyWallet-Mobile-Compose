@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.easy.dapp.presentation.components
+package com.easy.core.ui.components
 
 import android.graphics.Bitmap
 import android.view.ViewGroup
@@ -23,16 +23,14 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.AndroidView
-import com.easy.core.BuildConfig
-import com.easy.dapp.presentation.R
-import com.easy.dapp.presentation.components.LoadingState.Finished
-import com.easy.dapp.presentation.components.LoadingState.Loading
+import com.easy.core.ui.components.LoadingState.Finished
+import com.easy.core.ui.components.LoadingState.Loading
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import logcat.logcat
 
 /**
  * A wrapper around the Android View WebView to provide a basic WebView composable.
@@ -53,7 +51,7 @@ import logcat.logcat
  * @sample com.google.accompanist.sample.webview.BasicWebViewSample
  */
 @Composable
-fun DAppWebView(
+fun WebView(
     state: WebViewState,
     modifier: Modifier = Modifier,
     captureBackPresses: Boolean = true,
