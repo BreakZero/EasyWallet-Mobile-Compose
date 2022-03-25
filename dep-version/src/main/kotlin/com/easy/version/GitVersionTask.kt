@@ -14,8 +14,8 @@ abstract class GitVersionTask : DefaultTask() {
     fun getGitVersion() {
         val process = ProcessBuilder(
             "git",
-            "branch",
-            "--show"
+            "rev-parse",
+            "HEAD"
         ).start()
         val error = process.errorStream.readBytes().decodeToString()
         if (error.isNotBlank()) {
@@ -23,6 +23,6 @@ abstract class GitVersionTask : DefaultTask() {
         }
         val gitVersion = process.inputStream.readBytes().decodeToString()
         println("Git Version: $gitVersion")
-        gitVersionOutputFile.get().asFile.writeText("v1.1.2")
+        gitVersionOutputFile.get().asFile.writeText("v1.0.1")
     }
 }

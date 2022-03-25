@@ -73,14 +73,18 @@ fun DAppWebViewScreen(
         }
         if (showDialog) {
             AlertDialog(
-                onDismissRequest = {},
+                onDismissRequest = {
+                    logcat(tag = "") { "dismiss" }
+                },
                 confirmButton = {
-                    TextButton(onClick = {})
+                    TextButton(onClick = {
+                        showDialog = false
+                    })
                     { Text(text = "OK") }
                 },
                 dismissButton = {
                     TextButton(onClick = {
-
+                        showDialog = false
                     })
                     { Text(text = "Cancel") }
                 },

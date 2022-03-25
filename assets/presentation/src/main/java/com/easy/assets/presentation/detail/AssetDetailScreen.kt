@@ -153,7 +153,7 @@ fun AssetDetailScreen(
                             color = Color.Gray
                         )
                     }
-                    state.result.getOrNull()?.let {
+                    state.transactions.getOrNull()?.let {
                         items(it) {
                             TransactionItemView(
                                 transactionInfo = it,

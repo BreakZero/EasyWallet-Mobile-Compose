@@ -43,7 +43,7 @@ class AssetDetailViewModel @AssistedInject constructor(
     var state by mutableStateOf(
         AssetDetailState(
             isLoading = true,
-            result = Result.success(emptyList()),
+            transactions = Result.success(emptyList()),
             balance = Result.success("--")
         )
     )
@@ -73,7 +73,7 @@ class AssetDetailViewModel @AssistedInject constructor(
                 }
                 state = state.copy(
                     assetInfo = it,
-                    isLoading = false, result = txList.await(),
+                    isLoading = false, transactions = txList.await(),
                     balance = Result.success(balance.await().byDecimal(it.decimal, 8))
                 )
             }
@@ -93,7 +93,7 @@ class AssetDetailViewModel @AssistedInject constructor(
                             limit = 10,
                             contractAddress = it.contractAddress
                         )
-                        state = state.copy(result = txList, isLoading = false)
+                        state = state.copy(transactions = txList, isLoading = false)
                     }
                 }
             }

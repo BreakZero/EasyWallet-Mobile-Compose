@@ -9,5 +9,5 @@ data class AssetDetailState(
     val isLoading: Boolean,
     val balance: Result<String>,
     val assetInfo: AssetInfo? = null,
-    val result: Result<List<Transaction>>
+    val transactions: Result<List<Transaction>>
 )
