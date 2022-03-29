@@ -41,6 +41,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.EntryPointAccessors
+import logcat.logcat
 
 @Composable
 fun assetDetailViewModel(
@@ -168,8 +169,18 @@ fun AssetDetailScreen(
                             )
                         }
                     } ?: item {
-                        Box(modifier = Modifier.fillMaxSize()) {
-                            Text(text = "empty")
+                        Box(
+                            modifier = Modifier.fillParentMaxSize(),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "empty...",
+                                modifier = Modifier
+                                    .clickable {
+                                        logcat { "re-try" }
+                                    }
+                                    .padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
                         }
                     }
                 }
