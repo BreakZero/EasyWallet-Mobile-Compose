@@ -8,7 +8,7 @@ object Compose {
     const val icons = "androidx.compose.material:material-icons-extended:$version"
     const val uiTestJunit = "androidx.compose.ui:ui-test-junit4:$version"
     const val uiTooling = "androidx.compose.ui:ui-tooling:$version"
-    const val coil = "io.coil-kt:coil-compose:1.3.2"
+    const val coil = "io.coil-kt:coil-compose:1.4.0"
     const val navigation = "androidx.navigation:navigation-compose:2.4.0-rc01"
 
     object Navigation {
@@ -25,9 +25,8 @@ object Compose {
     }
 
     object Accompanist {
-        private const val version = "0.23.0"
+        private const val version = "0.24.1-alpha"
         const val windowInsets = "com.google.accompanist:accompanist-insets:$version"
-        const val coil = "com.google.accompanist:accompanist-coil:$version"
         const val uiController = "com.google.accompanist:accompanist-systemuicontroller:$version"
         const val permission = "com.google.accompanist:accompanist-permissions:$version"
         const val navigation = "com.google.accompanist:accompanist-navigation-material:$version"

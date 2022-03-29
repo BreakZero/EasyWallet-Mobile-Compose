@@ -176,9 +176,6 @@ fun NormalSendAddressScreen(
                     Button(
                         onClick = {
                             SendInfoHolder.submitField(SendInfo.Field.ADDRESS, sendViewModel.sendFlowState.toAddress.orEmpty())
-                            logcat {
-                                "====== ${SendInfoHolder.info()}"
-                            }
                             onNavigateTo(Navigator(router = AssetRouter.SEND_SECOND))
                         },
                         modifier = Modifier

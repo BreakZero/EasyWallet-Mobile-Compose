@@ -136,9 +136,6 @@ fun NormalSendAmountScreen(
                             sendViewModel.state.amount
                         )
                         SendInfoHolder.submitField(SendInfo.Field.MEMO, sendViewModel.state.memo)
-                        logcat {
-                            "====== ${SendInfoHolder.info()}"
-                        }
                     }) {
                     Text(text = "Next")
                 }

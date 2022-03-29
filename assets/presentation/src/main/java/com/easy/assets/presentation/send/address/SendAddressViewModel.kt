@@ -6,17 +6,13 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
-import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.domain.use_case.AssetsUseCases
-import com.easy.assets.presentation.detail.AssetDetailViewModel
 import com.easy.assets.presentation.send.SendFlowState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import logcat.logcat
-import javax.inject.Inject
 
 class SendAddressViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,
@@ -46,7 +42,6 @@ class SendAddressViewModel @AssistedInject constructor(
         viewModelScope.launch {
             val currAsset = assetsUseCases.assets().find { it.slug == slug }
             sendFlowState = sendFlowState.copy(assetInfo = currAsset)
-            logcat { "===== $currAsset" }
         }
     }
 

@@ -28,7 +28,7 @@ class WalletAssetViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             val result = assetsUseCases.assetsWithBalance()
-            assetState = assetState.copy(tokenResult = result, isLoading = false)
+            assetState = assetState.copy(tokenLists = result, isLoading = false)
         }
     }
 
@@ -53,10 +53,10 @@ class WalletAssetViewModel @Inject constructor(
                 viewModelScope.launch {
                     assetState = assetState.copy(
                         isLoading = true,
-                        tokenResult = Result.success(emptyList())
+                        tokenLists = Result.success(emptyList())
                     )
                     val result = assetsUseCases.assetsWithBalance()
-                    assetState = assetState.copy(tokenResult = result, isLoading = false)
+                    assetState = assetState.copy(tokenLists = result, isLoading = false)
                 }
             }
         }

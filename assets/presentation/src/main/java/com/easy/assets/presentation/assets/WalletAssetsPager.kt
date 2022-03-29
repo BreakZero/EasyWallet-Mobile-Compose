@@ -94,7 +94,7 @@ fun WalletPagerScreen(
                             )
                         }
                     }
-                    state.tokenResult.isSuccess -> {
+                    state.tokenLists.isSuccess -> {
                         LazyColumn(
                             modifier = Modifier
                                 .fillMaxSize()
@@ -106,7 +106,7 @@ fun WalletPagerScreen(
                                     )
                                 )
                         ) {
-                            val assets = state.tokenResult.getOrElse { emptyList() }
+                            val assets = state.tokenLists.getOrElse { emptyList() }
                             items(items = assets) {
                                 AssetItemView(data = it) {
                                     viewModel.onEvent(AssetEvent.OnItemClick(it))
@@ -114,7 +114,7 @@ fun WalletPagerScreen(
                             }
                         }
                     }
-                    state.tokenResult.isFailure -> {
+                    state.tokenLists.isFailure -> {
                         Box(
                             modifier = Modifier
                                 .fillMaxSize()

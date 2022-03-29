@@ -91,7 +91,6 @@ fun WalletCreateScreen(
                             .fillMaxWidth()
                             .height(48.dp)
                             .clickable {
-                                logcat { "=======" }
                             },
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween

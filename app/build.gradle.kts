@@ -8,7 +8,7 @@ plugins {
     id("com.google.devtools.ksp") version "1.6.10-1.0.2"
     id("dagger.hilt.android.plugin")
 }
-
+apply<MergeManifestPlugin>()
 android {
     compileSdk = BuildConfig.compileSdkVersion
 
@@ -42,8 +42,9 @@ android {
     }
 
     buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -51,7 +52,7 @@ android {
             signingConfig = signingConfigs.getByName("release")
             isDebuggable = false
         }
-        getByName("debug") {
+        debug {
             signingConfig = signingConfigs.getByName("debug")
             isDebuggable = true
         }
@@ -93,7 +94,8 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":core-ui"))
     implementation(project(":intro"))
-    implementation(project(":dapp"))
+    implementation(project(":dapp:dapp_domain"))
+    implementation(project(":dapp:dapp_presentation"))
     implementation(project(":assets:domain"))
     implementation(project(":assets:data"))
     implementation(project(":assets:presentation"))
@@ -115,3 +117,9 @@ dependencies {
     unitTestDependencies()
     androidTestDependencies()
 }
+
+//tasks.register("gitVersion", GitVersionTask::class.java) {
+//    println(project.name)
+//    this.gitVersionOutputFile.set(File(project.buildDir,"intermediates/gitVersionProvider/output"))
+//    this.outputs.upToDateWhen { false }
+//}

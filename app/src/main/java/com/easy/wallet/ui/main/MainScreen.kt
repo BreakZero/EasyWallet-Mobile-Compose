@@ -11,6 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -24,7 +25,8 @@ import com.easy.core.common.parameter
 import com.easy.core.ui.GlobalRouter
 import com.easy.core.ui.R
 import com.easy.core.ui.common.QRCodeGenerate
-import com.easy.dapp.ui.DAppPagerScreen
+import com.easy.dapp.presentation.list.DAppPagerScreen
+import com.easy.wallet.BuildConfig
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -50,6 +52,8 @@ fun MainScreen(
     viewModel: MainViewModel = hiltViewModel(),
     onNavigateTo: (Navigator) -> Unit
 ) {
+    val context = LocalContext.current
+    val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
     val pageState = rememberPagerState()
     val tabIndex = pageState.currentPage
     val scope = rememberCoroutineScope()
@@ -96,7 +100,7 @@ fun MainScreen(
                     .fillMaxWidth(),
                 contentAlignment = Alignment.Center
             ) {
-                QRCodeGenerate.genQRCode("Hello world")?.let {
+                QRCodeGenerate.genQRCode(BuildConfig.VERSION_NAME)?.let {
                     Column(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
@@ -105,7 +109,7 @@ fun MainScreen(
                             alignment = Alignment.Center
                         )
                         Text(
-                            text = "Hello world",
+                            text = versionName,
                             textAlign = TextAlign.Center,
                             modifier = Modifier.padding(top = 12.dp)
                         )
@@ -131,7 +135,9 @@ fun MainScreen(
                         })
                     }
                     1 -> {
-                        DAppPagerScreen()
+                        DAppPagerScreen {
+                            onNavigateTo.invoke(it)
+                        }
                     }
                     else -> Unit
                 }

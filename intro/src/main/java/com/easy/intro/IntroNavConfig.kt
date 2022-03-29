@@ -57,7 +57,6 @@ fun NavGraphBuilder.introGraph(navController: NavController, scaffoldState: Scaf
                     )
                 )
             ) {
-                logcat { "====== $it" }
                 navController.navigate(route = IntroRouter.ROUTER_WALLET_SETUP)
             }
         }
@@ -76,7 +75,6 @@ fun NavGraphBuilder.introGraph(navController: NavController, scaffoldState: Scaf
                 slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(700))
             }) {
             WalletSetupScreen(title = stringResource(id = com.easy.core.ui.R.string.app_name)) {
-                logcat { "===== $it" }
                 when (it) {
                     "back" -> navController.navigateUp()
                     "to wallet create" -> navController.navigate(IntroRouter.ROUTER_WALLET_CREATE)

@@ -25,8 +25,7 @@ class AssetsWithBalance @Inject constructor(
                         Pair(
                             item.slug,
                             assetRepository.balance(
-                                coinRepository.address(item.slug),
-                                ChainId.ETHEREUM,
+                                item.slug,
                                 item.contractAddress
                             )
                         )

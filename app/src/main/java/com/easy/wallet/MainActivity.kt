@@ -17,12 +17,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
 import com.easy.assets.presentation.routers.assetsGraph
 import com.easy.core.ui.globalGraph
+import com.easy.dapp.presentation.routers.DAppRouter
+import com.easy.dapp.presentation.routers.dappGraph
 import com.easy.intro.IntroRouter
 import com.easy.intro.introGraph
+import com.easy.settings.settingsGraph
 import com.easy.wallet.ui.main.MainScreen
 import com.easy.wallet.ui.splash.SplashScreen
 import com.easy.wallet.ui.theme.EasyTheme
-import com.easy.settings.settingsGraph
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
@@ -116,12 +118,17 @@ class MainActivity : ComponentActivity() {
                                     )
                                 }) {
                                 MainScreen {
-                                    navController.navigate(it.router())
+                                    if (it.router == DAppRouter.ROUTER_DETAIL) {
+                                        navController.navigate(it.routerWithParameter())
+                                    } else {
+                                        navController.navigate(it.router())
+                                    }
                                 }
                             }
                             globalGraph(navController)
                             introGraph(navController, scaffoldState)
                             assetsGraph(navController)
+                            dappGraph(navController)
                             settingsGraph(navController)
                         }
                     }

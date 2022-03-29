@@ -32,6 +32,8 @@ fun SettingsScreen(
     navigateUp: () -> Unit,
     onNavigateTo: (String) -> Unit
 ) {
+    val context = LocalContext.current
+    val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
     val systemUIController = rememberSystemUiController()
     LaunchedEffect(key1 = null) {
         systemUIController.setStatusBarColor(color = Color.White, darkIcons = true)
@@ -106,7 +108,7 @@ fun SettingsScreen(
             }
             MenuBlockView(
                 modifier = Modifier.fillMaxWidth(), header = "About EasyWallet", menus = listOf(
-                    MenuItem(title = "Version", endValue = "v1.0.0", showIcon = false),
+                    MenuItem(title = "Version", endValue = versionName, showIcon = false),
                     MenuItem(title = "Terms of Service"),
                     MenuItem(title = "Privacy Notice"),
                     MenuItem(title = "Visit our website")
