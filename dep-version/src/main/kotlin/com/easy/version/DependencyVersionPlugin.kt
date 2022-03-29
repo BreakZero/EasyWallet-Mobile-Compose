@@ -48,7 +48,7 @@ class DependencyVersionPlugin : Plugin<Project> {
                 val figmentApiKey = keysProperties.getProperty("apikey.figment")
                 val bscscanApikey = keysProperties.getProperty("apikey.bscscan")
                 val bscrpcApikey = keysProperties.getProperty("apikey.bscrpcscan")
-                getByName("release") {
+                release {
                     isMinifyEnabled = false
                     proguardFiles(
                         getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -60,8 +60,9 @@ class DependencyVersionPlugin : Plugin<Project> {
                     buildConfigField("String", "BSCRPC_APIKEY", bscrpcApikey)
                     buildConfigField("String", "BSCSCAN_APIKEY", bscscanApikey)
                 }
-                getByName("debug") {
+                debug {
                     isMinifyEnabled = false
+
                     proguardFiles(
                         getDefaultProguardFile("proguard-android-optimize.txt"),
                         "proguard-rules.pro"
@@ -73,14 +74,14 @@ class DependencyVersionPlugin : Plugin<Project> {
                     buildConfigField("String", "BSCSCAN_APIKEY", bscscanApikey)
                 }
             } else {
-                getByName("release") {
+                release {
                     isMinifyEnabled = true
                     proguardFiles(
                         getDefaultProguardFile("proguard-android-optimize.txt"),
                         "proguard-rules.pro"
                     )
                 }
-                getByName("debug") {
+                debug {
                     isMinifyEnabled = false
                     proguardFiles(
                         getDefaultProguardFile("proguard-android-optimize.txt"),

@@ -19,13 +19,10 @@ abstract class ManifestTransformerTask : DefaultTask() {
     fun mergedTask() {
         val gitVersion = gitInfoFile.get().asFile.readText()
         var manifest = mergedManifest.get().asFile.readText()
-        println("===== $gitVersion")
         manifest = manifest.replace(
             "android:versionName=\"v1.0.0\"",
             "android:versionName=\"$gitVersion\""
-        ).also {
-            println("====== $it")
-        }
+        )
         updatedManifest.get().asFile.writeText(manifest)
     }
 }

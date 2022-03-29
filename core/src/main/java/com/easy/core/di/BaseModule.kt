@@ -28,8 +28,7 @@ object BaseModule {
                 serializer = GsonSerializer()
             }
             install(Logging) {
-                logger = Logger.DEFAULT
-                level = LogLevel.BODY
+                level = LogLevel.ALL
             }
             engine {
                 connectTimeout = 10_000

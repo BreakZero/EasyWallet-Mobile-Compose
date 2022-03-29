@@ -39,7 +39,6 @@ class PasscodeViewModel @Inject constructor(): ViewModel() {
                         passcodeState = passcodeState.originDone("Enter new passcode")
                     }
                 }
-                logcat { "===== $passcodeState" }
             }
             else -> Unit
         }

@@ -1,17 +1,16 @@
 package com.easy.assets.domain.repository
 
 import com.easy.assets.domain.model.Transaction
-import com.easy.core.consts.ChainId
+import com.easy.assets.domain.model.TransactionPlan
 import java.math.BigInteger
 
 interface AssetRepository {
-    suspend fun signTransaction(slug: String): String
-    suspend fun balance(address: String, chainId: ChainId, contractAddress: String?): BigInteger
+    suspend fun signTransaction(slug: String, plan: TransactionPlan): String
+    suspend fun balance(slug: String, contract: String?): BigInteger
     suspend fun transactions(
-        address: String,
-        chainId: ChainId,
+        slug: String,
         offset: Int,
         limit: Int,
-        contractAddress: String?
+        contract: String?
     ): Result<List<Transaction>>
 }

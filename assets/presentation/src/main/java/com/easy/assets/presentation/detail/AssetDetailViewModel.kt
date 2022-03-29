@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.domain.use_case.AssetsUseCases
-import com.easy.core.consts.ChainId
 import com.easy.core.ext.byDecimal
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -56,19 +55,17 @@ class AssetDetailViewModel @AssistedInject constructor(
                 state = state.copy(assetInfo = it)
                 val balance = async {
                     assetsUseCases.balance(
-                        assetsUseCases.address(it.slug),
-                        ChainId.ETHEREUM,
+                        it.slug,
                         it.contractAddress
                     )
                 }
 
                 val txList = async {
                     assetsUseCases.transactions(
-                        assetsUseCases.address(it.slug),
-                        ChainId.ETHEREUM,
+                        slug = it.slug,
                         offset = 20,
                         limit = 10,
-                        contractAddress = it.contractAddress
+                        contract = it.contractAddress
                     )
                 }
                 state = state.copy(
@@ -87,11 +84,10 @@ class AssetDetailViewModel @AssistedInject constructor(
                 viewModelScope.launch(Dispatchers.IO) {
                     currAsset?.let {
                         val txList = assetsUseCases.transactions(
-                            assetsUseCases.address(it.slug),
-                            ChainId.ETHEREUM,
+                            slug = it.slug,
                             offset = 20,
                             limit = 10,
-                            contractAddress = it.contractAddress
+                            contract = it.contractAddress
                         )
                         state = state.copy(transactions = txList, isLoading = false)
                     }
