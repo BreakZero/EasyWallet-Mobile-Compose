@@ -12,14 +12,12 @@ import io.ktor.client.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
-import java.util.concurrent.atomic.AtomicReference
 import javax.inject.Inject
 
 class AssetsManager @Inject constructor(
     private val ktorClient: HttpClient
 ) {
     private val mutex = Mutex()
-    private val s = AtomicReference<Map<String, IChain>>()
     private val chains: MutableMap<String, IChain> = mutableMapOf()
 
     internal suspend fun fetchAssets(): List<AssetInfo> {
@@ -34,7 +32,7 @@ class AssetsManager @Inject constructor(
                 }
                 item.toAsset()
             }
-        } ?: emptyList()
+        }?.sortedBy { it.tag } ?: emptyList()
     }
 
     private fun syncChains(config: CoinConfigDto) {

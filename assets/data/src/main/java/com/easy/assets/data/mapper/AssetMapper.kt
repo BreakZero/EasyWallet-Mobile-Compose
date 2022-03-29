@@ -3,7 +3,7 @@ package com.easy.assets.data.mapper
 import com.easy.assets.data.remote.dto.CoinConfigDto
 import com.easy.assets.domain.model.AssetInfo
 
-fun CoinConfigDto.toAsset(
+internal fun CoinConfigDto.toAsset(
     balance: String = "0.0"
 ): AssetInfo {
     return AssetInfo(

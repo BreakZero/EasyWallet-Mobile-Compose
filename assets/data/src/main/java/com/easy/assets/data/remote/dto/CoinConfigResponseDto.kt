@@ -5,7 +5,7 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 @Keep
-data class CoinConfigResponseDto(
+internal data class CoinConfigResponseDto(
     @SerializedName("code")
     val code: Int,
     @SerializedName("data")

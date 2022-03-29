@@ -4,7 +4,6 @@ import com.easy.assets.data.remote.dto.EthTxDto
 import com.easy.assets.domain.model.Transaction
 import logcat.logcat
 
-
 internal fun EthTxDto.toTransaction(address: String): Transaction {
     return Transaction(
         txHash = this.hash,

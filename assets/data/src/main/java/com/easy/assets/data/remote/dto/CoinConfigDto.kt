@@ -5,7 +5,7 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 @Keep
-data class CoinConfigDto(
+internal data class CoinConfigDto(
     @SerializedName("coinSlug")
     val coinSlug: String,
     @SerializedName("coinSymbol")
