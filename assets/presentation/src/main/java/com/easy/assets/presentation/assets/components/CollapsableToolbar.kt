@@ -6,10 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.FractionalThreshold
-import androidx.compose.material.rememberSwipeableState
-import androidx.compose.material.swipeable
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -26,7 +23,7 @@ import androidx.compose.ui.unit.Velocity
 fun CollapsableToolbar(
     onReceive: () -> Unit,
     onSend: () -> Unit,
-    content: @Composable () -> Unit
+    content: @Composable (Boolean) -> Unit
 ) {
     val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
 
@@ -87,12 +84,13 @@ fun CollapsableToolbar(
                 MotionLayoutHeader(progress = if (swipingState.progress.to == SwipingStates.COLLAPSED) swipingState.progress.fraction else 1f - swipingState.progress.fraction,
                     onReceive = onReceive,
                     onSend = onSend) {
-                    content()
+                    content(swipingState.progress.to == SwipingStates.EXPANDED && swipingState.progress.fraction == 1f)
                 }
             }
         }
     }
 }
+
 
 // Helper class defining swiping State
 enum class SwipingStates {

@@ -1,0 +1,54 @@
+{
+  ConstraintSets: {
+    start: {
+      total_balance: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        top: ['parent', 'top'],
+        end: ['parent', 'end']
+      },
+      receive_send_row: {
+        start: ['parent', 'start'],
+        top: ['total_balance', 'bottom'],
+        end: ['parent', 'end']
+      },
+      box: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom', -16]
+      }
+    },
+    end: {
+      total_balance: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        top: ['parent', 'top'],
+        end: ['parent', 'end']
+      },
+      receive_send_row: {
+        start: ['parent', 'start'],
+        top: ['total_balance', 'bottom'],
+        end: ['parent', 'end']
+      },
+      box: {
+        width: 'spread',
+        height: 'spread',
+        start: ['parent', 'start'],
+        end: ['parent', 'end'],
+        top: ['parent', 'top'],
+        bottom: ['parent', 'bottom', -16]
+      }
+    }
+  },
+  Transitions: {
+    default: {
+      from: 'start',
+      to: 'end'
+    }
+  }
+}

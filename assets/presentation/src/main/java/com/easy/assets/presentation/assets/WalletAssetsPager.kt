@@ -1,6 +1,7 @@
 
 package com.easy.assets.presentation.assets
 
+import android.util.Log
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Image
@@ -29,7 +30,10 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.presentation.assets.components.CollapsableToolbar
+import com.easy.assets.presentation.assets.components.SwipingStates
 import com.easy.core.ui.components.EasyActionBar
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
 @OptIn(ExperimentalMaterialApi::class, ExperimentalCoilApi::class, ExperimentalAnimationApi::class)
 @Composable
@@ -70,6 +74,7 @@ fun WalletPagerScreen(
                 viewModel.onEvent(AssetEvent.OnReceive)
             }
         ) {
+            Log.d("=======", "$it")
             AnimatedContent(
                 targetState = state,
                 transitionSpec = {
@@ -77,39 +82,29 @@ fun WalletPagerScreen(
                             fadeOut(animationSpec = tween(300, 300))
                 }) { state ->
                 when {
-                    state.isLoading -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(
-                                        topEnd = 24.dp,
-                                        topStart = 24.dp
-                                    )
-                                ), contentAlignment = Alignment.TopCenter
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.padding(top = 100.dp)
-                            )
-                        }
-                    }
                     state.tokenLists.isSuccess -> {
-                        LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .background(
-                                    color = Color.White,
-                                    shape = RoundedCornerShape(
-                                        topEnd = 24.dp,
-                                        topStart = 24.dp
+                        SwipeRefresh(
+                            state = rememberSwipeRefreshState(state.isLoading),
+                            swipeEnabled = it,
+                            onRefresh = {
+                                viewModel.onEvent(AssetEvent.OnRefresh)
+                            }) {
+                            LazyColumn(
+                                modifier = Modifier
+                                    .fillMaxSize()
+                                    .background(
+                                        color = Color.White,
+                                        shape = RoundedCornerShape(
+                                            topEnd = 24.dp,
+                                            topStart = 24.dp
+                                        )
                                     )
-                                )
-                        ) {
-                            val assets = state.tokenLists.getOrElse { emptyList() }
-                            items(items = assets) {
-                                AssetItemView(data = it) {
-                                    viewModel.onEvent(AssetEvent.OnItemClick(it))
+                            ) {
+                                val assets = state.tokenLists.getOrElse { emptyList() }
+                                items(items = assets) {
+                                    AssetItemView(data = it) {
+                                        viewModel.onEvent(AssetEvent.OnItemClick(it))
+                                    }
                                 }
                             }
                         }
