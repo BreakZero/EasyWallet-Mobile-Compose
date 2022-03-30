@@ -9,6 +9,8 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import wallet.core.jni.CoinType
 import java.lang.NullPointerException
 import java.math.BigInteger
@@ -17,7 +19,14 @@ internal class BitcoinChain(
     private val ktorClient: HttpClient
 ) : IChain {
     override suspend fun sign(plan: TransactionPlan): String {
-        TODO("Not yet implemented")
+        return withContext(Dispatchers.IO) {
+            val amount = plan.amount
+            val from = address()
+            val usingMax = false
+            val hexScript = ""
+            val utxos = listOf<String>()
+            ""
+        }
     }
 
     override fun address(): String {

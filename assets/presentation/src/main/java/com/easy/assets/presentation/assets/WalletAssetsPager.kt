@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Card
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -30,7 +29,6 @@ import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.presentation.assets.components.CollapsableToolbar
-import com.easy.assets.presentation.assets.components.SwipingStates
 import com.easy.core.ui.components.EasyActionBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
