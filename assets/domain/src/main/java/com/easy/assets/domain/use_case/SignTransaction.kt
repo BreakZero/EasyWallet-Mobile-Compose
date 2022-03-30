@@ -7,7 +7,7 @@ import javax.inject.Inject
 class SignTransaction @Inject constructor(
     private val assetRepository: AssetRepository
 ) {
-    suspend operator fun invoke(slug: String, plan: TransactionPlan) {
-        assetRepository.signTransaction(slug, plan)
+    suspend operator fun invoke(slug: String, plan: TransactionPlan): String {
+        return assetRepository.signTransaction(slug, plan)
     }
 }

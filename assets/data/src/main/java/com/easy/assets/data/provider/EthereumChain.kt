@@ -1,5 +1,7 @@
 package com.easy.assets.data.provider
 
+import android.util.Log
+import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.errors.InsufficientBalanceException
 import com.easy.assets.data.remote.BaseRpcRequest
 import com.easy.assets.data.remote.CallBalance
@@ -11,9 +13,9 @@ import com.easy.core.BuildConfig
 import com.easy.core.GlobalHolder
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
+import com.easy.core.common.hex
 import com.easy.core.ext.clearHexPrefix
-import com.easy.core.ext.toHex
-import com.easy.core.ext.toHexBytes
+import com.easy.core.ext.toHexByteArray
 import com.google.protobuf.ByteString
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -35,42 +37,42 @@ internal class EthereumChain(
             val nonce = fetchNonce()
             val (baseFee, priorityFee) = feeHistory()
             val gasLimit = estimateGasLimit()
+            Log.d("======", "$balance, $nonce, $baseFee, $priorityFee")
             if (balance < plan.amount) throw InsufficientBalanceException()
             val prvKey =
                 ByteString.copyFrom(GlobalHolder.hdWallet.getKeyForCoin(CoinType.ETHEREUM).data())
             val signer = plan.contract?.let {
                 val tokenTransfer = Ethereum.Transaction.ERC20Transfer.newBuilder().apply {
                     to = plan.to
-                    amount = ByteString.copyFrom(plan.amount.toString(16).toHexBytes())
+                    amount = ByteString.copyFrom(plan.amount.toHexByteArray())
                 }
                 Ethereum.SigningInput.newBuilder().apply {
                     this.privateKey = prvKey
                     this.toAddress = it
-                    this.chainId = ByteString.copyFrom(BigInteger.ONE.toString(16).toHexBytes())
-                    this.nonce = ByteString.copyFrom(nonce.toString(16).toHexBytes())
+                    this.chainId = ByteString.copyFrom("4".toBigInteger().toByteArray())
+                    this.nonce = ByteString.copyFrom(nonce.toHexByteArray())
                     this.txMode = Ethereum.TransactionMode.Enveloped
-                    this.maxFeePerGas = ByteString.copyFrom(baseFee.toString(16).toHexBytes())
+                    this.maxFeePerGas = ByteString.copyFrom(baseFee.toHexByteArray())
                     this.maxInclusionFeePerGas =
-                        ByteString.copyFrom(priorityFee.toString(16).toHexBytes())
-                    this.gasLimit = ByteString.copyFrom(gasLimit.toString(16).toHexBytes())
+                        ByteString.copyFrom(priorityFee.toHexByteArray())
+                    this.gasLimit = ByteString.copyFrom(gasLimit.toBigInteger().toHexByteArray())
                     this.transaction = Ethereum.Transaction.newBuilder().apply {
                         erc20Transfer = tokenTransfer.build()
                     }.build()
                 }
             } ?: kotlin.run {
                 val transfer = Ethereum.Transaction.Transfer.newBuilder().apply {
-                    amount = ByteString.copyFrom(plan.amount.toString(16).toHexBytes())
+                    amount = ByteString.copyFrom(plan.amount.toHexByteArray())
                 }
                 Ethereum.SigningInput.newBuilder().apply {
                     this.privateKey = prvKey
                     this.toAddress = plan.to
-                    this.chainId = ByteString.copyFrom(BigInteger.ONE.toString(16).toHexBytes())
-                    this.nonce = ByteString.copyFrom(nonce.toString(16).toHexBytes())
+                    this.chainId = ByteString.copyFrom("4".toBigInteger().toByteArray())
+                    this.nonce = ByteString.copyFrom(nonce.toHexByteArray())
                     this.txMode = Ethereum.TransactionMode.Enveloped
-                    this.maxFeePerGas = ByteString.copyFrom(baseFee.toString(16).toHexBytes())
-                    this.maxInclusionFeePerGas =
-                        ByteString.copyFrom(priorityFee.toString(16).toHexBytes())
-                    this.gasLimit = ByteString.copyFrom(gasLimit.toString(16).toHexBytes())
+                    this.maxFeePerGas = ByteString.copyFrom(baseFee.toHexByteArray())
+                    this.maxInclusionFeePerGas = ByteString.copyFrom(priorityFee.toHexByteArray())
+                    this.gasLimit = ByteString.copyFrom(gasLimit.toBigInteger().toHexByteArray())
                     this.transaction = Ethereum.Transaction.newBuilder().apply {
                         this.transfer = transfer.build()
                     }.build()
@@ -81,7 +83,7 @@ internal class EthereumChain(
                 CoinType.ETHEREUM,
                 Ethereum.SigningOutput.parser()
             )
-            output.encoded.toByteArray().toHex()
+            output.encoded.toByteArray().hex
         }
     }
 
@@ -96,12 +98,15 @@ internal class EthereumChain(
             method = "eth_feeHistory",
             params = listOf("0xF", "latest", listOf(25, 50, 75))
         )
-        val feeHistories = ktorClient.post<FeeHistoryDto>(
-            urlString = "https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}"
+        val feeHistories = ktorClient.post<BaseRpcResponseDto<FeeHistoryDto>>(
+            urlString = HttpRoutes.INFURA_RPC
         ) {
             body = reqBody
-        }
-        Pair(BigInteger.ZERO, BigInteger.ZERO)
+        }.result
+        val baseFee = feeHistories.baseFeePerGas.map {
+            it.clearHexPrefix().toBigInteger(16)
+        }.maxOrNull() ?: BigInteger.ZERO
+        Pair(baseFee.times("1000000000".toBigInteger()), baseFee.times("1000000000".toBigInteger()))
     }
 
     private suspend fun fetchNonce() = withContext(Dispatchers.IO) {
@@ -109,14 +114,14 @@ internal class EthereumChain(
             id = 1,
             jsonrpc = "2.0",
             method = "eth_getTransactionCount",
-            params = listOf("", "")
+            params = listOf(address(), "latest")
         )
         val nonce = ktorClient.post<BaseRpcResponseDto<String>>(
-            urlString = "https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}"
+            urlString = HttpRoutes.INFURA_RPC
         ) {
             body = reqBody
         }.result
-        0
+        nonce.clearHexPrefix().toBigInteger(16)
     }
 
     override fun address(): String {
@@ -147,7 +152,7 @@ internal class EthereumChain(
                 )
             }
             val response = ktorClient
-                .post<HttpResponse>("https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}") {
+                .post<HttpResponse>(HttpRoutes.INFURA_RPC) {
                     body = reqBody
                 }
             response.receive<BaseRpcResponseDto<String>>().result.clearHexPrefix()

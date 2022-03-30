@@ -72,7 +72,6 @@ fun WalletPagerScreen(
                 viewModel.onEvent(AssetEvent.OnReceive)
             }
         ) {
-            Log.d("=======", "$it")
             AnimatedContent(
                 targetState = state,
                 transitionSpec = {

@@ -1,5 +1,6 @@
 package com.easy.assets.presentation.detail
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,6 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.model.AssetInfo
+import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.use_case.AssetsUseCases
 import com.easy.core.ext.byDecimal
 import dagger.assisted.Assisted
@@ -15,6 +17,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import java.math.BigInteger
 
 class AssetDetailViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,
@@ -99,5 +102,17 @@ class AssetDetailViewModel @AssistedInject constructor(
 
     fun address(): String {
         return assetsUseCases.address(slug)
+    }
+
+    fun mockSign() {
+        viewModelScope.launch {
+            val rawData = assetsUseCases.signTransaction(slug, TransactionPlan(
+                amount = "10000000000000000".toBigInteger(),
+                to = "0x81080a7e991bcDdDBA8C2302A70f45d6Bd369Ab5",
+                gasLimit = 21000L,
+                contract = null
+            ))
+            Log.d("=======", "$rawData")
+        }
     }
 }
