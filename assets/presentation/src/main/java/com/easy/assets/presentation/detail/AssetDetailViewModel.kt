@@ -7,17 +7,18 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.use_case.AssetsUseCases
+import com.easy.assets.presentation.detail.paging.TransactionPagingSource
 import com.easy.core.ext.byDecimal
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import java.math.BigInteger
 
 class AssetDetailViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,
@@ -44,8 +45,6 @@ class AssetDetailViewModel @AssistedInject constructor(
 
     var state by mutableStateOf(
         AssetDetailState(
-            isLoading = true,
-            transactions = Result.success(emptyList()),
             balance = Result.success("--")
         )
     )
@@ -63,18 +62,14 @@ class AssetDetailViewModel @AssistedInject constructor(
                     )
                 }
 
-                val txList = async {
-                    assetsUseCases.transactions(
-                        slug = it.slug,
-                        offset = 20,
-                        limit = 10,
-                        contract = it.contractAddress
-                    )
-                }
                 state = state.copy(
                     assetInfo = it,
-                    isLoading = false, transactions = txList.await(),
-                    balance = Result.success(balance.await().byDecimal(it.decimal, 8))
+                    balance = Result.success(balance.await().byDecimal(it.decimal, 8)),
+                    pager = Pager(
+                        PagingConfig(pageSize = 20)
+                    ) {
+                        TransactionPagingSource(assetsUseCases.transactions, it)
+                    }
                 )
             }
         }
@@ -83,20 +78,14 @@ class AssetDetailViewModel @AssistedInject constructor(
     fun onEvent(event: AssetDetailEvent) {
         when (event) {
             is AssetDetailEvent.OnRefresh -> {
-                state = state.copy(isLoading = true)
-                viewModelScope.launch(Dispatchers.IO) {
-                    currAsset?.let {
-                        val txList = assetsUseCases.transactions(
-                            slug = it.slug,
-                            offset = 20,
-                            limit = 10,
-                            contract = it.contractAddress
-                        )
-                        state = state.copy(transactions = txList, isLoading = false)
-                    }
+                currAsset?.let {
+                    state = state.copy(pager = Pager(
+                        PagingConfig(pageSize = 20)
+                    ) {
+                        TransactionPagingSource(assetsUseCases.transactions, it)
+                    })
                 }
             }
-            else -> Unit
         }
     }
 

@@ -10,9 +10,11 @@ import com.easy.assets.data.remote.dto.CoinConfigResponseDto
 import com.easy.assets.domain.model.AssetInfo
 import io.ktor.client.*
 import io.ktor.client.request.*
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
+import kotlin.collections.set
 
 class AssetsManager @Inject constructor(
     private val ktorClient: HttpClient
@@ -21,8 +23,9 @@ class AssetsManager @Inject constructor(
     private val chains: MutableMap<String, IChain> = mutableMapOf()
 
     internal suspend fun fetchAssets(): List<AssetInfo> {
+        delay(1000)
         return kotlin.runCatching {
-            ktorClient.get<CoinConfigResponseDto>("http://45.153.130.249:8080/currencies")
+            ktorClient.get<CoinConfigResponseDto>("http://0.0.0.0:8080/currencies")
         }.onFailure {
             it.printStackTrace()
         }.map { it.result }.getOrNull()?.let { it ->
@@ -32,7 +35,26 @@ class AssetsManager @Inject constructor(
                 }
                 item.toAsset()
             }
-        }?.sortedBy { it.tag } ?: emptyList()
+        }?.sortedBy { it.tag } ?: listOf(
+            CoinConfigDto(
+                coinSlug = "ethereum",
+                coinSymbol = "ETH",
+                contractAddress = null,
+                decimal = 18,
+                iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/ethereum.png",
+                tag = null
+            ), CoinConfigDto(
+                coinSlug = "erc20-uni",
+                coinSymbol = "UNI",
+                contractAddress = "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+                decimal = 18,
+                iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/UNI_4x.png",
+                tag = "ERC20"
+            )
+        ).map {
+            syncChains(it)
+            it.toAsset()
+        }
     }
 
     private fun syncChains(config: CoinConfigDto) {

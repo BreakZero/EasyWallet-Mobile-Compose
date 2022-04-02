@@ -14,6 +14,7 @@ import com.easy.core.GlobalHolder
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.common.hex
+import com.easy.core.ext._16toNumber
 import com.easy.core.ext.clearHexPrefix
 import com.easy.core.ext.toHexByteArray
 import com.google.protobuf.ByteString
@@ -36,8 +37,8 @@ internal class EthereumChain(
             val balance = balance(plan.contract)
             val nonce = fetchNonce()
             val (baseFee, priorityFee) = feeHistory()
+            Log.d("=====", "base: $baseFee, priority: $priorityFee")
             val gasLimit = estimateGasLimit()
-            Log.d("======", "$balance, $nonce, $baseFee, $priorityFee")
             if (balance < plan.amount) throw InsufficientBalanceException()
             val prvKey =
                 ByteString.copyFrom(GlobalHolder.hdWallet.getKeyForCoin(CoinType.ETHEREUM).data())
@@ -103,10 +104,8 @@ internal class EthereumChain(
         ) {
             body = reqBody
         }.result
-        val baseFee = feeHistories.baseFeePerGas.map {
-            it.clearHexPrefix().toBigInteger(16)
-        }.maxOrNull() ?: BigInteger.ZERO
-        Pair(baseFee.times("1000000000".toBigInteger()), baseFee.times("1000000000".toBigInteger()))
+        val baseFee = formatFeeHistory(feeHistories)
+        Pair(baseFee, baseFee)
     }
 
     private suspend fun fetchNonce() = withContext(Dispatchers.IO) {
@@ -121,7 +120,7 @@ internal class EthereumChain(
         ) {
             body = reqBody
         }.result
-        nonce.clearHexPrefix().toBigInteger(16)
+        nonce._16toNumber()
     }
 
     override fun address(): String {
@@ -168,13 +167,14 @@ internal class EthereumChain(
         limit: Int,
         contract: String?
     ): NetworkResponse<EthTxResponseDto> = withContext(Dispatchers.IO) {
+        Log.d("======","offset: $offset, limit: $limit")
         val url = if (contract.isNullOrEmpty()) {
             """
             https://api.etherscan.io/api?
             module=account
             &action=txlist
             &address=${address()}
-            &page=1
+            &page=$limit
             &offset=$offset
             &sort=desc
             &apikey=${BuildConfig.ETHERSCAN_APIKEY}
@@ -186,7 +186,7 @@ internal class EthereumChain(
             &action=tokentx
             &contractaddress=$contract
             &address=${address()}
-            &page=1
+            &page=$limit
             &offset=$offset
             &sort=desc
             &apikey=${BuildConfig.ETHERSCAN_APIKEY}
@@ -199,4 +199,28 @@ internal class EthereumChain(
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
     }
+
+    private fun formatFeeHistory(historyDto: FeeHistoryDto): BigInteger {
+        val oldestBlock = historyDto.oldestBlock
+        val blocks = historyDto.baseFeePerGas.mapIndexed { index, value ->
+            BlockInfo(
+                number = oldestBlock._16toNumber().plus(index.toBigInteger()),
+                baseFeePerGas = value._16toNumber(),
+                gasUsedRatio = historyDto.gasUsedRatio.getOrNull(index) ?: 0.0,
+                priorityFeePerGas = historyDto.reward.getOrNull(index)?.map { it._16toNumber() }
+                    ?: emptyList()
+            )
+        }
+        val firstPercentialPriorityFees = blocks.first().priorityFeePerGas
+        val sum = firstPercentialPriorityFees.reduce { acc, bigInteger -> acc.plus(bigInteger) }
+        val manual = sum.divide(firstPercentialPriorityFees.size.toBigInteger())
+        return manual
+    }
 }
+
+data class BlockInfo(
+    val number: BigInteger,
+    val baseFeePerGas: BigInteger,
+    val gasUsedRatio: Double,
+    val priorityFeePerGas: List<BigInteger>
+)

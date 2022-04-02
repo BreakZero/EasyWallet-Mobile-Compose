@@ -20,3 +20,7 @@ fun Int.toHexByteArray(): ByteArray {
 fun BigInteger.toHexByteArray(): ByteArray {
     return this.toString(16).unhex
 }
+
+fun String._16toNumber(): BigInteger {
+    return this.clearHexPrefix().toBigInteger(16)
+}

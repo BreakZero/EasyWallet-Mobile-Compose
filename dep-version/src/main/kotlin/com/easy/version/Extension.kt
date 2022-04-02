@@ -33,6 +33,7 @@ fun DependencyHandlerScope.composeUI() {
     "implementation"(Compose.preview)
     "implementation"(Compose.icons)
     "implementation"(Compose.coil)
+    "implementation"(Compose.paging)
     "implementation"(Compose.navigation)
     "implementation"(Compose.Accompanist.windowInsets)
     "implementation"(Compose.Accompanist.uiController)

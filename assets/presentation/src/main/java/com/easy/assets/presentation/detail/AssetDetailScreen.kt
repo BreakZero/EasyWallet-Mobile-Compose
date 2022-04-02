@@ -7,7 +7,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -24,6 +23,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.items
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
@@ -73,6 +75,7 @@ fun AssetDetailScreen(
         systemUIController.setStatusBarColor(Color.White, true)
     }
     val state = viewModel.state
+    val lazyPagingItems = viewModel.state.pager?.flow?.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -88,13 +91,14 @@ fun AssetDetailScreen(
             }
         }
     ) {
-
+        val isRefreshing = lazyPagingItems?.loadState == null ||
+                lazyPagingItems.loadState.refresh == LoadState.Loading
         Column(modifier = Modifier.fillMaxSize()) {
             SwipeRefresh(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                state = rememberSwipeRefreshState(isRefreshing = state.isLoading),
+                state = rememberSwipeRefreshState(isRefreshing),
                 onRefresh = {
                     viewModel.onEvent(AssetDetailEvent.OnRefresh)
                 }) {
@@ -154,7 +158,34 @@ fun AssetDetailScreen(
                             color = Color.Gray
                         )
                     }
-                    state.transactions.getOrNull()?.let {
+                    lazyPagingItems?.let {
+
+                        items(lazyPagingItems) {
+                            it?.let {
+                                TransactionItemView(
+                                    transactionInfo = it,
+                                    state.assetInfo?.decimal ?: 0
+                                ) {
+
+                                }
+                                Divider(
+                                    modifier = Modifier
+                                        .height(0.2.dp)
+                                        .padding(start = 16.dp)
+                                )
+                            }
+                        }
+                        if (lazyPagingItems.loadState.append == LoadState.Loading) {
+                            item {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .wrapContentWidth(Alignment.CenterHorizontally)
+                                )
+                            }
+                        }
+                    }
+                    /*state.transactions.getOrNull()?.let {
                         items(it) {
                             TransactionItemView(
                                 transactionInfo = it,
@@ -182,7 +213,7 @@ fun AssetDetailScreen(
                                     .padding(horizontal = 8.dp, vertical = 4.dp)
                             )
                         }
-                    }
+                    }*/
                 }
             }
             Row(

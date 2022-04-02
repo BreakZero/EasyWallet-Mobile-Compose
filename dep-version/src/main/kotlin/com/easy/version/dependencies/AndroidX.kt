@@ -12,6 +12,14 @@ object AndroidX {
     const val paging = "androidx.paging:paging-runtime:3.0.0-alpha06"
     const val biometric = "androidx.biometric:biometric:1.2.0-alpha03"
 
+    const val datastore = "androidx.datastore:datastore:1.0.0"
+
+    object Paging {
+        private const val paging_version = "3.1.0"
+        const val runtime = "androidx.paging:paging-runtime:$paging_version"
+        const val common = "androidx.paging:paging-common:$paging_version"
+    }
+
     object Fragment {
         private const val fragment_version = "1.3.0-beta01"
         const val fragment = "androidx.fragment:fragment:$fragment_version"
