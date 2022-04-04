@@ -96,6 +96,9 @@ fun SettingsScreen(
                 )
             ) {
                 when(it) {
+                    0 -> {
+                        onNavigateTo.invoke(Navigator(SettingsRouter.SETTINGS_CURRENCY))
+                    }
                     1 -> {
                         onNavigateTo.invoke(Navigator(SettingsRouter.SETTINGS_CHAINS))
                     }

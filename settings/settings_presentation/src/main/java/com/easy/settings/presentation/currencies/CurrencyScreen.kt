@@ -1,4 +1,4 @@
-package com.easy.settings.presentation.multi_chain
+package com.easy.settings.presentation.currencies
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -25,11 +25,11 @@ import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
-fun SupportChainScreen(
-    viewModel: SupportChainViewModel = hiltViewModel(),
+fun CurrencyScreen(
+    currencyViewModel: CurrencyViewModel = hiltViewModel(),
     onNavigateUp: () -> Unit
 ) {
-    val state = viewModel.state
+    val state = currencyViewModel.currencyState
     Scaffold(
         modifier = Modifier
             .statusBarsPadding()
@@ -37,13 +37,13 @@ fun SupportChainScreen(
         topBar = {
             EasyAppBar(
                 navIcon = Icons.Filled.ArrowBack,
-                title = "Select Chain",
+                title = "Select Currency",
                 backgroundColor = Color.White,
                 actions = {
                     Box(modifier = Modifier
                         .padding(4.dp)
                         .clickable {
-                            viewModel.setChain()
+
                         }
                         .padding(end = 12.dp)
                     ) {
@@ -55,15 +55,15 @@ fun SupportChainScreen(
         }
     ) {
         LazyColumn {
-            items(state.supportChains) {
+            items(state.supportList) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButton(selected = it.id == state.checkId, onClick = {
-                        viewModel.onChainChanged(it)
+                    RadioButton(selected = it.currencyCode == state.selected.currencyCode, onClick = {
+
                     })
-                    Text(text = it.name)
+                    Text(text = "${it.symbol} (${it.currencyCode})")
                 }
             }
         }

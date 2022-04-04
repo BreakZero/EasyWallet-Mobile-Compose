@@ -6,6 +6,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import com.easy.settings.presentation.currencies.CurrencyScreen
 import com.easy.settings.presentation.multi_chain.SupportChainScreen
 import com.easy.settings.presentation.ui.SettingsScreen
 import com.google.accompanist.navigation.animation.composable
@@ -51,6 +52,23 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
                 fadeOut(animationSpec = tween(700))
             }) {
             SupportChainScreen(onNavigateUp = {
+                navController.navigateUp()
+            })
+        }
+        composable(SettingsRouter.SETTINGS_CURRENCY,
+            enterTransition = {
+                fadeIn(animationSpec = tween(700))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(700))
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(700))
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(700))
+            }) {
+            CurrencyScreen(onNavigateUp = {
                 navController.navigateUp()
             })
         }
