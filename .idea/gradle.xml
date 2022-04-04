@@ -35,6 +35,9 @@
             <option value="$PROJECT_DIR$/dep-version" />
             <option value="$PROJECT_DIR$/intro" />
             <option value="$PROJECT_DIR$/settings" />
+            <option value="$PROJECT_DIR$/settings/settings_domain" />
+            <option value="$PROJECT_DIR$/settings/settings_presentation" />
+            <option value="$PROJECT_DIR$/wallets" />
           </set>
         </option>
       </GradleProjectSettings>

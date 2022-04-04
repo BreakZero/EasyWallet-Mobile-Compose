@@ -93,13 +93,15 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.4.1")
     implementation(project(":core"))
     implementation(project(":core-ui"))
+    implementation(project(":wallets"))
     implementation(project(":intro"))
     implementation(project(":dapp:dapp_domain"))
     implementation(project(":dapp:dapp_presentation"))
     implementation(project(":assets:domain"))
     implementation(project(":assets:data"))
     implementation(project(":assets:presentation"))
-    implementation(project(":settings"))
+    implementation(project(":settings:settings_domain"))
+    implementation(project(":settings:settings_presentation"))
 
     implementation("com.google.guava:guava:29.0-android")
 

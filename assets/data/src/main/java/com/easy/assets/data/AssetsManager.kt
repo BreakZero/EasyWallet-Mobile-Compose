@@ -23,7 +23,6 @@ class AssetsManager @Inject constructor(
     private val chains: MutableMap<String, IChain> = mutableMapOf()
 
     internal suspend fun fetchAssets(): List<AssetInfo> {
-        delay(1000)
         return kotlin.runCatching {
             ktorClient.get<CoinConfigResponseDto>("http://0.0.0.0:8080/currencies")
         }.onFailure {

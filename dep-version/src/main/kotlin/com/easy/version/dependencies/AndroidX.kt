@@ -13,6 +13,7 @@ object AndroidX {
     const val biometric = "androidx.biometric:biometric:1.2.0-alpha03"
 
     const val datastore = "androidx.datastore:datastore:1.0.0"
+    const val datastore_pref = "androidx.datastore:datastore-preferences:1.0.0"
 
     object Paging {
         private const val paging_version = "3.1.0"

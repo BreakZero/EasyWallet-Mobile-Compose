@@ -3,18 +3,26 @@ package com.easy.intro.passcode
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.easy.core.common.UiEvent
+import com.easy.core.common.SecurityUtil
+import com.easy.core.consts.ConfigurationKey
+import com.easy.core.consts.SecurityAlias
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import logcat.logcat
 import javax.inject.Inject
 
 @HiltViewModel
-class PasscodeViewModel @Inject constructor(): ViewModel() {
+class PasscodeViewModel @Inject constructor(
+    private val datastore: DataStore<Preferences>,
+    private val securityUtil: SecurityUtil
+) : ViewModel() {
     var passcodeState by mutableStateOf(PasscodeState(messageLabel = "Enter passcode"))
     private val _uiEvent = Channel<Result<String>>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -40,7 +48,17 @@ class PasscodeViewModel @Inject constructor(): ViewModel() {
                     }
                 }
             }
-            else -> Unit
+            is PasscodeEvent.Done -> {
+                viewModelScope.launch {
+                    datastore.edit {
+                        it[stringPreferencesKey(ConfigurationKey.KEY_PASSWORD)] =
+                            securityUtil.encryptData(
+                                SecurityAlias.PASSCODE_ALIAS,
+                                passcodeState.passcode
+                            ).decodeToString()
+                    }
+                }
+            }
         }
     }
 }

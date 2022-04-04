@@ -13,6 +13,8 @@ dependencies {
 
     api(Other.coroutineCore)
     api(Other.coroutineAndroid)
+    api(AndroidX.datastore_pref)
+    api(AndroidX.datastore)
     api("com.squareup.logcat:logcat:0.1")
 
     api(Other.Ktor.client_core)

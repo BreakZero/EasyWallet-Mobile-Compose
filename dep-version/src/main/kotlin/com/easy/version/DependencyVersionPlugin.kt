@@ -13,7 +13,7 @@ import java.io.InputStreamReader
 import java.util.*
 
 class DependencyVersionPlugin : Plugin<Project> {
-    private val ignoreList = listOf("app", "EasyWallet", "assets", "dapp")
+    private val ignoreList = listOf("app", "EasyWallet", "assets", "dapp", "settings")
 
     override fun apply(target: Project) {
         if (target.name !in ignoreList) {
