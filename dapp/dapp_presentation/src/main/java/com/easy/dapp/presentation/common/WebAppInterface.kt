@@ -6,7 +6,6 @@ import android.webkit.WebView
 import android.widget.Toast
 import com.easy.core.common.hex
 import com.easy.core.ext.toHexBytes
-import logcat.logcat
 import org.json.JSONObject
 import wallet.core.jni.Curve
 import wallet.core.jni.PrivateKey
@@ -38,7 +37,6 @@ class WebAppInterface(
                         // ignore
                     }
                     webView.evaluateJavascript(callback) { value ->
-                        logcat { "===== $value" }
                     }
                 }
             }
@@ -80,11 +78,9 @@ class WebAppInterface(
     }
 
     private fun handleSignMessage(id: Long, data: ByteArray, addPrefix: Boolean) {
-        logcat { if (addPrefix) String(data, Charsets.UTF_8) else data.hex }
     }
 
     private fun handleSignTypedMessage(id: Long, data: ByteArray, raw: String) {
-        logcat { raw }
         webView.sendResult(signEthereumMessage(data, false), id)
     }
 

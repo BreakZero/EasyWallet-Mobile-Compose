@@ -5,6 +5,10 @@ import com.easy.version.dependencies.Other
 import com.easy.version.hiltDependencies
 import com.easy.version.unitTestDependencies
 
+plugins {
+    kotlin("plugin.serialization") version "1.6.10"
+}
+
 dependencies {
     implementation(kotlin("stdlib-jdk8", BuildConfig.kotlinVersion))
     api(AndroidX.coreKtx)
@@ -15,7 +19,7 @@ dependencies {
     api(Other.coroutineAndroid)
     api(AndroidX.datastore_pref)
     api(AndroidX.datastore)
-    api("com.squareup.logcat:logcat:0.1")
+    api(Other.timber)
 
     api(Other.Ktor.client_core)
     api(Other.Ktor.client_cio)

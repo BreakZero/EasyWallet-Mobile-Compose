@@ -1,6 +1,5 @@
 package com.easy.settings.presentation.ui
 
-import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,11 +16,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.easy.core.common.Navigator
 import com.easy.settings.presentation.components.MenuBlockView
 import com.easy.settings.presentation.model.MenuItem
 import com.easy.core.ext.toast
 import com.easy.core.ui.R
 import com.easy.core.ui.components.EasyAppBar
+import com.easy.settings.presentation.SettingsRouter
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -30,7 +31,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 fun SettingsScreen(
     title: String,
     navigateUp: () -> Unit,
-    onNavigateTo: (String) -> Unit
+    onNavigateTo: (Navigator) -> Unit
 ) {
     val context = LocalContext.current
     val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
@@ -94,7 +95,12 @@ fun SettingsScreen(
                     MenuItem(title = "Network Settings", endValue = "Mainnet")
                 )
             ) {
-                context.toast("click: $it")
+                when(it) {
+                    1 -> {
+                        onNavigateTo.invoke(Navigator(SettingsRouter.SETTINGS_CHAINS))
+                    }
+                    else -> Unit
+                }
             }
             MenuBlockView(
                 modifier = Modifier.fillMaxWidth(), header = "Support", menus = listOf(

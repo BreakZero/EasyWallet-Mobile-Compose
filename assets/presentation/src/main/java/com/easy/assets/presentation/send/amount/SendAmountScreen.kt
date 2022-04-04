@@ -26,7 +26,6 @@ import com.easy.assets.presentation.send.SendInfoHolder
 import com.easy.core.common.Navigator
 import com.easy.core.ui.components.EasyAppBar
 import com.google.accompanist.insets.statusBarsPadding
-import logcat.logcat
 
 @Composable
 fun NormalSendAmountScreen(

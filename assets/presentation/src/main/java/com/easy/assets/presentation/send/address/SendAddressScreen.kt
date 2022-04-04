@@ -38,7 +38,6 @@ import com.easy.core.common.Navigator
 import com.easy.core.ui.LocalSpacing
 import com.google.accompanist.insets.statusBarsPadding
 import dagger.hilt.android.EntryPointAccessors
-import logcat.logcat
 
 @Composable
 fun assetSendAddressViewModel(

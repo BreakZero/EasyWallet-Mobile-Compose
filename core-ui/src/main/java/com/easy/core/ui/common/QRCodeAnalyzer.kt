@@ -60,7 +60,6 @@ class QRCodeAnalyzer(
                 onCodeScanned(result.text)
             }.onFailure {
                 it.printStackTrace()
-                logcat(priority = LogPriority.ERROR) { it.message ?: "analyze image failed" }
             }.also {
                 image.close()
             }*/

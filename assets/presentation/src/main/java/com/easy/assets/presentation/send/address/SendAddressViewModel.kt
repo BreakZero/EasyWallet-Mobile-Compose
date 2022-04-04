@@ -12,7 +12,6 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.launch
-import logcat.logcat
 
 class SendAddressViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,

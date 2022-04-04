@@ -31,7 +31,6 @@ import com.easy.intro.IntroRouter
 import com.easy.intro.R
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
-import logcat.logcat
 
 @Composable
 fun WalletProtectScreen(

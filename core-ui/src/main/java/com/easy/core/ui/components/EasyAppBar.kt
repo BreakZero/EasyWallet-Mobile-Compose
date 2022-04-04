@@ -1,6 +1,7 @@
 package com.easy.core.ui.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
@@ -16,6 +17,7 @@ fun EasyAppBar(
     navIcon: ImageVector,
     title: String? = null,
     backgroundColor: Color,
+    actions: @Composable RowScope.() -> Unit = {},
     navigateUp: () -> Unit
 ) {
     TopAppBar(
@@ -33,6 +35,7 @@ fun EasyAppBar(
             title?.let {
                 Text(text = title)
             }
-        }
+        },
+        actions = actions
     )
 }

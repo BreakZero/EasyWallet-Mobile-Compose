@@ -3,7 +3,6 @@ package com.easy.assets.domain.use_case
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.domain.repository.AssetRepository
 import com.easy.assets.domain.repository.CoinRepository
-import com.easy.core.consts.ChainId
 import com.easy.core.ext.byDecimal
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
