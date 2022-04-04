@@ -31,13 +31,9 @@ object WalletsModule {
             .openHelperFactory(supportFactory)
             .build()
     }
-}
 
-@Module
-@InstallIn(ViewModelComponent::class)
-object WalletViewModelModule {
     @Provides
-    @ViewModelScoped
+    @Singleton
     fun provideWalletRepository(
         database: WalletDatabase
     ): WalletRepositoryImpl {

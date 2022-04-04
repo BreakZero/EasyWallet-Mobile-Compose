@@ -10,13 +10,13 @@ import com.easy.assets.data.remote.dto.EthTxResponseDto
 import com.easy.assets.data.remote.dto.FeeHistoryDto
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.BuildConfig
-import com.easy.core.GlobalHolder
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.common.hex
 import com.easy.core.ext._16toNumber
 import com.easy.core.ext.clearHexPrefix
 import com.easy.core.ext.toHexByteArray
+import com.easy.wallets.repository.WalletRepositoryImpl
 import com.google.protobuf.ByteString
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -30,7 +30,8 @@ import wallet.core.jni.proto.Ethereum
 import java.math.BigInteger
 
 internal class EthereumChain(
-    private val ktorClient: HttpClient
+    private val ktorClient: HttpClient,
+    private val walletRepository: WalletRepositoryImpl
 ) : IChain {
     override suspend fun sign(plan: TransactionPlan): String {
         return withContext(Dispatchers.IO) {
@@ -41,7 +42,7 @@ internal class EthereumChain(
             val gasLimit = estimateGasLimit()
             if (balance < plan.amount) throw InsufficientBalanceException()
             val prvKey =
-                ByteString.copyFrom(GlobalHolder.hdWallet.getKeyForCoin(CoinType.ETHEREUM).data())
+                ByteString.copyFrom(walletRepository.hdWallet.getKeyForCoin(CoinType.ETHEREUM).data())
             val signer = plan.contract?.let {
                 val tokenTransfer = Ethereum.Transaction.ERC20Transfer.newBuilder().apply {
                     to = plan.to
@@ -124,7 +125,7 @@ internal class EthereumChain(
     }
 
     override fun address(): String {
-        return GlobalHolder.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
+        return walletRepository.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
     }
 
     override suspend fun balance(contract: String?) = withContext(Dispatchers.IO) {

@@ -5,6 +5,7 @@ import com.easy.assets.data.repository.AssetRepositoryImpl
 import com.easy.assets.data.repository.CoinRepositoryImpl
 import com.easy.assets.domain.repository.AssetRepository
 import com.easy.assets.domain.repository.CoinRepository
+import com.easy.wallets.repository.WalletRepositoryImpl
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
@@ -30,9 +31,10 @@ abstract class AssetDataModule {
         @Provides
         @Singleton
         fun provideChains(
-            ktorClient: HttpClient
+            ktorClient: HttpClient,
+            walletRepositoryImpl: WalletRepositoryImpl
         ): AssetsManager {
-            return AssetsManager(ktorClient)
+            return AssetsManager(ktorClient, walletRepositoryImpl)
         }
     }
 }

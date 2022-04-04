@@ -8,16 +8,17 @@ import com.easy.assets.data.provider.IChain
 import com.easy.assets.data.remote.dto.CoinConfigDto
 import com.easy.assets.data.remote.dto.CoinConfigResponseDto
 import com.easy.assets.domain.model.AssetInfo
+import com.easy.wallets.repository.WalletRepositoryImpl
 import io.ktor.client.*
 import io.ktor.client.request.*
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import kotlin.collections.set
 
 class AssetsManager @Inject constructor(
-    private val ktorClient: HttpClient
+    private val ktorClient: HttpClient,
+    private val walletRepository: WalletRepositoryImpl
 ) {
     private val mutex = Mutex()
     private val chains: MutableMap<String, IChain> = mutableMapOf()
@@ -61,9 +62,9 @@ class AssetsManager @Inject constructor(
         if (chains[slug] == null) {
             when {
                 slug == "ethereum" || config.tag.equals("ERC20", true) -> {
-                    chains[slug] = EthereumChain(ktorClient)
+                    chains[slug] = EthereumChain(ktorClient, walletRepository)
                 }
-                slug == "bitcoin" -> chains[slug] = BitcoinChain(ktorClient)
+                slug == "bitcoin" -> chains[slug] = BitcoinChain(ktorClient, walletRepository)
                 else -> Unit
             }
         }

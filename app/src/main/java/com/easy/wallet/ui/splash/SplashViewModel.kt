@@ -2,7 +2,6 @@ package com.easy.wallet.ui.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.easy.core.GlobalHolder
 import com.easy.wallets.repository.WalletRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,7 +21,7 @@ class SplashViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             walletRepository.activeWallet()?.let {
-                GlobalHolder.inject(HDWallet(it.mnemonic, it.passphrase))
+                walletRepository.inject(HDWallet(it.mnemonic, it.passphrase))
                 _uiEvent.send(true)
             } ?: kotlin.run {
                 _uiEvent.send(false)
