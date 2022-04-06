@@ -1,7 +1,9 @@
 package com.easy.assets.data
 
 import com.easy.assets.data.mapper.toAsset
+import com.easy.assets.data.provider.*
 import com.easy.assets.data.provider.BitcoinChain
+import com.easy.assets.data.provider.CardanoChain
 import com.easy.assets.data.provider.DefaultChain
 import com.easy.assets.data.provider.EthereumChain
 import com.easy.assets.data.provider.IChain
@@ -25,7 +27,7 @@ class AssetsManager @Inject constructor(
 
     internal suspend fun fetchAssets(): List<AssetInfo> {
         return kotlin.runCatching {
-            ktorClient.get<CoinConfigResponseDto>("http://0.0.0.0:8080/currencies")
+            ktorClient.get<CoinConfigResponseDto>("http://141.164.63.231:8080/currencies")
         }.onFailure {
             it.printStackTrace()
         }.map { it.result }.getOrNull()?.let { it ->
@@ -65,6 +67,7 @@ class AssetsManager @Inject constructor(
                     chains[slug] = EthereumChain(ktorClient, walletRepository)
                 }
                 slug == "bitcoin" -> chains[slug] = BitcoinChain(ktorClient, walletRepository)
+                slug == "cardano" -> chains[slug] = CardanoChain(ktorClient, walletRepository)
                 else -> Unit
             }
         }

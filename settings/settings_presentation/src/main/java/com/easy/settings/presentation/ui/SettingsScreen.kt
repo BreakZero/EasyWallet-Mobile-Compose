@@ -43,7 +43,7 @@ fun SettingsScreen(
         systemUIController.setStatusBarColor(color = Color.White, darkIcons = true)
     }
     val settingsState = settingsViewModel.settingsState
-
+    val scrollState = rememberScrollState()
     Scaffold(
         modifier = Modifier
             .fillMaxSize()
@@ -62,7 +62,7 @@ fun SettingsScreen(
         Column(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
         ) {
             Image(
                 painter = painterResource(id = R.mipmap.avatar_generic_1),
