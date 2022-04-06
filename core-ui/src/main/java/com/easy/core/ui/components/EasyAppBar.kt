@@ -1,16 +1,13 @@
 package com.easy.core.ui.components
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import com.easy.core.ui.LocalSpacing
 
 @Composable
 fun EasyAppBar(
@@ -23,13 +20,14 @@ fun EasyAppBar(
     TopAppBar(
         backgroundColor = backgroundColor,
         navigationIcon = {
-            Icon(
-                modifier = Modifier
-                    .clickable { navigateUp() }
-                    .padding(LocalSpacing.current.spaceSmall),
-                imageVector = navIcon,
-                contentDescription = ""
-            )
+            IconButton(onClick = {
+                navigateUp()
+            }) {
+                Icon(
+                    imageVector = navIcon,
+                    contentDescription = ""
+                )
+            }
         },
         title = {
             title?.let {

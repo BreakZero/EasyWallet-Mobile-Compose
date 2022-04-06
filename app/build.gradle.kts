@@ -103,7 +103,7 @@ dependencies {
     implementation(project(":settings:settings_domain"))
     implementation(project(":settings:settings_presentation"))
 
-    implementation("com.google.guava:guava:29.0-android")
+    implementation("com.google.guava:guava:30.1.1-android")
 
     implementation(com.easy.version.dependencies.Other.material)
 

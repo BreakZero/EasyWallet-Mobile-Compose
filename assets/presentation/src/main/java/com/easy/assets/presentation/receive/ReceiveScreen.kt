@@ -14,8 +14,8 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.easy.core.ui.LocalSpacing
 import com.easy.core.ui.common.QRCodeGenerate
+import com.easy.core.ui.components.EasyAppBar
 import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -34,23 +34,17 @@ fun ReceiveScreen(
     Scaffold(
         modifier = Modifier.statusBarsPadding(),
         topBar = {
-            TopAppBar(
+            EasyAppBar(
+                navIcon = Icons.Filled.ArrowBack,
                 backgroundColor = Color.White,
-                navigationIcon = {
-                    Icon(
-                        modifier = Modifier
-                            .clickable { navigateUp() }
-                            .padding(LocalSpacing.current.spaceSmall),
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = ""
-                    )
-                },
-                title = { Text(text = "Receive") },
+                title = "Receive",
                 actions = {
                     DropdownMenu(expanded = showMenu, onDismissRequest = { /*TODO*/ }) {
 
                     }
-                })
+                }) {
+                navigateUp()
+            }
         }) {
         QRCodeGenerate.genQRCode(address)?.let {
             Card(

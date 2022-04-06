@@ -27,6 +27,7 @@
             <option value="$PROJECT_DIR$/assets/data" />
             <option value="$PROJECT_DIR$/assets/domain" />
             <option value="$PROJECT_DIR$/assets/presentation" />
+            <option value="$PROJECT_DIR$/configuration" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core-ui" />
             <option value="$PROJECT_DIR$/dapp" />

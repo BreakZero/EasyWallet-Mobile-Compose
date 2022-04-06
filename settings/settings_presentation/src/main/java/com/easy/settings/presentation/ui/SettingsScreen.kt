@@ -42,6 +42,7 @@ fun SettingsScreen(
     LaunchedEffect(key1 = null) {
         systemUIController.setStatusBarColor(color = Color.White, darkIcons = true)
     }
+    val settingsState = settingsViewModel.settingsState
 
     Scaffold(
         modifier = Modifier
@@ -92,8 +93,8 @@ fun SettingsScreen(
             }
             MenuBlockView(
                 modifier = Modifier.fillMaxWidth(), header = "Account", menus = listOf(
-                    MenuItem(title = "Display Currency", endValue = "$ USD"),
-                    MenuItem(title = "Network Settings", endValue = "Mainnet")
+                    MenuItem(title = "Display Currency", endValue = settingsState.displayCurrency),
+                    MenuItem(title = "Network Settings", endValue = settingsState.currentNetwork)
                 )
             ) {
                 when(it) {

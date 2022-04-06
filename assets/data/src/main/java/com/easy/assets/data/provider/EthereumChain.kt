@@ -1,6 +1,7 @@
 package com.easy.assets.data.provider
 
 import android.util.Log
+import androidx.annotation.Keep
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.errors.InsufficientBalanceException
 import com.easy.assets.data.remote.BaseRpcRequest
@@ -24,6 +25,7 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import wallet.core.java.AnySigner
 import wallet.core.jni.CoinType
 import wallet.core.jni.proto.Ethereum
@@ -38,7 +40,7 @@ internal class EthereumChain(
             val balance = balance(plan.contract)
             val nonce = fetchNonce()
             val (baseFee, priorityFee) = feeHistory()
-            Log.d("=====", "base: $baseFee, priority: $priorityFee")
+            Timber.d(message = "base: $baseFee, priority: $priorityFee")
             val gasLimit = estimateGasLimit()
             if (balance < plan.amount) throw InsufficientBalanceException()
             val prvKey =
@@ -168,7 +170,7 @@ internal class EthereumChain(
         limit: Int,
         contract: String?
     ): NetworkResponse<EthTxResponseDto> = withContext(Dispatchers.IO) {
-        Log.d("======","offset: $offset, limit: $limit")
+        Timber.d(message = "offset: $offset, limit: $limit")
         val url = if (contract.isNullOrEmpty()) {
             """
             https://api.etherscan.io/api?
@@ -219,7 +221,8 @@ internal class EthereumChain(
     }
 }
 
-data class BlockInfo(
+@Keep
+private data class BlockInfo(
     val number: BigInteger,
     val baseFeePerGas: BigInteger,
     val gasUsedRatio: Double,
