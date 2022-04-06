@@ -7,14 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.Icon
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +21,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.ui.components.EasyAppBar
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
+import kotlinx.coroutines.flow.collect
 
 @Composable
 fun CurrencyScreen(
@@ -30,6 +29,16 @@ fun CurrencyScreen(
     onNavigateUp: () -> Unit
 ) {
     val state = currencyViewModel.currencyState
+    LaunchedEffect(key1 = currencyViewModel) {
+        currencyViewModel.uiEvent.collect {
+            when(it) {
+                CurrencyUIEvent.ActionDone -> {
+                    onNavigateUp()
+                }
+            }
+        }
+    }
+
     Scaffold(
         modifier = Modifier
             .statusBarsPadding()
@@ -40,13 +49,9 @@ fun CurrencyScreen(
                 title = "Select Currency",
                 backgroundColor = Color.White,
                 actions = {
-                    Box(modifier = Modifier
-                        .padding(4.dp)
-                        .clickable {
-
-                        }
-                        .padding(end = 12.dp)
-                    ) {
+                    IconButton(onClick = {
+                        currencyViewModel.onEvent(CurrencyEvent.OnDone)
+                    }) {
                         Icon(imageVector = Icons.Filled.Done, contentDescription = null)
                     }
                 }) {
@@ -61,7 +66,7 @@ fun CurrencyScreen(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     RadioButton(selected = it.currencyCode == state.selected.currencyCode, onClick = {
-
+                        currencyViewModel.onEvent(CurrencyEvent.OnSelected(it))
                     })
                     Text(text = "${it.symbol} (${it.currencyCode})")
                 }

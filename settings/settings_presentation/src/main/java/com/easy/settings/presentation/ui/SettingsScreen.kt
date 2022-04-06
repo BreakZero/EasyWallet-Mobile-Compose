@@ -16,7 +16,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.common.Navigator
+import com.easy.core.common.parameter
 import com.easy.settings.presentation.components.MenuBlockView
 import com.easy.settings.presentation.model.MenuItem
 import com.easy.core.ext.toast
@@ -29,6 +31,7 @@ import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun SettingsScreen(
+    settingsViewModel: SettingsViewModel = hiltViewModel(),
     title: String,
     navigateUp: () -> Unit,
     onNavigateTo: (Navigator) -> Unit
@@ -55,7 +58,6 @@ fun SettingsScreen(
             }
         }
     ) {
-        val context = LocalContext.current
         Column(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp)
@@ -87,7 +89,6 @@ fun SettingsScreen(
                     0 -> "protect"
                     else -> "recovery"
                 }
-                context.toast(msg)
             }
             MenuBlockView(
                 modifier = Modifier.fillMaxWidth(), header = "Account", menus = listOf(
@@ -123,7 +124,11 @@ fun SettingsScreen(
                     MenuItem(title = "Visit our website")
                 )
             ) {
-
+                onNavigateTo.invoke(Navigator(SettingsRouter.SETTINGS_WEB) {
+                    parameter {
+                        "url" to "https://breakzero.github.io"
+                    }
+                })
             }
             Spacer(modifier = Modifier.height(24.dp))
         }

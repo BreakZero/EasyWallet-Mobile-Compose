@@ -5,4 +5,5 @@ object SettingsRouter {
     const val SETTINGS = "settings"
     const val SETTINGS_CHAINS = "settings-chains"
     const val SETTINGS_CURRENCY = "settings-currency"
+    const val SETTINGS_WEB = "settings-web"
 }

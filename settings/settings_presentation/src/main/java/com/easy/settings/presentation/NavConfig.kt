@@ -6,6 +6,9 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavType
+import androidx.navigation.navArgument
+import com.easy.core.ui.screens.EasyWebScreen
 import com.easy.settings.presentation.currencies.CurrencyScreen
 import com.easy.settings.presentation.multi_chain.SupportChainScreen
 import com.easy.settings.presentation.ui.SettingsScreen
@@ -29,12 +32,13 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
             }) {
-            SettingsScreen("Settings",
+            SettingsScreen(
+                title = "Settings",
                 navigateUp = {
                     navController.navigateUp()
                 },
                 onNavigateTo = {
-                    navController.navigate(it.router)
+                    navController.navigate(it.routerWithParameter())
                 }
             )
         }
@@ -71,6 +75,29 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
             CurrencyScreen(onNavigateUp = {
                 navController.navigateUp()
             })
+        }
+        composable(SettingsRouter.SETTINGS_WEB + "?url={url}",
+            arguments = listOf(
+                navArgument("url") {
+                    type = NavType.StringType
+                }
+            ),
+            enterTransition = {
+                fadeIn(animationSpec = tween(700))
+            },
+            exitTransition = {
+                fadeOut(animationSpec = tween(700))
+            },
+            popEnterTransition = {
+                fadeIn(animationSpec = tween(700))
+            },
+            popExitTransition = {
+                fadeOut(animationSpec = tween(700))
+            }) {
+            val url = it.arguments?.getString("url")!!
+            EasyWebScreen(url = url) {
+                navController.navigateUp()
+            }
         }
     }
 }
