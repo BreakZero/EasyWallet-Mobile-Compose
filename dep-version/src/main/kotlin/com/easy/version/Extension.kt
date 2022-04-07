@@ -2,10 +2,15 @@ package com.easy.version
 
 import com.easy.version.dependencies.AndroidX
 import com.easy.version.dependencies.Compose
+import com.easy.version.dependencies.Tester
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 
 fun DependencyHandlerScope.unitTestDependencies() {
     "testImplementation"("junit:junit:4.13.2")
+    "testImplementation"(Tester.arch_core_testing)
+    "testImplementation"(Tester.mockito_kotlin)
+    "testImplementation"(Tester.coroutines_test)
+    "testImplementation"(Tester.turbine)
 }
 
 fun DependencyHandlerScope.androidTestDependencies() {

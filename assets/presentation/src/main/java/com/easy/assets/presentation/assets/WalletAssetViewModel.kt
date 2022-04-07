@@ -23,8 +23,6 @@ class WalletAssetViewModel @Inject constructor(
     private val _uiEvent = Channel<AssetUIEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
-    private val _state = MutableStateFlow(false)
-    val state = _state.asStateFlow()
     init {
         viewModelScope.launch {
             val result = assetsUseCases.assetsWithBalance()
