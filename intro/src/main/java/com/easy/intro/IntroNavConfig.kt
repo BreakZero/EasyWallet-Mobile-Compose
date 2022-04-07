@@ -17,7 +17,6 @@ import com.easy.intro.walletprotect.WalletProtectScreen
 import com.easy.intro.walletsetup.WalletSetupScreen
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
-import logcat.logcat
 
 @OptIn(ExperimentalAnimationApi::class)
 fun NavGraphBuilder.introGraph(navController: NavController, scaffoldState: ScaffoldState) {

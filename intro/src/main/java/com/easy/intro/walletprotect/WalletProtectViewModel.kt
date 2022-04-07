@@ -5,11 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.easy.core.GlobalHolder
 import com.easy.core.common.UiEvent
 import com.easy.core.common.UiText
-import com.easy.intro.local.entities.WalletEntity
-import com.easy.intro.repository.WalletRepositoryImpl
+import com.easy.wallets.data.WalletEntity
+import com.easy.wallets.repository.WalletRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -47,12 +46,10 @@ class WalletProtectViewModel @Inject constructor(
             is ProtectEvent.OnCreated -> {
                 viewModelScope.launch {
                     val result = HDWallet(128, "").also {
-                        GlobalHolder.inject(it)
+                        walletRepository.inject(it)
                     }.mnemonic()
                     walletRepository.insertWallet(
-                        WalletEntity(
-                            mnemonic = result, 1, passphrase = ""
-                        )
+                        WalletEntity(mnemonic = result, 1, passphrase = "")
                     )
                     _uiEvent.send(UiEvent.Success)
                 }

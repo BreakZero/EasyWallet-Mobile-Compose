@@ -38,6 +38,7 @@ fun PasscodeScreen(
         viewModel.uiEvent.collect {
             val passcode = it.getOrNull().orEmpty()
             if (it.isSuccess && passcode.isNotEmpty()) {
+                viewModel.onEvent(PasscodeEvent.Done)
                 onNavigateUp(passcode)
             }
         }

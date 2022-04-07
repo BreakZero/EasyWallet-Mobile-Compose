@@ -27,6 +27,7 @@
             <option value="$PROJECT_DIR$/assets/data" />
             <option value="$PROJECT_DIR$/assets/domain" />
             <option value="$PROJECT_DIR$/assets/presentation" />
+            <option value="$PROJECT_DIR$/configuration" />
             <option value="$PROJECT_DIR$/core" />
             <option value="$PROJECT_DIR$/core-ui" />
             <option value="$PROJECT_DIR$/dapp" />
@@ -35,6 +36,9 @@
             <option value="$PROJECT_DIR$/dep-version" />
             <option value="$PROJECT_DIR$/intro" />
             <option value="$PROJECT_DIR$/settings" />
+            <option value="$PROJECT_DIR$/settings/settings_domain" />
+            <option value="$PROJECT_DIR$/settings/settings_presentation" />
+            <option value="$PROJECT_DIR$/wallets" />
           </set>
         </option>
       </GradleProjectSettings>

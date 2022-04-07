@@ -12,7 +12,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,20 +24,17 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import coil.transform.CircleCropTransformation
-import com.easy.assets.presentation.detail.AssetDetailViewModel
 import com.easy.assets.presentation.di.ViewModelFactoryProvider
 import com.easy.assets.presentation.routers.AssetRouter
 import com.easy.assets.presentation.send.SendInfo
 import com.easy.assets.presentation.send.SendInfoHolder
 import com.easy.core.common.Navigator
-import com.easy.core.ui.LocalSpacing
+import com.easy.core.ui.components.EasyAppBar
 import com.google.accompanist.insets.statusBarsPadding
 import dagger.hilt.android.EntryPointAccessors
-import logcat.logcat
 
 @Composable
 fun assetSendAddressViewModel(
@@ -69,40 +65,25 @@ fun NormalSendAddressScreen(
             .fillMaxSize()
             .statusBarsPadding(),
         topBar = {
-            TopAppBar(
+            EasyAppBar(
+                navIcon = Icons.Filled.ArrowBack,
                 backgroundColor = Color.White,
-                navigationIcon = {
-                    Icon(
-                        modifier = Modifier
-                            .clickable { navigateUp() }
-                            .padding(LocalSpacing.current.spaceSmall),
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = ""
-                    )
-                },
-                title = {
-                    Text(text = "Send")
-                },
+                title = "Send",
                 actions = {
-                    Box(
-                        modifier = Modifier
-                            .size(32.dp)
-                            .clickable {
-
-                            },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Icon(
-                            modifier = Modifier,
-                            painter = painterResource(
-                                id =
-                                com.easy.core.ui.R.drawable.ic_scan_white
-                            ),
-                            contentDescription = null
-                        )
-                    }
+                   IconButton(onClick = { /*TODO*/ }) {
+                       Icon(
+                           modifier = Modifier,
+                           painter = painterResource(
+                               id =
+                               com.easy.core.ui.R.drawable.ic_scan_white
+                           ),
+                           contentDescription = null
+                       )
+                   }
                 }
-            )
+            ) {
+                navigateUp()
+            }
         }
     ) {
         Column(

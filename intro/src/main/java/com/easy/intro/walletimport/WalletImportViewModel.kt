@@ -5,11 +5,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.easy.core.GlobalHolder
 import com.easy.core.common.UiEvent
 import com.easy.core.common.UiText
-import com.easy.intro.local.entities.WalletEntity
-import com.easy.intro.repository.WalletRepositoryImpl
+import com.easy.wallets.data.WalletEntity
+import com.easy.wallets.repository.WalletRepositoryImpl
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -37,7 +36,7 @@ class WalletImportViewModel @Inject constructor(
                         _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("invalid mnemonic, please try another")))
                     }
                 }.onSuccess {
-                    GlobalHolder.inject(it)
+                    walletRepository.inject(it)
                     viewModelScope.launch {
                         walletRepository.insertWallet(
                             WalletEntity(

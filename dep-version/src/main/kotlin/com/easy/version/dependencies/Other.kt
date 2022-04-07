@@ -6,7 +6,7 @@ object Other {
     const val coroutineCore = "org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0"
     const val coroutineAndroid = "org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0"
 
-    const val timber = "com.jakewharton.timber:timber:4.7.1"
+    const val timber = "com.jakewharton.timber:timber:5.0.1"
     const val okHttpLogger = "com.squareup.okhttp3:logging-interceptor:4.1.1"
 
     const val zxingEmbedded = "com.journeyapps:zxing-android-embedded:4.1.0"

@@ -5,6 +5,10 @@ import com.easy.version.dependencies.Other
 import com.easy.version.hiltDependencies
 import com.easy.version.unitTestDependencies
 
+plugins {
+    kotlin("plugin.serialization") version "1.6.10"
+}
+
 dependencies {
     implementation(kotlin("stdlib-jdk8", BuildConfig.kotlinVersion))
     api(AndroidX.coreKtx)
@@ -13,7 +17,9 @@ dependencies {
 
     api(Other.coroutineCore)
     api(Other.coroutineAndroid)
-    api("com.squareup.logcat:logcat:0.1")
+    api(AndroidX.datastore_pref)
+    api(AndroidX.datastore)
+    api(Other.timber)
 
     api(Other.Ktor.client_core)
     api(Other.Ktor.client_cio)
@@ -21,7 +27,7 @@ dependencies {
     api(Other.Ktor.client_gson)
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
-    api("com.trustwallet:wallet-core:2.6.35") {
+    api("com.trustwallet:wallet-core:2.7.7") {
         exclude(group = "com.google.guava", module = "listenablefuture")
     }
 

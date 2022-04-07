@@ -3,7 +3,7 @@ package com.easy.wallet
 import android.app.Application
 import com.jakewharton.threetenabp.AndroidThreeTen
 import dagger.hilt.android.HiltAndroidApp
-import logcat.AndroidLogcatLogger
+import timber.log.Timber
 
 @HiltAndroidApp
 class EasyApplication: Application() {
@@ -12,7 +12,7 @@ class EasyApplication: Application() {
     }
     override fun onCreate() {
         super.onCreate()
-        AndroidLogcatLogger.installOnDebuggableApp(this)
+        Timber.plant(Timber.DebugTree())
         AndroidThreeTen.init(this)
     }
 }

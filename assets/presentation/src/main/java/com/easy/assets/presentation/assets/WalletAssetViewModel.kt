@@ -51,10 +51,7 @@ class WalletAssetViewModel @Inject constructor(
             }
             is AssetEvent.OnRefresh -> {
                 viewModelScope.launch {
-                    assetState = assetState.copy(
-                        isLoading = true,
-                        tokenLists = Result.success(emptyList())
-                    )
+                    assetState = assetState.copy(isLoading = true)
                     val result = assetsUseCases.assetsWithBalance()
                     assetState = assetState.copy(tokenLists = result, isLoading = false)
                 }

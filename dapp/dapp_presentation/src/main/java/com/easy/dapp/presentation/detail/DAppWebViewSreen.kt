@@ -21,7 +21,6 @@ import com.easy.dapp.presentation.common.WebAppInterface
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.launch
-import logcat.logcat
 
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -74,7 +73,6 @@ fun DAppWebViewScreen(
         if (showDialog) {
             AlertDialog(
                 onDismissRequest = {
-                    logcat(tag = "") { "dismiss" }
                 },
                 confirmButton = {
                     TextButton(onClick = {
@@ -100,7 +98,6 @@ fun DAppWebViewScreen(
                 evaluateJavascript(initJs, null)
                 val script = "window.ethereum.request({method: \"eth_requestAccounts\"})"
                 evaluateJavascript(script) {
-                    logcat { "======== $it" }
                 }
             },
             onCreated = {

@@ -1,35 +1,137 @@
 package com.easy.assets.data.provider
 
+import android.util.Log
+import androidx.annotation.Keep
+import com.easy.assets.data.HttpRoutes
+import com.easy.assets.data.errors.InsufficientBalanceException
 import com.easy.assets.data.remote.BaseRpcRequest
 import com.easy.assets.data.remote.CallBalance
 import com.easy.assets.data.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.remote.dto.EthTxResponseDto
+import com.easy.assets.data.remote.dto.FeeHistoryDto
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.BuildConfig
-import com.easy.core.GlobalHolder
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
+import com.easy.core.common.hex
+import com.easy.core.ext._16toNumber
 import com.easy.core.ext.clearHexPrefix
+import com.easy.core.ext.toHexByteArray
+import com.easy.wallets.repository.WalletRepositoryImpl
+import com.google.protobuf.ByteString
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import timber.log.Timber
+import wallet.core.java.AnySigner
 import wallet.core.jni.CoinType
+import wallet.core.jni.proto.Ethereum
 import java.math.BigInteger
 
 internal class EthereumChain(
-    private val ktorClient: HttpClient
+    private val ktorClient: HttpClient,
+    private val walletRepository: WalletRepositoryImpl
 ) : IChain {
     override suspend fun sign(plan: TransactionPlan): String {
-        TODO("Not yet implemented")
+        return withContext(Dispatchers.IO) {
+            val balance = balance(plan.contract)
+            val nonce = fetchNonce()
+            val (baseFee, priorityFee) = feeHistory()
+            Timber.d(message = "base: $baseFee, priority: $priorityFee")
+            val gasLimit = estimateGasLimit()
+            if (balance < plan.amount) throw InsufficientBalanceException()
+            val prvKey =
+                ByteString.copyFrom(walletRepository.hdWallet.getKeyForCoin(CoinType.ETHEREUM).data())
+            val signer = plan.contract?.let {
+                val tokenTransfer = Ethereum.Transaction.ERC20Transfer.newBuilder().apply {
+                    to = plan.to
+                    amount = ByteString.copyFrom(plan.amount.toHexByteArray())
+                }
+                Ethereum.SigningInput.newBuilder().apply {
+                    this.privateKey = prvKey
+                    this.toAddress = it
+                    this.chainId = ByteString.copyFrom("4".toBigInteger().toByteArray())
+                    this.nonce = ByteString.copyFrom(nonce.toHexByteArray())
+                    this.txMode = Ethereum.TransactionMode.Enveloped
+                    this.maxFeePerGas = ByteString.copyFrom(baseFee.toHexByteArray())
+                    this.maxInclusionFeePerGas =
+                        ByteString.copyFrom(priorityFee.toHexByteArray())
+                    this.gasLimit = ByteString.copyFrom(gasLimit.toBigInteger().toHexByteArray())
+                    this.transaction = Ethereum.Transaction.newBuilder().apply {
+                        erc20Transfer = tokenTransfer.build()
+                    }.build()
+                }
+            } ?: kotlin.run {
+                val transfer = Ethereum.Transaction.Transfer.newBuilder().apply {
+                    amount = ByteString.copyFrom(plan.amount.toHexByteArray())
+                }
+                Ethereum.SigningInput.newBuilder().apply {
+                    this.privateKey = prvKey
+                    this.toAddress = plan.to
+                    this.chainId = ByteString.copyFrom("4".toBigInteger().toByteArray())
+                    this.nonce = ByteString.copyFrom(nonce.toHexByteArray())
+                    this.txMode = Ethereum.TransactionMode.Enveloped
+                    this.maxFeePerGas = ByteString.copyFrom(baseFee.toHexByteArray())
+                    this.maxInclusionFeePerGas = ByteString.copyFrom(priorityFee.toHexByteArray())
+                    this.gasLimit = ByteString.copyFrom(gasLimit.toBigInteger().toHexByteArray())
+                    this.transaction = Ethereum.Transaction.newBuilder().apply {
+                        this.transfer = transfer.build()
+                    }.build()
+                }
+            }
+            val output = AnySigner.sign(
+                signer.build(),
+                CoinType.ETHEREUM,
+                Ethereum.SigningOutput.parser()
+            )
+            output.encoded.toByteArray().hex
+        }
+    }
+
+    private suspend fun estimateGasLimit() = withContext(Dispatchers.IO) {
+        21000L
+    }
+
+    private suspend fun feeHistory() = withContext(Dispatchers.IO) {
+        val reqBody = BaseRpcRequest(
+            id = 1,
+            jsonrpc = "2.0",
+            method = "eth_feeHistory",
+            params = listOf("0xF", "latest", listOf(25, 50, 75))
+        )
+        val feeHistories = ktorClient.post<BaseRpcResponseDto<FeeHistoryDto>>(
+            urlString = HttpRoutes.INFURA_RPC
+        ) {
+            body = reqBody
+        }.result
+        val baseFee = formatFeeHistory(feeHistories)
+        Pair(baseFee, baseFee)
+    }
+
+    private suspend fun fetchNonce() = withContext(Dispatchers.IO) {
+        val reqBody = BaseRpcRequest(
+            id = 1,
+            jsonrpc = "2.0",
+            method = "eth_getTransactionCount",
+            params = listOf(address(), "latest")
+        )
+        val nonce = ktorClient.post<BaseRpcResponseDto<String>>(
+            urlString = HttpRoutes.INFURA_RPC
+        ) {
+            body = reqBody
+        }.result
+        nonce._16toNumber()
     }
 
     override fun address(): String {
-        return GlobalHolder.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
+        return walletRepository.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
     }
 
-    override suspend fun balance(contract: String?): BigInteger {
-        return try {
+    override suspend fun balance(contract: String?) = withContext(Dispatchers.IO) {
+        try {
             val reqBody = if (contract.isNullOrEmpty()) {
                 BaseRpcRequest(
                     id = 1,
@@ -52,7 +154,7 @@ internal class EthereumChain(
                 )
             }
             val response = ktorClient
-                .post<HttpResponse>("https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}") {
+                .post<HttpResponse>(HttpRoutes.INFURA_RPC) {
                     body = reqBody
                 }
             response.receive<BaseRpcResponseDto<String>>().result.clearHexPrefix()
@@ -67,36 +169,62 @@ internal class EthereumChain(
         offset: Int,
         limit: Int,
         contract: String?
-    ): NetworkResponse<EthTxResponseDto> {
+    ): NetworkResponse<EthTxResponseDto> = withContext(Dispatchers.IO) {
+        Timber.d(message = "offset: $offset, limit: $limit")
         val url = if (contract.isNullOrEmpty()) {
             """
-                https://api.etherscan.io/api?
-                module=account
-                &action=txlist
-                &address=${address()}
-                &page=1
-                &offset=$offset
-                &sort=desc
-                &apikey=${BuildConfig.ETHERSCAN_APIKEY}
-                """.trimIndent()
+            https://api.etherscan.io/api?
+            module=account
+            &action=txlist
+            &address=${address()}
+            &page=$limit
+            &offset=$offset
+            &sort=desc
+            &apikey=${BuildConfig.ETHERSCAN_APIKEY}
+            """.trimIndent()
         } else {
             """
-                https://api.etherscan.io/api?
-                module=account
-                &action=tokentx
-                &contractaddress=$contract
-                &address=${address()}
-                &page=1
-                &offset=$offset
-                &sort=desc
-                &apikey=${BuildConfig.ETHERSCAN_APIKEY}
+            https://api.etherscan.io/api?
+            module=account
+            &action=tokentx
+            &contractaddress=$contract
+            &address=${address()}
+            &page=$limit
+            &offset=$offset
+            &sort=desc
+            &apikey=${BuildConfig.ETHERSCAN_APIKEY}
             """.trimIndent()
         }
-        return try {
+        try {
             val response = ktorClient.get<HttpResponse>(url)
             NetworkResponse.Success(response.receive())
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
     }
+
+    private fun formatFeeHistory(historyDto: FeeHistoryDto): BigInteger {
+        val oldestBlock = historyDto.oldestBlock
+        val blocks = historyDto.baseFeePerGas.mapIndexed { index, value ->
+            BlockInfo(
+                number = oldestBlock._16toNumber().plus(index.toBigInteger()),
+                baseFeePerGas = value._16toNumber(),
+                gasUsedRatio = historyDto.gasUsedRatio.getOrNull(index) ?: 0.0,
+                priorityFeePerGas = historyDto.reward.getOrNull(index)?.map { it._16toNumber() }
+                    ?: emptyList()
+            )
+        }
+        val firstPercentialPriorityFees = blocks.first().priorityFeePerGas
+        val sum = firstPercentialPriorityFees.reduce { acc, bigInteger -> acc.plus(bigInteger) }
+        val manual = sum.divide(firstPercentialPriorityFees.size.toBigInteger())
+        return manual
+    }
 }
+
+@Keep
+private data class BlockInfo(
+    val number: BigInteger,
+    val baseFeePerGas: BigInteger,
+    val gasUsedRatio: Double,
+    val priorityFeePerGas: List<BigInteger>
+)

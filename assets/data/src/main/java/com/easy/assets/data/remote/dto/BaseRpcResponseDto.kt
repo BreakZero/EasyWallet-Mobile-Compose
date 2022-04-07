@@ -4,7 +4,7 @@ import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 
 @Keep
-data class BaseRpcResponseDto<T>(
+internal data class BaseRpcResponseDto<T>(
     @SerializedName("id")
     val id: Int,
     @SerializedName("jsonrpc")
