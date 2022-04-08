@@ -1,6 +1,5 @@
 package com.easy.assets.data.provider
 
-import android.util.Log
 import androidx.annotation.Keep
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.errors.InsufficientBalanceException

@@ -45,13 +45,6 @@ class AssetsManager @Inject constructor(
                 decimal = 18,
                 iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/ethereum.png",
                 tag = null
-            ), CoinConfigDto(
-                coinSlug = "erc20-uni",
-                coinSymbol = "UNI",
-                contractAddress = "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
-                decimal = 18,
-                iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/UNI_4x.png",
-                tag = "ERC20"
             )
         ).map {
             syncChains(it)
@@ -74,6 +67,6 @@ class AssetsManager @Inject constructor(
     }
 
     internal fun find(slug: String): IChain {
-        return chains[slug] ?: DefaultChain()
+        return chains[slug] ?: DefaultChain
     }
 }

@@ -68,10 +68,11 @@ object Other {
     }
 
     object Ktor {
-        private const val version = "1.6.7"
-        const val client_core = "io.ktor:ktor-client-core:$version"
-        const val client_log = "io.ktor:ktor-client-logging:$version"
-        const val client_cio = "io.ktor:ktor-client-android:$version"
-        const val client_gson  = "io.ktor:ktor-client-gson:$version"
+        private const val ktor_version = "1.6.7"
+        const val client_core = "io.ktor:ktor-client-core:$ktor_version"
+        const val client_log = "io.ktor:ktor-client-logging:$ktor_version"
+        const val client_cio = "io.ktor:ktor-client-android:$ktor_version"
+        const val client_gson  = "io.ktor:ktor-client-gson:$ktor_version"
+        const val client_test = "io.ktor:ktor-client-mock:$ktor_version"
     }
 }

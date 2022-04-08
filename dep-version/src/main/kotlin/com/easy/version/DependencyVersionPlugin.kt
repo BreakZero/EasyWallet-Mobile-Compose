@@ -74,6 +74,12 @@ class DependencyVersionPlugin : Plugin<Project> {
                     buildConfigField("String", "BSCSCAN_APIKEY", bscscanApikey)
                 }
             } else {
+                packagingOptions {
+                    resources.excludes.add("META-INF/INDEX.LIST")
+                }
+                defaultConfig {
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                }
                 release {
                     isMinifyEnabled = true
                     proguardFiles(
