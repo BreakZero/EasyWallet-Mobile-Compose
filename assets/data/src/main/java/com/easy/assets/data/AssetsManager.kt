@@ -61,6 +61,8 @@ class AssetsManager @Inject constructor(
                 }
                 slug == "bitcoin" -> chains[slug] = BitcoinChain(ktorClient, walletRepository)
                 slug == "cardano" -> chains[slug] = CardanoChain(ktorClient, walletRepository)
+                slug == "polygon" -> chains[slug] = PolygonChain(ktorClient, walletRepository)
+                slug == "cronos" -> chains[slug] = CronosChain(ktorClient, walletRepository)
                 else -> Unit
             }
         }
