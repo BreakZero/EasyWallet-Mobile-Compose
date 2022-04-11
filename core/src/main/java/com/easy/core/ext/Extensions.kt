@@ -5,8 +5,8 @@ import com.easy.core.common.shex
 import com.easy.core.common.unhex
 import java.math.BigInteger
 
-fun ByteArray.toHex(): String {
-    return this.hex
+fun ByteArray.toHex(withPrefix: Boolean = false): String {
+    return if (withPrefix) "0x${this.hex}" else this.hex
 }
 
 fun String.toHexBytes(): ByteArray {

@@ -19,7 +19,7 @@ android {
         versionCode = BuildConfig.versionCode
         versionName = BuildConfig.versionName
 
-        // testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 //        vectorDrawables {
 //            useSupportLibrary true
 //        }

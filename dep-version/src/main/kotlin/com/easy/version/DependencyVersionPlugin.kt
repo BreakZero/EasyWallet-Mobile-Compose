@@ -36,9 +36,13 @@ class DependencyVersionPlugin : Plugin<Project> {
     @Suppress("UnstableApiUsage")
     private fun LibraryExtension.moduleConfig(isCore: Boolean) {
         compileSdk = BuildConfig.compileSdkVersion
+        packagingOptions {
+            resources.excludes.add("META-INF/INDEX.LIST")
+        }
         defaultConfig {
             minSdk = BuildConfig.minSdkVersion
             targetSdk = BuildConfig.targetSdkVersion
+            testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         }
         buildTypes {
             if (isCore) {
@@ -74,12 +78,6 @@ class DependencyVersionPlugin : Plugin<Project> {
                     buildConfigField("String", "BSCSCAN_APIKEY", bscscanApikey)
                 }
             } else {
-                packagingOptions {
-                    resources.excludes.add("META-INF/INDEX.LIST")
-                }
-                defaultConfig {
-                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-                }
                 release {
                     isMinifyEnabled = true
                     proguardFiles(

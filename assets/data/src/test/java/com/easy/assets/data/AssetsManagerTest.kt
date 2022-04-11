@@ -10,13 +10,11 @@ import io.ktor.http.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.test.runTest
-import org.junit.Assert.*
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
-import wallet.core.jni.CoinType
-import wallet.core.jni.HDWallet
 import java.io.File
 
 @OptIn(ExperimentalCoroutinesApi::class)
