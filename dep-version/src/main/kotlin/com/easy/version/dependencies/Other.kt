@@ -73,6 +73,7 @@ object Other {
         const val client_log = "io.ktor:ktor-client-logging:$ktor_version"
         const val client_cio = "io.ktor:ktor-client-android:$ktor_version"
         const val client_gson  = "io.ktor:ktor-client-gson:$ktor_version"
+        const val client_serializer  = "io.ktor:ktor-client-serialization:$ktor_version"
         const val client_test = "io.ktor:ktor-client-mock:$ktor_version"
     }
 }

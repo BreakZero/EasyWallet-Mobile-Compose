@@ -13,7 +13,7 @@ data class AbiParameter(
 )
 
 enum class AbiParameterType {
-    ADDRESS, UINT, STRING, BOOLEAN, UINT256, BYTEFIX, ARR_BYTE, ARR_UINT32, ARR_UINT256
+    ADDRESS, UINT, STRING, BOOLEAN, UINT256, BYTEFIX, ARR_BYTE, ARR_UINT32, ARR_UINT256, ARR_ADDRESS
 }
 
 object PayloadUtil {
@@ -39,6 +39,12 @@ object PayloadUtil {
                         (param.value as String).toByteArray(),
                         false
                     )
+                }
+                AbiParameterType.ARR_ADDRESS -> {
+                    function.addParamArray(false)
+                    (param.value as List<*>).forEach {
+                        function.addInArrayParamAddress(param.index, (it as String).toHexBytes())
+                    }
                 }
                 AbiParameterType.ARR_UINT256 -> {
                     function.addParamArray(false)

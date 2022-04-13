@@ -106,6 +106,7 @@ dependencies {
     implementation("com.google.guava:guava:30.1.1-android")
 
     implementation(com.easy.version.dependencies.Other.material)
+    implementation(com.easy.version.dependencies.Special.web3j_abi)
 
     composeUI()
 

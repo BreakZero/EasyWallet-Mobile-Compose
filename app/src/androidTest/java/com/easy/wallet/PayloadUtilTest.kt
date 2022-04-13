@@ -4,11 +4,20 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.easy.core.common.AbiParameter
 import com.easy.core.common.AbiParameterType
 import com.easy.core.common.PayloadUtil
+import com.easy.core.ext.clearHexPrefix
 import com.easy.core.ext.toHex
+import com.easy.core.ext.toHexBytes
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import org.junit.runner.RunWith
+import org.web3j.abi.FunctionEncoder
+import org.web3j.abi.TypeReference
+import org.web3j.abi.datatypes.*
+import org.web3j.abi.datatypes.Function
+import org.web3j.abi.datatypes.generated.*
 import wallet.core.jni.EthereumAbi
+import java.math.BigInteger
+
 
 @RunWith(AndroidJUnit4::class)
 class PayloadUtilTest {
@@ -18,7 +27,7 @@ class PayloadUtilTest {
 
     @Test
     fun testFFunction() {
-        val function = PayloadUtil.generate(
+        /*val function = PayloadUtil.generate(
             fnName = "f", params = listOf(
                 AbiParameter(
                     type = AbiParameterType.UINT,
@@ -42,17 +51,30 @@ class PayloadUtilTest {
                     value = "Hello, world!"
                 )
             )
+        )*/
+        val function = Function(
+            "f",
+            listOf(
+                Uint("291".toBigInteger()),
+                DynamicStruct(Uint32("1110".toBigInteger()), Uint32("1929".toBigInteger())),
+                Bytes10("1234567890".toByteArray()),
+                DynamicBytes("Hello, world!".toByteArray())
+            ),
+            listOf(
+                object : TypeReference<Uint256>() {},
+                object : TypeReference<Uint256>() {},
+                object : TypeReference<Uint256>() {}
+            )
         )
-        assertEquals("f(uint[],uint32[],bytes10,bytes)", function.type)
         assertEquals(
-            "0x8be6524600000000000000000000000000000000000000000000000000000000000001230000000000000000000000000000000000000000000000000000000000000080313233343536373839300000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000e0000000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000004560000000000000000000000000000000000000000000000000000000000000789000000000000000000000000000000000000000000000000000000000000000d48656c6c6f2c20776f726c642100000000000000000000000000000000000000",
-            EthereumAbi.encode(function).toHex(true)
+            "",
+            FunctionEncoder.encode(function)
         )
     }
 
     @Test
     fun testSamFunction() {
-        val function = PayloadUtil.generate(
+        /*val function = PayloadUtil.generate(
             fnName = "sam",
             params = listOf(
                 AbiParameter(
@@ -71,21 +93,30 @@ class PayloadUtilTest {
                     value = listOf(1.toString(16),2.toString(16),3.toString(16))
                 )
             )
+        )*/
+        val function = Function(
+            "sam",
+            listOf(
+                DynamicBytes("dave".toByteArray()),
+                Bool(true),
+                DynamicStruct(Uint256(BigInteger("1")), Uint256(BigInteger("2")), Uint256(BigInteger("3")))
+            ),
+            emptyList()
         )
-        assertEquals("sam(bytes,bool,uint256[])", function.type)
-//        assertEquals(
-//            "0xa5643bf2" +
-//                    "0000000000000000000000000000000000000000000000000000000000000060" +
-//                    "0000000000000000000000000000000000000000000000000000000000000001" +
-//                    "00000000000000000000000000000000000000000000000000000000000000a0" +
-//                    "0000000000000000000000000000000000000000000000000000000000000004" +
-//                    "6461766500000000000000000000000000000000000000000000000000000000" +
-//                    "0000000000000000000000000000000000000000000000000000000000000003" +
-//                    "0000000000000000000000000000000000000000000000000000000000000001" +
-//                    "0000000000000000000000000000000000000000000000000000000000000002" +
-//                    "0000000000000000000000000000000000000000000000000000000000000003",
-//            EthereumAbi.encode(function).toHex(true)
-//        )
+
+        assertEquals(
+            "0xa5643bf2" +
+                    "0000000000000000000000000000000000000000000000000000000000000060" +
+                    "0000000000000000000000000000000000000000000000000000000000000001" +
+                    "00000000000000000000000000000000000000000000000000000000000000a0" +
+                    "0000000000000000000000000000000000000000000000000000000000000004" +
+                    "6461766500000000000000000000000000000000000000000000000000000000" +
+                    "0000000000000000000000000000000000000000000000000000000000000003" +
+                    "0000000000000000000000000000000000000000000000000000000000000001" +
+                    "0000000000000000000000000000000000000000000000000000000000000002" +
+                    "0000000000000000000000000000000000000000000000000000000000000003",
+            FunctionEncoder.encode(function)
+        )
     }
 
     @Test
@@ -124,5 +155,64 @@ class PayloadUtilTest {
             "0xc5ebeaec0000000000000000000000000000000000000000000000000000000005f5e100",
             EthereumAbi.encode(function).toHex(true)
         )
+    }
+
+    @Test
+    fun testEnterMarkets() {
+        val function = PayloadUtil.generate(
+            fnName = "enterMarkets",
+            params = listOf(
+                AbiParameter(
+                    type = AbiParameterType.ARR_ADDRESS,
+                    index = 0,
+                    value = listOf("0xe1c4c56f772686909c28c319079d41adfd6ec89b".clearHexPrefix())
+                )
+            )
+        )
+        println("======= ${function.type}")
+        assertEquals(
+            "0xc299823800000000000000000000000000000000000000000000000000000000000000200000000000000000000000000000000000000000000000000000000000000001000000000000000000000000e1c4c56f772686909c28c319079d41adfd6ec89b",
+            EthereumAbi.encode(function).toHex(true)
+        )
+    }
+
+    @Test
+    fun testAccountLiquidity() {
+        val function = PayloadUtil.generate(
+            fnName = "getAccountLiquidity",
+            params = listOf(
+                AbiParameter(
+                    type = AbiParameterType.ADDRESS,
+                    index = 0,
+                    value = "0x81080a7e991bcDdDBA8C2302A70f45d6Bd369Ab5".clearHexPrefix()
+                )
+            )
+        )
+        assertEquals(
+            "0x5ec88c7900000000000000000000000081080a7e991bcdddba8c2302a70f45d6bd369ab5",
+            EthereumAbi.encode(function).toHex(true)
+        )
+    }
+
+    @Test
+    fun testDecoder() {
+        val function = Function(
+            "getAccountLiquidity",
+            listOf(Address("0x81080a7e991bcDdDBA8C2302A70f45d6Bd369Ab5")),
+            listOf(
+                object : TypeReference<Uint256>() {},
+                object : TypeReference<Uint256>() {},
+                object : TypeReference<Uint256>() {}
+            )
+        )
+        assertEquals(
+            "0x5ec88c7900000000000000000000000081080a7e991bcdddba8c2302a70f45d6bd369ab5",
+            FunctionEncoder.encode(function)
+        )
+        /*val result = FunctionReturnDecoder.decode(
+            "0x0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000307acbe5abed448f0000000000000000000000000000000000000000000000000000000000000000",
+            function.outputParameters
+        )
+        assertEquals("", result[1].value)*/
     }
 }
