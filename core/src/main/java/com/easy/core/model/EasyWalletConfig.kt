@@ -4,6 +4,7 @@ package com.easy.core.model
 
 import androidx.datastore.core.Serializer
 import com.easy.core.enums.Chain
+import com.easy.core.enums.ChainNetwork
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.InputStream
@@ -13,7 +14,7 @@ import java.util.*
 
 @Serializable
 data class AppSettings(
-    val chain: Chain,
+    val network: ChainNetwork,
     val localCurrency: EasyCurrency
 )
 
@@ -26,7 +27,7 @@ data class EasyCurrency(
 object AppSettingsSerializer : Serializer<AppSettings> {
     override val defaultValue: AppSettings
         get() = AppSettings(
-            chain = Chain.ETHEREUM,
+            network = ChainNetwork.MAIN,
             localCurrency = Currency.getInstance(Locale.US).let {
                 EasyCurrency(it.symbol, it.currencyCode)
             }

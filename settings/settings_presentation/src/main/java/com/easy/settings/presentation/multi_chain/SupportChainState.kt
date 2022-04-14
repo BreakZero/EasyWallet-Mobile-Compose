@@ -1,12 +1,8 @@
 package com.easy.settings.presentation.multi_chain
 
-import com.easy.core.enums.Chain
+import com.easy.core.enums.ChainNetwork
 
 data class SupportChainState(
-    val checkId: Int = Chain.ETHEREUM.id,
-    val supportChains: List<Chain>
-) {
-    fun selected(): Chain {
-        return supportChains.find { it.id == checkId } ?: Chain.ETHEREUM
-    }
-}
+    val selectedOne: ChainNetwork = ChainNetwork.MAIN,
+    val supportNetworks: List<ChainNetwork>
+)

@@ -54,13 +54,13 @@ fun SupportChainScreen(
         }
     ) {
         LazyColumn {
-            items(state.supportChains) {
+            items(state.supportNetworks) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    RadioButton(selected = it.id == state.checkId, onClick = {
-                        supportChainViewModel.onEvent(ChainEvent.OnSelected(it.id))
+                    RadioButton(selected = it == state.selectedOne, onClick = {
+                        supportChainViewModel.onEvent(ChainEvent.OnSelected(it))
                     })
                     Text(text = it.name)
                 }

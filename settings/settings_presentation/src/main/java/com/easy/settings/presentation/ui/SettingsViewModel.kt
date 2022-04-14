@@ -22,7 +22,7 @@ class SettingsViewModel @Inject constructor(
             appSettings.data.collect {
                 settingsState = settingsState.copy(
                     displayCurrency = it.localCurrency.code,
-                    currentNetwork = it.chain.name
+                    currentNetwork = it.network
                 )
             }
         }

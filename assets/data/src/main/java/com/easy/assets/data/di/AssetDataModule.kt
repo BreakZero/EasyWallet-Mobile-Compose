@@ -1,10 +1,12 @@
 package com.easy.assets.data.di
 
+import androidx.datastore.core.DataStore
 import com.easy.assets.data.AssetsManager
 import com.easy.assets.data.repository.AssetRepositoryImpl
 import com.easy.assets.data.repository.CoinRepositoryImpl
 import com.easy.assets.domain.repository.AssetRepository
 import com.easy.assets.domain.repository.CoinRepository
+import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import dagger.Binds
 import dagger.Module
@@ -32,9 +34,10 @@ abstract class AssetDataModule {
         @Singleton
         fun provideChains(
             ktorClient: HttpClient,
+            appSettings: DataStore<AppSettings>,
             walletRepositoryImpl: WalletRepositoryImpl
         ): AssetsManager {
-            return AssetsManager(ktorClient, walletRepositoryImpl)
+            return AssetsManager(ktorClient, appSettings, walletRepositoryImpl)
         }
     }
 }

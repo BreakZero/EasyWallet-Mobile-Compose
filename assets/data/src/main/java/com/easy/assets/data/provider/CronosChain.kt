@@ -1,5 +1,6 @@
 package com.easy.assets.data.provider
 
+import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.errors.InsufficientBalanceException
 import com.easy.assets.data.remote.BaseRpcRequest
@@ -7,18 +8,22 @@ import com.easy.assets.data.remote.CallBalance
 import com.easy.assets.data.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.remote.dto.EthTxResponseDto
 import com.easy.assets.domain.model.TransactionPlan
+import com.easy.core.BuildConfig
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.common.hex
+import com.easy.core.enums.ChainNetwork
 import com.easy.core.ext._16toNumber
 import com.easy.core.ext.clearHexPrefix
 import com.easy.core.ext.toHexByteArray
+import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import com.google.protobuf.ByteString
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import wallet.core.java.AnySigner
@@ -27,6 +32,7 @@ import wallet.core.jni.proto.Ethereum
 import java.math.BigInteger
 
 internal class CronosChain(
+    private val appSettings: DataStore<AppSettings>,
     private val ktorClient: HttpClient,
     private val walletRepository: WalletRepositoryImpl
 ) : IChain {
@@ -81,29 +87,12 @@ internal class CronosChain(
         }
     }
 
-    private suspend fun estimateGasLimit() = withContext(Dispatchers.IO) {
-        21000L
-    }
-
-    private suspend fun fetchNonce() = withContext(Dispatchers.IO) {
-        val reqBody = BaseRpcRequest(
-            id = 1,
-            jsonrpc = "2.0",
-            method = "eth_getTransactionCount",
-            params = listOf(address(), "latest")
-        )
-        val nonce = ktorClient.post() {
-            url(HttpRoutes.CRONOS_BASE_URL)
-            setBody(reqBody)
-        }.body<BaseRpcResponseDto<String>>().result
-        nonce._16toNumber()
-    }
-
     override fun address(): String {
         return walletRepository.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
     }
 
     override suspend fun balance(contract: String?) = withContext(Dispatchers.IO) {
+        val rpc = getRpc()
         try {
             val reqBody = if (contract.isNullOrEmpty()) {
                 BaseRpcRequest(
@@ -127,7 +116,7 @@ internal class CronosChain(
                 )
             }
             val response: BaseRpcResponseDto<String> = ktorClient.post {
-                url(HttpRoutes.CRONOS_BASE_URL)
+                url(rpc)
                 setBody(reqBody)
             }.body()
             response.result.clearHexPrefix().toBigInteger(16)
@@ -142,34 +131,55 @@ internal class CronosChain(
         limit: Int,
         contract: String?
     ): NetworkResponse<EthTxResponseDto> = withContext(Dispatchers.IO) {
-        Timber.d(message = "offset: $offset, limit: $limit")
-        val url = if (contract.isNullOrEmpty()) {
-            """
-            https://cronos.org/explorer/api?
-            module=account
-            &action=txlist
-            &address=${address()}
-            &page=$limit
-            &offset=$offset
-            &sort=desc
-            """.trimIndent()
-        } else {
-            """
-            https://cronos.org/explorer/api?
-            module=account
-            &action=tokentx
-            &contractaddress=$contract
-            &address=${address()}
-            &page=$limit
-            &offset=$offset
-            &sort=desc
-            """.trimIndent()
-        }
+        val explorerUrl = getExplorerUrl()
         try {
-            val response: EthTxResponseDto = ktorClient.get(urlString = url).body()
+            val response: EthTxResponseDto = ktorClient.get {
+                url(explorerUrl)
+                parameter("module", "account")
+                parameter("action", "txlist")
+                parameter("address", address())
+                parameter("page", limit)
+                parameter("offset", offset)
+                parameter("sort", "desc")
+                parameter("apikey", BuildConfig.ETHERSCAN_APIKEY)
+                if (!contract.isNullOrEmpty()) {
+                    parameter("contractaddress", contract)
+                }
+            }.body()
             NetworkResponse.Success(response)
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
+        }
+    }
+    private suspend fun estimateGasLimit() = withContext(Dispatchers.IO) {
+        21000L
+    }
+
+    private suspend fun fetchNonce() = withContext(Dispatchers.IO) {
+        val rpc = getRpc()
+        val reqBody = BaseRpcRequest(
+            id = 1,
+            jsonrpc = "2.0",
+            method = "eth_getTransactionCount",
+            params = listOf(address(), "latest")
+        )
+        val nonce = ktorClient.post() {
+            url(rpc)
+            setBody(reqBody)
+        }.body<BaseRpcResponseDto<String>>().result
+        nonce._16toNumber()
+    }
+    private suspend fun getRpc(): String {
+        return when (appSettings.data.first().network) {
+            ChainNetwork.MAIN -> HttpRoutes.CRONOS_MAINNET_RPC
+            else -> HttpRoutes.CRONOS_TESTNET_RPC
+        }
+    }
+
+    private suspend fun getExplorerUrl(): String {
+        return when (appSettings.data.first().network) {
+            ChainNetwork.MAIN -> HttpRoutes.CRONOS_MAINNET_EXPLORER
+            else -> HttpRoutes.CRONOS_TESTNET_EXPLORER
         }
     }
 }

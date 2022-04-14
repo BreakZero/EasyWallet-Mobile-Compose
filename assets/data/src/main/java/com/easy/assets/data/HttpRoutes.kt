@@ -4,12 +4,24 @@ import com.easy.core.BuildConfig
 
 internal object HttpRoutes {
     private const val EHT_RPC = "https://mainnet.infura.io/v3"
-//    private const val BASE_URL = "https://ropsten.infura.io/v3"
-//    private const val BASE_URL = "https://rinkeby.infura.io/v3"
     private const val CRONOS_RPC = "https://rpc.tectonic.finance"
     private const val POLYGON_RPC = "https://polygon-rpc.com"
 
-    const val ETHEREUM_BASE_URL = "$EHT_RPC/${BuildConfig.INFURA_APIKEY}"
-    const val CRONOS_BASE_URL = CRONOS_RPC
-    const val POLYGON_BASE_URL = POLYGON_RPC
+    const val MAINNET_RPC = "https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}"
+    const val MAINNET_EXPLORER = "https://api.etherscan.io/api"
+    const val ROPSTEN_RPC = "https://ropsten.infura.io/v3/${BuildConfig.INFURA_APIKEY}"
+    const val ROPSTEN_EXPLORER = "https://api-ropsten.etherscan.io/api"
+    const val RINKEBY_RPC = "https://rinkeby.infura.io/v3/${BuildConfig.INFURA_APIKEY}"
+    const val RINKEBY_EXPLORER = "https://api-rinkeby.etherscan.io/api"
+
+
+    const val CRONOS_MAINNET_RPC = "https://rpc.tectonic.finance"
+    const val CRONOS_MAINNET_EXPLORER = "https://cronos.org/explorer/api"
+    const val CRONOS_TESTNET_RPC = "https://rpc.tectonic.finance"
+    const val CRONOS_TESTNET_EXPLORER = "https://cronos.org/explorer/api"
+
+    const val POLYGON_MAINNET_RPC = "https://polygon-rpc.com"
+    const val POLYGON_MAINNET_EXPLORER = "https://api.polygonscan.com/api"
+    const val POLYGON_TESTNET_RPC = "https://polygon-rpc.com"
+    const val POLYGON_TESTNET_EXPLORER = "https://api.polygonscan.com/api"
 }

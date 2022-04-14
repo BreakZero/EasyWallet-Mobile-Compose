@@ -1,10 +1,12 @@
 package com.easy.assets.data
 
+import androidx.datastore.core.DataStore
 import com.easy.assets.data.mapper.toAsset
 import com.easy.assets.data.provider.*
 import com.easy.assets.data.remote.dto.CoinConfigDto
 import com.easy.assets.data.remote.dto.CoinConfigResponseDto
 import com.easy.assets.domain.model.AssetInfo
+import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -16,6 +18,7 @@ import kotlin.collections.set
 
 class AssetsManager @Inject constructor(
     private val ktorClient: HttpClient,
+    private val appSettings: DataStore<AppSettings>,
     private val walletRepository: WalletRepositoryImpl
 ) {
     private val mutex = Mutex()
@@ -56,12 +59,12 @@ class AssetsManager @Inject constructor(
         if (chains[slug] == null) {
             when {
                 slug == "ethereum" || config.tag.equals("ERC20", true) -> {
-                    chains[slug] = EthereumChain(ktorClient, walletRepository)
+                    chains[slug] = EthereumChain(appSettings, ktorClient, walletRepository)
                 }
                 slug == "bitcoin" -> chains[slug] = BitcoinChain(ktorClient, walletRepository)
                 slug == "cardano" -> chains[slug] = CardanoChain(ktorClient, walletRepository)
-                slug == "polygon" -> chains[slug] = PolygonChain(ktorClient, walletRepository)
-                slug == "cronos" -> chains[slug] = CronosChain(ktorClient, walletRepository)
+                slug == "polygon" -> chains[slug] = PolygonChain(appSettings, ktorClient, walletRepository)
+                slug == "cronos" -> chains[slug] = CronosChain(appSettings, ktorClient, walletRepository)
                 else -> Unit
             }
         }

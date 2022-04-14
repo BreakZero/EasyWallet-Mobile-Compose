@@ -94,7 +94,7 @@ fun SettingsScreen(
             MenuBlockView(
                 modifier = Modifier.fillMaxWidth(), header = "Account", menus = listOf(
                     MenuItem(title = "Display Currency", endValue = settingsState.displayCurrency),
-                    MenuItem(title = "Network Settings", endValue = settingsState.currentNetwork)
+                    MenuItem(title = "Network Settings", endValue = settingsState.currentNetwork.label)
                 )
             ) {
                 when(it) {

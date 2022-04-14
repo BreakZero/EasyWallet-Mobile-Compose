@@ -7,6 +7,7 @@ import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easy.core.enums.Chain
+import com.easy.core.enums.SUPPORT_NETWORKS
 import com.easy.core.model.AppSettings
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -22,10 +23,7 @@ class SupportChainViewModel @Inject constructor(
 ) : ViewModel() {
     var state: SupportChainState by mutableStateOf(
         SupportChainState(
-            supportChains = listOf(
-                Chain.ETHEREUM,
-                Chain.MATIC
-            )
+            supportNetworks = SUPPORT_NETWORKS
         )
     )
     private val _uiEvent = Channel<ChainUIEvent>()
@@ -35,7 +33,7 @@ class SupportChainViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             appSettings.data.collect {
                 withContext(Dispatchers.Main) {
-                    state = state.copy(checkId = it.chain.id)
+                    state = state.copy(selectedOne = it.network)
                 }
             }
         }
@@ -50,14 +48,14 @@ class SupportChainViewModel @Inject constructor(
                 }
             }
             is ChainEvent.OnSelected -> {
-                state = state.copy(checkId = event.selectedId)
+                state = state.copy(selectedOne = event.network)
             }
         }
     }
 
     private suspend fun updateChain() {
         appSettings.updateData {
-            it.copy(chain = state.selected())
+            it.copy(network = state.selectedOne)
         }
     }
 }
