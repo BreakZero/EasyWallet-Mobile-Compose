@@ -2,16 +2,12 @@ package com.easy.assets.data
 
 import com.easy.assets.data.mapper.toAsset
 import com.easy.assets.data.provider.*
-import com.easy.assets.data.provider.BitcoinChain
-import com.easy.assets.data.provider.CardanoChain
-import com.easy.assets.data.provider.DefaultChain
-import com.easy.assets.data.provider.EthereumChain
-import com.easy.assets.data.provider.IChain
 import com.easy.assets.data.remote.dto.CoinConfigDto
 import com.easy.assets.data.remote.dto.CoinConfigResponseDto
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.wallets.repository.WalletRepositoryImpl
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -27,7 +23,10 @@ class AssetsManager @Inject constructor(
 
     internal suspend fun fetchAssets(): List<AssetInfo> {
         return kotlin.runCatching {
-            ktorClient.get<CoinConfigResponseDto>("http://141.164.63.231:8080/currencies")
+            val responseDto: CoinConfigResponseDto = ktorClient.get(
+                urlString = "http://141.164.63.231:8080/currencies"
+            ).body()
+            responseDto
         }.onFailure {
             it.printStackTrace()
         }.map { it.result }.getOrNull()?.let { it ->

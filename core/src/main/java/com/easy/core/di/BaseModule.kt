@@ -1,7 +1,6 @@
 package com.easy.core.di
 
 import android.content.Context
-import androidx.datastore.core.DataMigration
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.core.handlers.ReplaceFileCorruptionHandler
@@ -20,11 +19,12 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import io.ktor.client.engine.android.*
-import io.ktor.client.features.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.logging.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import io.ktor.serialization.gson.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -41,17 +41,20 @@ object BaseModule {
     @Singleton
     fun ktorClient(): HttpClient {
         return HttpClient(Android) {
-            install(DefaultRequest) {
+            defaultRequest {
                 header("Content-type", "application/json")
                 contentType(ContentType.Application.Json)
             }
-            install(JsonFeature) {
-                serializer = GsonSerializer()
+            install(ContentNegotiation) {
+                gson {
+                    setPrettyPrinting()
+                    serializeNulls()
+                }
             }
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        Timber.tag("HTTPS ===== |").d(message)
+                        Timber.d(message)
                     }
                 }
                 level = LogLevel.BODY

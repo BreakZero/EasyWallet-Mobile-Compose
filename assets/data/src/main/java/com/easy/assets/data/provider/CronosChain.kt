@@ -18,7 +18,6 @@ import com.google.protobuf.ByteString
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
@@ -93,11 +92,10 @@ internal class CronosChain(
             method = "eth_getTransactionCount",
             params = listOf(address(), "latest")
         )
-        val nonce = ktorClient.post<BaseRpcResponseDto<String>>(
-            urlString = HttpRoutes.CRONOS_BASE_URL
-        ) {
-            body = reqBody
-        }.result
+        val nonce = ktorClient.post() {
+            url(HttpRoutes.CRONOS_BASE_URL)
+            setBody(reqBody)
+        }.body<BaseRpcResponseDto<String>>().result
         nonce._16toNumber()
     }
 
@@ -128,12 +126,11 @@ internal class CronosChain(
                     )
                 )
             }
-            val response = ktorClient
-                .post<HttpResponse>(HttpRoutes.CRONOS_BASE_URL) {
-                    body = reqBody
-                }
-            response.receive<BaseRpcResponseDto<String>>().result.clearHexPrefix()
-                .toBigInteger(16)
+            val response: BaseRpcResponseDto<String> = ktorClient.post {
+                url(HttpRoutes.CRONOS_BASE_URL)
+                setBody(reqBody)
+            }.body()
+            response.result.clearHexPrefix().toBigInteger(16)
         } catch (e: Exception) {
             e.printStackTrace()
             BigInteger.ZERO
@@ -169,8 +166,8 @@ internal class CronosChain(
             """.trimIndent()
         }
         try {
-            val response = ktorClient.get<HttpResponse>(url)
-            NetworkResponse.Success(response.receive())
+            val response: EthTxResponseDto = ktorClient.get(urlString = url).body()
+            NetworkResponse.Success(response)
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }

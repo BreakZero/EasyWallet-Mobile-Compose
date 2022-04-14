@@ -1,6 +1,6 @@
 package com.easy.core.common
 
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import java.nio.channels.UnresolvedAddressException
 
 object NetworkResponseCode {

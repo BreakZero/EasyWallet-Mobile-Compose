@@ -101,12 +101,11 @@ internal class PolygonChain(
             method = "eth_feeHistory",
             params = listOf("0xF", "latest", listOf(25, 50, 75))
         )
-        val feeHistories = ktorClient.post<BaseRpcResponseDto<FeeHistoryDto>>(
-            urlString = HttpRoutes.POLYGON_BASE_URL
-        ) {
-            body = reqBody
-        }.result
-        val baseFee = formatFeeHistory(feeHistories)
+        val feeHistoryDto: BaseRpcResponseDto<FeeHistoryDto> = ktorClient.post {
+            url(HttpRoutes.POLYGON_BASE_URL)
+            setBody(reqBody)
+        }.body()
+        val baseFee = formatFeeHistory(feeHistoryDto.result)
         Pair(baseFee, baseFee)
     }
 
@@ -117,11 +116,10 @@ internal class PolygonChain(
             method = "eth_getTransactionCount",
             params = listOf(address(), "latest")
         )
-        val nonce = ktorClient.post<BaseRpcResponseDto<String>>(
-            urlString = HttpRoutes.POLYGON_BASE_URL
-        ) {
-            body = reqBody
-        }.result
+        val nonce = ktorClient.post() {
+            url(HttpRoutes.POLYGON_BASE_URL)
+            setBody(reqBody)
+        }.body<BaseRpcResponseDto<String>>().result
         nonce._16toNumber()
     }
 
@@ -152,12 +150,11 @@ internal class PolygonChain(
                     )
                 )
             }
-            val response = ktorClient
-                .post<HttpResponse>(HttpRoutes.POLYGON_BASE_URL) {
-                    body = reqBody
-                }
-            response.receive<BaseRpcResponseDto<String>>().result.clearHexPrefix()
-                .toBigInteger(16)
+            val response: BaseRpcResponseDto<String> = ktorClient.post {
+                url(HttpRoutes.POLYGON_BASE_URL)
+                setBody(reqBody)
+            }.body()
+            response.result.clearHexPrefix().toBigInteger(16)
         } catch (e: Exception) {
             e.printStackTrace()
             BigInteger.ZERO
@@ -195,8 +192,8 @@ internal class PolygonChain(
             """.trimIndent()
         }
         try {
-            val response = ktorClient.get<HttpResponse>(url)
-            NetworkResponse.Success(response.receive())
+            val response: EthTxResponseDto = ktorClient.get(urlString = url).body()
+            NetworkResponse.Success(response)
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
