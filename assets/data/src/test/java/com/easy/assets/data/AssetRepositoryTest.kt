@@ -1,6 +1,10 @@
 package com.easy.assets.data
 
+import androidx.datastore.core.DataStore
 import com.easy.assets.data.repository.AssetRepositoryImpl
+import com.easy.core.enums.ChainNetwork
+import com.easy.core.model.AppSettings
+import com.easy.core.model.EasyCurrency
 import com.easy.wallets.data.WalletDao
 import com.easy.wallets.repository.WalletRepositoryImpl
 import io.ktor.client.*
@@ -11,9 +15,13 @@ import io.ktor.serialization.gson.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
+import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Before
@@ -25,6 +33,7 @@ import wallet.core.jni.CoinType
 import wallet.core.jni.HDWallet
 import java.io.File
 import java.math.BigInteger
+import java.util.*
 
 @OptIn(ExperimentalCoroutinesApi::class)
 class AssetRepositoryTest {
@@ -34,12 +43,26 @@ class AssetRepositoryTest {
 
     @Mock
     private lateinit var walletDao: WalletDao
+
+    @Mock
+    private lateinit var appSettings: DataStore<AppSettings>
     private lateinit var assetsManager: AssetsManager
 
     @Before
     fun setUp() {
         val testDispatcher = StandardTestDispatcher()
         Dispatchers.setMain(testDispatcher)
+        appSettings = mock() {
+            onBlocking { data } doReturn flow { emit(
+                AppSettings(
+                    ChainNetwork.MAIN,
+                    Currency.getInstance(
+                        Locale.US
+                    ).let {
+                        EasyCurrency(it.symbol, it.currencyCode)
+                    })
+            ) }
+        }
         hdWallet = mock() {
             on { getAddressForCoin(CoinType.ETHEREUM) } doReturn "0xa4531dE99E22B2166d340E7221669DF565c52024"
         }
@@ -63,7 +86,7 @@ class AssetRepositoryTest {
                 }
             }
         }
-        assetsManager = AssetsManager(httpClient, walletRepositoryImpl)
+        assetsManager = AssetsManager(httpClient, appSettings, walletRepositoryImpl)
     }
 
     @Test
@@ -78,5 +101,10 @@ class AssetRepositoryTest {
         val assetRepositoryImpl = AssetRepositoryImpl(assetsManager)
         assetsManager.fetchAssets()
         assertFalse(assetRepositoryImpl.transactions("bitcoin", 0, 0, null).isSuccess)
+    }
+
+    @After
+    fun cleanUp() {
+        Dispatchers.resetMain()
     }
 }

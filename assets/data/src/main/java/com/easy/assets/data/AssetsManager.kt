@@ -29,29 +29,24 @@ class AssetsManager @Inject constructor(
             val responseDto: CoinConfigResponseDto = ktorClient.get(
                 urlString = "http://141.164.63.231:8080/currencies"
             ).body()
-            responseDto
-        }.onFailure {
-            it.printStackTrace()
-        }.map { it.result }.getOrNull()?.let { it ->
-            it.map { item ->
-                mutex.withLock {
-                    syncChains(item)
-                }
-                item.toAsset()
-            }
-        }?.sortedBy { it.tag } ?: listOf(
-            CoinConfigDto(
-                coinSlug = "ethereum",
-                coinSymbol = "ETH",
-                contractAddress = null,
-                decimal = 18,
-                iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/ethereum.png",
-                tag = null
+            responseDto.result
+        }.getOrElse {
+            listOf(
+                CoinConfigDto(
+                    coinSlug = "ethereum",
+                    coinSymbol = "ETH",
+                    contractAddress = null,
+                    decimal = 18,
+                    iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/ethereum.png",
+                    tag = null
+                )
             )
-        ).map {
-            syncChains(it)
-            it.toAsset()
-        }
+        }.map { item ->
+            mutex.withLock {
+                syncChains(item)
+            }
+            item.toAsset()
+        }.sortedBy { it.tag }
     }
 
     private fun syncChains(config: CoinConfigDto) {
