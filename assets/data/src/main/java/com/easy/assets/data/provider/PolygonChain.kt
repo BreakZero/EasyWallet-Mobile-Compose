@@ -3,7 +3,6 @@ package com.easy.assets.data.provider
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.errors.InsufficientBalanceException
-import com.easy.assets.data.errors.UnSupportChainException
 import com.easy.assets.data.remote.BaseRpcRequest
 import com.easy.assets.data.remote.CallBalance
 import com.easy.assets.data.remote.dto.BaseRpcResponseDto
@@ -24,11 +23,9 @@ import com.google.protobuf.ByteString
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import wallet.core.java.AnySigner
 import wallet.core.jni.CoinType
 import wallet.core.jni.proto.Ethereum
@@ -44,7 +41,6 @@ internal class PolygonChain(
             val balance = balance(plan.contract)
             val nonce = fetchNonce()
             val (baseFee, priorityFee) = feeHistory()
-            Timber.d(message = "base: $baseFee, priority: $priorityFee")
             val gasLimit = estimateGasLimit()
             if (balance < plan.amount) throw InsufficientBalanceException()
             val prvKey =
