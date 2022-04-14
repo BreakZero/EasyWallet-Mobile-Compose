@@ -12,6 +12,7 @@ import com.easy.core.BuildConfig
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.common.hex
+import com.easy.core.enums.Chain
 import com.easy.core.enums.ChainNetwork
 import com.easy.core.ext._16toNumber
 import com.easy.core.ext.clearHexPrefix
@@ -25,7 +26,6 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
-import timber.log.Timber
 import wallet.core.java.AnySigner
 import wallet.core.jni.CoinType
 import wallet.core.jni.proto.Ethereum
@@ -38,6 +38,7 @@ internal class CronosChain(
 ) : IChain {
     override suspend fun sign(plan: TransactionPlan): String {
         return withContext(Dispatchers.IO) {
+            val chainId = getChainId()
             val balance = balance(plan.contract)
             val nonce = fetchNonce()
             val gasLimit = estimateGasLimit()
@@ -52,7 +53,7 @@ internal class CronosChain(
                 Ethereum.SigningInput.newBuilder().apply {
                     this.privateKey = prvKey
                     this.toAddress = it
-                    this.chainId = ByteString.copyFrom("25".toBigInteger().toByteArray())
+                    this.chainId = ByteString.copyFrom(chainId.toHexByteArray())
                     this.nonce = ByteString.copyFrom(nonce.toHexByteArray())
                     this.txMode = Ethereum.TransactionMode.Legacy
                     this.gasPrice = ByteString.copyFrom("100".toBigInteger().toHexByteArray())
@@ -68,7 +69,7 @@ internal class CronosChain(
                 Ethereum.SigningInput.newBuilder().apply {
                     this.privateKey = prvKey
                     this.toAddress = plan.to
-                    this.chainId = ByteString.copyFrom("4".toBigInteger().toByteArray())
+                    this.chainId = ByteString.copyFrom(chainId.toHexByteArray())
                     this.nonce = ByteString.copyFrom(nonce.toHexByteArray())
                     this.txMode = Ethereum.TransactionMode.Enveloped
                     this.gasPrice = ByteString.copyFrom("100".toBigInteger().toHexByteArray())
@@ -91,7 +92,7 @@ internal class CronosChain(
         return walletRepository.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
     }
 
-    override suspend fun balance(contract: String?) = withContext(Dispatchers.IO) {
+    override suspend fun balance(contract: String?): BigInteger = withContext(Dispatchers.IO) {
         val rpc = getRpc()
         try {
             val reqBody = if (contract.isNullOrEmpty()) {
@@ -169,6 +170,14 @@ internal class CronosChain(
         }.body<BaseRpcResponseDto<String>>().result
         nonce._16toNumber()
     }
+
+    private suspend fun getChainId(): Int {
+        return when (appSettings.data.first().network) {
+            ChainNetwork.MAIN -> Chain.CRONOS.id
+            else -> Chain.CRONOS_TEST.id
+        }
+    }
+
     private suspend fun getRpc(): String {
         return when (appSettings.data.first().network) {
             ChainNetwork.MAIN -> HttpRoutes.CRONOS_MAINNET_RPC

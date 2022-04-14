@@ -13,6 +13,7 @@ import com.easy.core.BuildConfig
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.common.hex
+import com.easy.core.enums.Chain
 import com.easy.core.enums.ChainNetwork
 import com.easy.core.ext._16toNumber
 import com.easy.core.ext.clearHexPrefix
@@ -40,6 +41,7 @@ internal class PolygonChain(
         return withContext(Dispatchers.IO) {
             val balance = balance(plan.contract)
             val nonce = fetchNonce()
+            val chainId = getChainId()
             val (baseFee, priorityFee) = feeHistory()
             val gasLimit = estimateGasLimit()
             if (balance < plan.amount) throw InsufficientBalanceException()
@@ -53,7 +55,7 @@ internal class PolygonChain(
                 Ethereum.SigningInput.newBuilder().apply {
                     this.privateKey = prvKey
                     this.toAddress = it
-                    this.chainId = ByteString.copyFrom("4".toBigInteger().toByteArray())
+                    this.chainId = ByteString.copyFrom(chainId.toHexByteArray())
                     this.nonce = ByteString.copyFrom(nonce.toHexByteArray())
                     this.txMode = Ethereum.TransactionMode.Enveloped
                     this.maxFeePerGas = ByteString.copyFrom(baseFee.toHexByteArray())
@@ -71,7 +73,7 @@ internal class PolygonChain(
                 Ethereum.SigningInput.newBuilder().apply {
                     this.privateKey = prvKey
                     this.toAddress = plan.to
-                    this.chainId = ByteString.copyFrom("137".toBigInteger().toHexByteArray())
+                    this.chainId = ByteString.copyFrom(chainId.toHexByteArray())
                     this.nonce = ByteString.copyFrom(nonce.toHexByteArray())
                     this.txMode = Ethereum.TransactionMode.Enveloped
                     this.maxFeePerGas = ByteString.copyFrom(baseFee.toHexByteArray())
@@ -95,7 +97,7 @@ internal class PolygonChain(
         return walletRepository.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
     }
 
-    override suspend fun balance(contract: String?) = withContext(Dispatchers.IO) {
+    override suspend fun balance(contract: String?): BigInteger = withContext(Dispatchers.IO) {
         val rpc = getRpc()
         try {
             val reqBody = if (contract.isNullOrEmpty()) {
@@ -206,6 +208,14 @@ internal class PolygonChain(
         val sum = firstPercentialPriorityFees.reduce { acc, bigInteger -> acc.plus(bigInteger) }
         val manual = sum.divide(firstPercentialPriorityFees.size.toBigInteger())
         return manual
+    }
+
+
+    private suspend fun getChainId(): Int {
+        return when (appSettings.data.first().network) {
+            ChainNetwork.MAIN -> Chain.POLYGON.id
+            else -> Chain.POLYGON_TEST.id
+        }
     }
 
     private suspend fun getRpc(): String {
