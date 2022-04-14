@@ -5,8 +5,9 @@ import com.easy.wallets.data.WalletDao
 import com.easy.wallets.repository.WalletRepositoryImpl
 import io.ktor.client.*
 import io.ktor.client.engine.mock.*
-import io.ktor.client.features.json.*
+import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.http.*
+import io.ktor.serialization.gson.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -55,8 +56,11 @@ class AssetRepositoryTest {
             )
         }
         val httpClient = HttpClient(mockEngine) {
-            install(JsonFeature) {
-                serializer = GsonSerializer()
+            install(ContentNegotiation) {
+                gson {
+                    setPrettyPrinting()
+                    serializeNulls()
+                }
             }
         }
         assetsManager = AssetsManager(httpClient, walletRepositoryImpl)
