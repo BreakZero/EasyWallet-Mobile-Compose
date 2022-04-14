@@ -7,7 +7,7 @@ import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import java.math.BigInteger
 
-internal class DefaultChain: IChain {
+internal object DefaultChain: IChain {
     override suspend fun sign(plan: TransactionPlan): String {
         return ""
     }

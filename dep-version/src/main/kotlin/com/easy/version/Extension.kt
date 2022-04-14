@@ -2,15 +2,28 @@ package com.easy.version
 
 import com.easy.version.dependencies.AndroidX
 import com.easy.version.dependencies.Compose
+import com.easy.version.dependencies.Other
+import com.easy.version.dependencies.Tester
 import org.gradle.kotlin.dsl.DependencyHandlerScope
 
 fun DependencyHandlerScope.unitTestDependencies() {
     "testImplementation"("junit:junit:4.13.2")
+    "testImplementation"(Tester.arch_core_testing)
+    "testImplementation"(Tester.mockito_kotlin)
+    "testImplementation"(Tester.coroutines_test)
+    "testImplementation"(Tester.turbine)
+    "testImplementation"(Other.Ktor.client_test)
 }
 
 fun DependencyHandlerScope.androidTestDependencies() {
     "androidTestImplementation"("androidx.test.ext:junit:1.1.3")
     "androidTestImplementation"("androidx.test.espresso:espresso-core:3.4.0")
+    "androidTestImplementation"("com.google.guava:guava:30.1.1-android")
+    "androidTestImplementation"(Tester.arch_core_testing)
+    "androidTestImplementation"(Tester.mockito_kotlin)
+    "androidTestImplementation"(Tester.coroutines_test)
+    "androidTestImplementation"(Tester.turbine)
+    "androidTestImplementation"(Other.Ktor.client_test)
 }
 
 fun DependencyHandlerScope.hiltDependencies() {

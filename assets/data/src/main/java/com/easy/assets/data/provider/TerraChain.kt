@@ -28,7 +28,7 @@ internal class TerraChain(
     }
 
     override fun address(): String {
-        return walletRepository.hdWallet.getAddressForCoin(CoinType.TERRA)
+        return walletRepository.hdWallet().getAddressForCoin(CoinType.TERRA)
     }
 
     override suspend fun balance(contract: String?): BigInteger {

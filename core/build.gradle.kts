@@ -22,8 +22,9 @@ dependencies {
     api(Other.timber)
 
     api(Other.Ktor.client_core)
-    api(Other.Ktor.client_cio)
+    api(Other.Ktor.client_android)
     api(Other.Ktor.client_log)
+    api(Other.Ktor.client_negotiation)
     api(Other.Ktor.client_gson)
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 

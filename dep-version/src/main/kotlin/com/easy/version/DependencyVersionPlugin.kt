@@ -36,15 +36,20 @@ class DependencyVersionPlugin : Plugin<Project> {
     @Suppress("UnstableApiUsage")
     private fun LibraryExtension.moduleConfig(isCore: Boolean) {
         compileSdk = BuildConfig.compileSdkVersion
+        packagingOptions {
+            resources.excludes.add("META-INF/INDEX.LIST")
+        }
         defaultConfig {
             minSdk = BuildConfig.minSdkVersion
             targetSdk = BuildConfig.targetSdkVersion
+            testInstrumentationRunner = "android.support.test.runner.AndroidJUnitRunner"
         }
         buildTypes {
             if (isCore) {
                 val keysProperties = keyStoreProperties()
                 val infuraApiKey = keysProperties.getProperty("apikey.infura")
                 val etherscanApiKey = keysProperties.getProperty("apikey.etherscan")
+                val polygonscanApiKey = keysProperties.getProperty("apikey.polygonscan")
                 val figmentApiKey = keysProperties.getProperty("apikey.figment")
                 val bscscanApikey = keysProperties.getProperty("apikey.bscscan")
                 val bscrpcApikey = keysProperties.getProperty("apikey.bscrpcscan")
@@ -56,6 +61,7 @@ class DependencyVersionPlugin : Plugin<Project> {
                     )
                     buildConfigField("String", "INFURA_APIKEY", infuraApiKey)
                     buildConfigField("String", "ETHERSCAN_APIKEY", etherscanApiKey)
+                    buildConfigField("String", "POLYGONSCAN_APIKEY", polygonscanApiKey)
                     buildConfigField("String", "FIGMENT_APIKEY", figmentApiKey)
                     buildConfigField("String", "BSCRPC_APIKEY", bscrpcApikey)
                     buildConfigField("String", "BSCSCAN_APIKEY", bscscanApikey)
@@ -69,6 +75,7 @@ class DependencyVersionPlugin : Plugin<Project> {
                     )
                     buildConfigField("String", "INFURA_APIKEY", infuraApiKey)
                     buildConfigField("String", "ETHERSCAN_APIKEY", etherscanApiKey)
+                    buildConfigField("String", "POLYGONSCAN_APIKEY", polygonscanApiKey)
                     buildConfigField("String", "FIGMENT_APIKEY", figmentApiKey)
                     buildConfigField("String", "BSCRPC_APIKEY", bscrpcApikey)
                     buildConfigField("String", "BSCSCAN_APIKEY", bscscanApikey)

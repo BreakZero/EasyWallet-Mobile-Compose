@@ -16,7 +16,6 @@ class SecurityUtil @Inject constructor() {
     }
     private val charset by lazy {
         charset("UTF-8")
-
     }
     private val keyStore by lazy {
         KeyStore.getInstance(provider).apply {
