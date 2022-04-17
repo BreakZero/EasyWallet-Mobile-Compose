@@ -1,4 +1,4 @@
-name: Build dev and preprod for each commit
+name: Unit Test
 on: [push]
 jobs:
   Build:
