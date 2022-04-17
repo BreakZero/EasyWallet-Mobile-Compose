@@ -74,7 +74,7 @@ fun MainScreen(
                 }
                 is MainUIEvent.OnSettingsClick -> onNavigateTo.invoke(Navigator(router = AssetRouter.SETTINGS))
                 is MainUIEvent.OnReceiveClick -> bottomSheetState.show()
-                is MainUIEvent.OnSendClick -> Unit
+                else -> Unit
             }
         }
     }

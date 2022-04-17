@@ -7,6 +7,7 @@ import android.widget.Toast
 import com.easy.core.common.hex
 import com.easy.core.ext.toHexBytes
 import org.json.JSONObject
+import timber.log.Timber
 import wallet.core.jni.Curve
 import wallet.core.jni.PrivateKey
 
@@ -78,9 +79,11 @@ class WebAppInterface(
     }
 
     private fun handleSignMessage(id: Long, data: ByteArray, addPrefix: Boolean) {
+        Timber.d("id: $id, data: $data, addPrefix: $addPrefix ")
     }
 
     private fun handleSignTypedMessage(id: Long, data: ByteArray, raw: String) {
+        Timber.d("raw: $raw")
         webView.sendResult(signEthereumMessage(data, false), id)
     }
 

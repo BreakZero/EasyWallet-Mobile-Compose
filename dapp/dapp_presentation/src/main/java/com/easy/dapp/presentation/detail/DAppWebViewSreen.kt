@@ -103,7 +103,7 @@ fun DAppWebViewScreen(
             onCreated = {
                 it.settings.javaScriptEnabled = true
                 it.settings.domStorageEnabled = true
-                it.addJavascriptInterface(WebAppInterface(context, it, url) { title, message ->
+                it.addJavascriptInterface(WebAppInterface(context, it, url) { _, _ ->
                     scope.launch {
                         showDialog = true
                     }
