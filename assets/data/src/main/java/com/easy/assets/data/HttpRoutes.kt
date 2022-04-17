@@ -3,10 +3,6 @@ package com.easy.assets.data
 import com.easy.core.BuildConfig
 
 internal object HttpRoutes {
-    private const val EHT_RPC = "https://mainnet.infura.io/v3"
-    private const val CRONOS_RPC = "https://rpc.tectonic.finance"
-    private const val POLYGON_RPC = "https://polygon-rpc.com"
-
     const val MAINNET_RPC = "https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}"
     const val MAINNET_EXPLORER = "https://api.etherscan.io/api"
     const val ROPSTEN_RPC = "https://ropsten.infura.io/v3/${BuildConfig.INFURA_APIKEY}"
