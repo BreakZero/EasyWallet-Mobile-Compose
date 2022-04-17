@@ -29,8 +29,6 @@ jobs:
           java-version: '11'
 
       - name: Prepare Env
-        run: |
-          mkdir keystore
       - run: cd . > keystore/configs.properties
       - run: cd . > keystore/easywallet.jks
       - run: echo ${{ secrets.CONFIGS }} | base64 -i --decode > keystore/configs.properties
