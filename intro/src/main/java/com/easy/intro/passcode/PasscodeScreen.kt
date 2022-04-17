@@ -19,8 +19,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.ui.components.ActionType
 import com.easy.core.ui.components.Passcode
 import com.easy.intro.R
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
@@ -47,8 +45,6 @@ fun PasscodeScreen(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding()
     ) {
         Column(
             modifier = Modifier

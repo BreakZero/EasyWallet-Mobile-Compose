@@ -8,8 +8,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -25,13 +23,11 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.common.UiEvent
 import com.easy.core.ui.components.EasyAppBar
 import com.easy.core.ui.spacing
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
+import timber.log.Timber
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun WalletImportScreen(
-    scaffoldState: ScaffoldState,
     viewModel: WalletImportViewModel = hiltViewModel(),
     onNavigateUp: () -> Unit,
     onNavigateToAssets: () -> Unit
@@ -46,9 +42,7 @@ fun WalletImportScreen(
                     onNavigateToAssets.invoke()
                 }
                 is UiEvent.ShowSnackbar -> {
-                    scaffoldState.snackbarHostState.showSnackbar(
-                        message = event.message.asString(context)
-                    )
+                    Timber.d(event.message.asString(context))
                 }
                 is UiEvent.NavigateUp -> {
                     onNavigateUp.invoke()
@@ -58,15 +52,10 @@ fun WalletImportScreen(
         }
     }
     Scaffold(
-        scaffoldState = scaffoldState,
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier = Modifier,
         topBar = {
             EasyAppBar(
-                title = "Import Wallet",
-                navIcon = Icons.Filled.ArrowBack,
-                backgroundColor = Color.White
+                title = "Import Wallet"
             ) {
                 viewModel.onNavigateUp()
                 keyboardController?.hide()

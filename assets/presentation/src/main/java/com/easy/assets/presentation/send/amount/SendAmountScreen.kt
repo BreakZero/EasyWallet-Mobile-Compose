@@ -8,8 +8,6 @@ import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -25,7 +23,6 @@ import com.easy.assets.presentation.send.SendInfo
 import com.easy.assets.presentation.send.SendInfoHolder
 import com.easy.core.common.Navigator
 import com.easy.core.ui.components.EasyAppBar
-import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
 fun NormalSendAmountScreen(
@@ -35,13 +32,10 @@ fun NormalSendAmountScreen(
 ) {
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+            .fillMaxSize(),
         topBar = {
             EasyAppBar(
-                title = "Send",
-                navIcon = Icons.Filled.ArrowBack,
-                backgroundColor = Color.White
+                title = "Send"
             ) {
                 navigateUp()
             }

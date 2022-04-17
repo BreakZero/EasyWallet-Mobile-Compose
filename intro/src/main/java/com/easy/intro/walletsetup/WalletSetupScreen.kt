@@ -6,8 +6,6 @@ import androidx.compose.material.Button
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -15,9 +13,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.easy.core.ui.components.EasyAppBar
-import com.easy.core.ui.R
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
 fun WalletSetupScreen(
@@ -26,14 +21,10 @@ fun WalletSetupScreen(
 ) {
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .fillMaxSize(),
         topBar = {
             EasyAppBar(
-                navIcon = Icons.Filled.ArrowBack,
-                title = title,
-                backgroundColor = Color.White
+                title = title
             ) {
                 // navController.navigateUp()
                 onNavigateTo.invoke("back")

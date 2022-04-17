@@ -10,7 +10,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -33,7 +32,6 @@ import com.easy.assets.presentation.send.SendInfo
 import com.easy.assets.presentation.send.SendInfoHolder
 import com.easy.core.common.Navigator
 import com.easy.core.ui.components.EasyAppBar
-import com.google.accompanist.insets.statusBarsPadding
 import dagger.hilt.android.EntryPointAccessors
 
 @Composable
@@ -62,12 +60,9 @@ fun NormalSendAddressScreen(
 ) {
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding(),
+            .fillMaxSize(),
         topBar = {
             EasyAppBar(
-                navIcon = Icons.Filled.ArrowBack,
-                backgroundColor = Color.White,
                 title = "Send",
                 actions = {
                    IconButton(onClick = { /*TODO*/ }) {

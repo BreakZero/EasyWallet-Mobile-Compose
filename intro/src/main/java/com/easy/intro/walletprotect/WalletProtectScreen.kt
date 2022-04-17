@@ -29,8 +29,6 @@ import com.easy.core.ui.LocalSpacing
 import com.easy.core.ui.common.BiometricUtil
 import com.easy.intro.IntroRouter
 import com.easy.intro.R
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 
 @Composable
 fun WalletProtectScreen(
@@ -40,9 +38,7 @@ fun WalletProtectScreen(
     onNavigateUp: () -> Unit
 ) {
     Scaffold(
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier = Modifier,
         topBar = {
             Row(
                 modifier = Modifier.fillMaxWidth(),

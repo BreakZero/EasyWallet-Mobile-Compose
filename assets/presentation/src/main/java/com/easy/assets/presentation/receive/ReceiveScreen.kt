@@ -32,11 +32,9 @@ fun ReceiveScreen(
         systemUIController.setStatusBarColor(Color.White, true)
     }
     Scaffold(
-        modifier = Modifier.statusBarsPadding(),
+        modifier = Modifier,
         topBar = {
             EasyAppBar(
-                navIcon = Icons.Filled.ArrowBack,
-                backgroundColor = Color.White,
                 title = "Receive",
                 actions = {
                     DropdownMenu(expanded = showMenu, onDismissRequest = { /*TODO*/ }) {

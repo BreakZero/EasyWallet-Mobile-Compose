@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.ArrowCircleUp
 import androidx.compose.runtime.Composable
@@ -37,8 +36,6 @@ import com.easy.core.common.Navigator
 import com.easy.core.common.parameter
 import com.easy.core.ext.byDecimal
 import com.easy.core.ui.components.EasyAppBar
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
@@ -77,13 +74,9 @@ fun AssetDetailScreen(
     val lazyPagingItems = viewModel.state.pager?.flow?.collectAsLazyPagingItems()
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .fillMaxSize(),
         topBar = {
             EasyAppBar(
-                navIcon = Icons.Filled.ArrowBack,
-                backgroundColor = Color.White,
                 title = state.assetInfo?.symbol
             ) {
                 navigateUp.invoke()
