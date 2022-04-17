@@ -6,11 +6,11 @@ import com.easy.version.hiltDependencies
 import com.easy.version.unitTestDependencies
 
 plugins {
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.20"
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", BuildConfig.kotlinVersion))
+    implementation(kotlin("stdlib-jdk8", BuildConfig.kotlin_version))
     api(AndroidX.coreKtx)
 
     api(Other.threetenabp)

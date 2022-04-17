@@ -39,6 +39,9 @@ class DependencyVersionPlugin : Plugin<Project> {
         packagingOptions {
             resources.excludes.add("META-INF/INDEX.LIST")
         }
+        lint {
+            isCheckDependencies = true
+        }
 
         defaultConfig {
             minSdk = BuildConfig.minSdkVersion

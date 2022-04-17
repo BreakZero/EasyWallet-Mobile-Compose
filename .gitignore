@@ -13,5 +13,5 @@
 .externalNativeBuild
 .cxx
 /assets/build/*
-/keystore/*
+/keystore/configs.properties
 local.properties
