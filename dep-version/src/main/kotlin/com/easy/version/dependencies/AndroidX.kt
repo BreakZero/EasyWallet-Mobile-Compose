@@ -53,9 +53,9 @@ object AndroidX {
     }
 
     object Camera {
-        private const val camera_version = "1.0.2"
+        private const val camera_version = "1.1.0-beta03"
         const val camera = "androidx.camera:camera-camera2:$camera_version"
         const val cameraLife = "androidx.camera:camera-lifecycle:$camera_version"
-        const val cameraView = "androidx.camera:camera-view:1.1.0-beta03"
+        const val cameraView = "androidx.camera:camera-view:$camera_version"
     }
 }
