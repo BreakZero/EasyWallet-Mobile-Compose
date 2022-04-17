@@ -18,11 +18,6 @@ internal class TerraChain(
 ) : IChain {
     override suspend fun sign(plan: TransactionPlan): String {
         return withContext(Dispatchers.IO) {
-            val amount = plan.amount
-            val from = address()
-            val usingMax = false
-            val hexScript = ""
-            val utxos = listOf<String>()
             ""
         }
     }

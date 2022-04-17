@@ -86,10 +86,6 @@ fun SettingsScreen(
                     MenuItem(title = "Recovery Phrase", subTitle = "Wallet Name")
                 )
             ) {
-                val msg = when (it) {
-                    0 -> "protect"
-                    else -> "recovery"
-                }
             }
             MenuBlockView(
                 modifier = Modifier.fillMaxWidth(), header = "Account", menus = listOf(

@@ -16,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.easy.core.ui.components.ActionType
 import com.easy.core.ui.components.Passcode
 import com.easy.intro.R
 import com.google.accompanist.insets.navigationBarsPadding
@@ -126,12 +127,11 @@ fun PasscodeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White),
-                random = false,
                 onNumberClick = {
-                    when(it) {
-                        "*" -> Unit
-                        "<" -> viewModel.onEvent(PasscodeEvent.Delete)
-                        else -> viewModel.onEvent(PasscodeEvent.Insert(it))
+                    when(it.actionType) {
+                        ActionType.NUMBER -> viewModel.onEvent(PasscodeEvent.Insert(it.number))
+                        ActionType.BACKSPACE -> viewModel.onEvent(PasscodeEvent.Delete)
+                        else -> Unit
                     }
                 })
         }

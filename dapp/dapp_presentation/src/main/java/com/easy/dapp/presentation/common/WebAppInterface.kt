@@ -36,7 +36,7 @@ class WebAppInterface(
                     webView.evaluateJavascript(setAddress) {
                         // ignore
                     }
-                    webView.evaluateJavascript(callback) { value ->
+                    webView.evaluateJavascript(callback) { _ ->
                     }
                 }
             }
