@@ -67,7 +67,7 @@ class CoinRepositoryTest {
         val walletRepositoryImpl = WalletRepositoryImpl(walletDao)
         walletRepositoryImpl.inject(hdWallet)
         val response = File("./src/test/assets/mock_currencies.json").readBytes().decodeToString()
-        val mockEngine = MockEngine { request ->
+        val mockEngine = MockEngine { _ ->
             respond(
                 content = ByteReadChannel(response),
                 status = HttpStatusCode.OK,

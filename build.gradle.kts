@@ -15,6 +15,12 @@ buildscript {
 
 subprojects {
     this.apply(plugin = "version-plugin")
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
+        kotlinOptions {
+            freeCompilerArgs = freeCompilerArgs + "-opt-in=kotlin.RequiresOptIn"
+            jvmTarget = JavaVersion.VERSION_11.toString()
+        }
+    }
 }
 
 tasks.register("clean", Delete::class.java) {

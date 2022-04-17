@@ -39,6 +39,7 @@ class DependencyVersionPlugin : Plugin<Project> {
         packagingOptions {
             resources.excludes.add("META-INF/INDEX.LIST")
         }
+
         defaultConfig {
             minSdk = BuildConfig.minSdkVersion
             targetSdk = BuildConfig.targetSdkVersion

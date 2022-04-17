@@ -48,7 +48,7 @@ class AssetsManagerTest {
             ) }
         }
         val response = File("./src/test/assets/mock_currencies.json").readBytes().decodeToString()
-        val mockEngine = MockEngine { request ->
+        val mockEngine = MockEngine { _ ->
             respond(
                 content = ByteReadChannel(response),
                 status = HttpStatusCode.OK,
@@ -80,7 +80,7 @@ class AssetsManagerTest {
 
     @Test
     fun `Given an error response check`() = runTest {
-        val mockEngine = MockEngine { request ->
+        val mockEngine = MockEngine { _ ->
             respondBadRequest()
         }
         val httpClient = HttpClient(mockEngine) {
