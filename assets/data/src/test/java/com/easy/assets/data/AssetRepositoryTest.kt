@@ -52,8 +52,11 @@ class AssetRepositoryTest {
     fun setUp() {
         val testDispatcher = StandardTestDispatcher()
         Dispatchers.setMain(testDispatcher)
+        hdWallet = mock() {
+            on { getAddressForCoin(CoinType.ETHEREUM) } doReturn "0xa4531dE99E22B2166d340E7221669DF565c52024"
+        }
         appSettings = mock() {
-            onBlocking { data } doReturn flow { emit(
+            on { data } doReturn flow { emit(
                 AppSettings(
                     ChainNetwork.MAIN,
                     Currency.getInstance(
@@ -62,9 +65,6 @@ class AssetRepositoryTest {
                         EasyCurrency(it.symbol, it.currencyCode)
                     })
             ) }
-        }
-        hdWallet = mock() {
-            on { getAddressForCoin(CoinType.ETHEREUM) } doReturn "0xa4531dE99E22B2166d340E7221669DF565c52024"
         }
         walletDao = mock()
 

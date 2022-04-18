@@ -48,7 +48,7 @@ class CoinRepositoryTest {
     fun setUp() {
         val testDispatcher = StandardTestDispatcher()
         appSettings = mock() {
-            onBlocking { data } doReturn flow { emit(
+            on { data } doReturn flow { emit(
                 AppSettings(
                     ChainNetwork.MAIN,
                     Currency.getInstance(

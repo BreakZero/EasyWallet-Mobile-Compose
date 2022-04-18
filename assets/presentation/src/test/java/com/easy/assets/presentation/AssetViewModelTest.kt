@@ -31,8 +31,6 @@ import kotlin.time.ExperimentalTime
 class AssetViewModelTest {
     private lateinit var assetViewModel: WalletAssetViewModel
     private lateinit var assetsUseCases: AssetsUseCases
-    private lateinit var assetRepository: AssetRepository
-    private lateinit var coinRepository: CoinRepository
 
     private val mockAsset = AssetInfo(
         slug = "erc20-uni",
@@ -48,7 +46,7 @@ class AssetViewModelTest {
     fun setUp() {
         val testDispatcher = StandardTestDispatcher()
         Dispatchers.setMain(testDispatcher)
-        assetRepository = mock() {
+        val assetRepository = mock<AssetRepository>() {
             onBlocking { balance("", "") }.doReturn(BigInteger.ZERO)
             onBlocking {
                 balance(
@@ -59,7 +57,7 @@ class AssetViewModelTest {
                 BigInteger.TEN
             )
         }
-        coinRepository = mock() {
+        val coinRepository = mock<CoinRepository>() {
             on { address("") }.doReturn("mock-address")
             onBlocking { assets() }.doReturn(listOf(mockAsset))
         }

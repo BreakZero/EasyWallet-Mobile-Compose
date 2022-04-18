@@ -21,6 +21,9 @@ class DependencyVersionPlugin : Plugin<Project> {
             target.afterEvaluate {
                 extensions.getByType(LibraryExtension::class).run {
                     moduleConfig(target.name == "core")
+                    this.libraryVariants.all {
+                        createVariantCoverage(target, variant = this)
+                    }
                 }
             }
         }
@@ -31,6 +34,7 @@ class DependencyVersionPlugin : Plugin<Project> {
         apply(plugin = "kotlin-android")
         apply(plugin = "kotlin-kapt")
         apply(plugin = "kotlin-parcelize")
+        apply(plugin = "org.gradle.jacoco")
     }
 
     @Suppress("UnstableApiUsage")
@@ -72,7 +76,7 @@ class DependencyVersionPlugin : Plugin<Project> {
                 }
                 debug {
                     isMinifyEnabled = false
-
+                    isTestCoverageEnabled = true
                     proguardFiles(
                         getDefaultProguardFile("proguard-android-optimize.txt"),
                         "proguard-rules.pro"
@@ -98,6 +102,7 @@ class DependencyVersionPlugin : Plugin<Project> {
                         getDefaultProguardFile("proguard-android-optimize.txt"),
                         "proguard-rules.pro"
                     )
+                    isTestCoverageEnabled = true
                 }
             }
         }

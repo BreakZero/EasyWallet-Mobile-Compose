@@ -37,15 +37,17 @@ class AssetsManagerTest {
     fun setUp() {
         walletDao = mock()
         appSettings = mock() {
-            onBlocking { data } doReturn flow { emit(
-                AppSettings(
-                    ChainNetwork.MAIN,
-                    Currency.getInstance(
-                        Locale.US
-                    ).let {
-                        EasyCurrency(it.symbol, it.currencyCode)
-                    })
-            ) }
+            on { data } doReturn flow {
+                emit(
+                    AppSettings(
+                        ChainNetwork.MAIN,
+                        Currency.getInstance(
+                            Locale.US
+                        ).let {
+                            EasyCurrency(it.symbol, it.currencyCode)
+                        })
+                )
+            }
         }
         val response = File("./src/test/assets/mock_currencies.json").readBytes().decodeToString()
         val mockEngine = MockEngine { _ ->
