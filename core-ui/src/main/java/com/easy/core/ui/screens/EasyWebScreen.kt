@@ -22,11 +22,9 @@ fun EasyWebScreen(
 ) {
     val webViewState = rememberWebViewState(url = url)
     Scaffold(
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier = Modifier.fillMaxSize(),
         topBar = {
-            EasyAppBar(navIcon = Icons.Filled.ArrowBack, backgroundColor = Color.White) {
+            EasyAppBar {
                 navigateUp()
             }
         }) {

@@ -1,7 +1,7 @@
 package com.easy.version.dependencies
 
 object Compose {
-    const val version = "1.1.0"
+    const val version = "1.1.1"
     const val ui = "androidx.compose.ui:ui:$version"
     const val material = "androidx.compose.material:material:$version"
     const val preview = "androidx.compose.ui:ui-tooling-preview:$version"

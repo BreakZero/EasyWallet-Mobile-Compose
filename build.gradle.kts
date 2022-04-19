@@ -1,10 +1,9 @@
-
 plugins {
     id("com.android.application") version "7.1.2" apply false
     id("com.android.library") version "7.1.2" apply false
+    id("version-plugin")
     id("org.jetbrains.kotlin.android") version "1.6.10" apply false
     kotlin("plugin.serialization") version "1.6.10" apply false
-    id("version-plugin")
 }
 
 buildscript {
@@ -15,6 +14,12 @@ buildscript {
 
 subprojects {
     this.apply(plugin = "version-plugin")
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
+        kotlinOptions {
+            freeCompilerArgs = listOf("-opt-in=kotlin.RequiresOptIn")
+            jvmTarget = JavaVersion.VERSION_11.toString()
+        }
+    }
 }
 
 tasks.register("clean", Delete::class.java) {

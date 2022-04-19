@@ -5,7 +5,6 @@ plugins {
     id("com.android.application")
     kotlin("android")
     kotlin("kapt")
-    id("com.google.devtools.ksp") version "1.6.10-1.0.2"
     id("dagger.hilt.android.plugin")
 }
 apply<MergeManifestPlugin>()
@@ -61,9 +60,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
-    }
+
     buildFeatures {
         compose = true
     }
@@ -73,17 +70,6 @@ android {
     packagingOptions {
         resources {
             excludes.add("/META-INF/{AL2.0,LGPL2.1}")
-        }
-    }
-}
-
-kotlin {
-    sourceSets {
-        debug {
-            kotlin.srcDir("build/generated/ksp/debug/kotlin")
-        }
-        release {
-            kotlin.srcDir("build/generated/ksp/release/kotlin")
         }
     }
 }

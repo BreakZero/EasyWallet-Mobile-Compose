@@ -32,8 +32,6 @@ fun IntroMainScreen(
     val pagerState = rememberPagerState()
     Column(
         modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding()
     ) {
         Text(
             modifier = Modifier

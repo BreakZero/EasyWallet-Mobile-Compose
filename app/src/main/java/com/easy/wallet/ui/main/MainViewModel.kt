@@ -19,4 +19,8 @@ class MainViewModel @Inject constructor(): ViewModel() {
             _uiEvent.send(event)
         }
     }
+
+    fun test(): String {
+        return "hello"
+    }
 }

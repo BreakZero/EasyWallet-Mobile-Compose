@@ -10,6 +10,7 @@ import androidx.navigation.NavType
 import androidx.navigation.navArgument
 import com.easy.assets.presentation.detail.AssetDetailScreen
 import com.easy.assets.presentation.receive.ReceiveScreen
+import com.easy.assets.presentation.send.SendingScreen
 import com.easy.assets.presentation.send.address.NormalSendAddressScreen
 import com.easy.assets.presentation.send.amount.NormalSendAmountScreen
 import com.google.accompanist.navigation.animation.composable
@@ -89,7 +90,7 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
                 fadeOut(animationSpec = tween(700))
             }) {
             val slug = it.arguments?.getString("slug")!!
-            NormalSendAddressScreen(
+            SendingScreen(
                 slug = slug,
                 navigateUp = {
                     navController.navigateUp()

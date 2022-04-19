@@ -10,7 +10,7 @@ plugins {
 }
 
 dependencies {
-    implementation(kotlin("stdlib-jdk8", BuildConfig.kotlinVersion))
+    implementation(kotlin("stdlib-jdk8", BuildConfig.kotlin_version))
     api(AndroidX.coreKtx)
 
     api(Other.threetenabp)

@@ -19,7 +19,7 @@ import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 
 @OptIn(ExperimentalAnimationApi::class)
-fun NavGraphBuilder.introGraph(navController: NavController, scaffoldState: ScaffoldState) {
+fun NavGraphBuilder.introGraph(navController: NavController) {
     navigation(
         startDestination = IntroRouter.ROUTER_INTRO,
         route = IntroRouter.ROUTER_INTRO_INDEX
@@ -116,7 +116,6 @@ fun NavGraphBuilder.introGraph(navController: NavController, scaffoldState: Scaf
                 slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(700))
             }) {
             WalletImportScreen(
-                scaffoldState = scaffoldState,
                 onNavigateUp = {
                     navController.navigateUp()
                 },

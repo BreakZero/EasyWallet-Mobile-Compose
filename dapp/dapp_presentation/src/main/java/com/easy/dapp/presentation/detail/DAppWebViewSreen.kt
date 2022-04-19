@@ -6,11 +6,8 @@ import androidx.compose.material.AlertDialog
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TextButton
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.easy.core.BuildConfig
 import com.easy.core.ui.components.EasyAppBar
@@ -18,8 +15,6 @@ import com.easy.core.ui.components.WebView
 import com.easy.core.ui.components.rememberWebViewState
 import com.easy.dapp.presentation.R
 import com.easy.dapp.presentation.common.WebAppInterface
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 import kotlinx.coroutines.launch
 
 @SuppressLint("SetJavaScriptEnabled")
@@ -51,13 +46,9 @@ fun DAppWebViewScreen(
     }
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .fillMaxSize(),
         topBar = {
             EasyAppBar(
-                navIcon = Icons.Filled.ArrowBack,
-                backgroundColor = Color.White,
                 title = "DAPP"
             ) {
                 navigateUp.invoke()
@@ -103,7 +94,7 @@ fun DAppWebViewScreen(
             onCreated = {
                 it.settings.javaScriptEnabled = true
                 it.settings.domStorageEnabled = true
-                it.addJavascriptInterface(WebAppInterface(context, it, url) { title, message ->
+                it.addJavascriptInterface(WebAppInterface(context, it, url) { _, _ ->
                     scope.launch {
                         showDialog = true
                     }

@@ -3,12 +3,12 @@ import com.easy.version.composeUI
 import com.easy.version.unitTestDependencies
 
 dependencies {
-    implementation("com.google.zxing:core:3.4.1")
+    implementation(com.easy.version.dependencies.Other.zxing)
 
     // CameraX
-    implementation("androidx.camera:camera-camera2:1.1.0-beta02")
-    implementation("androidx.camera:camera-lifecycle:1.1.0-beta02")
-    implementation("androidx.camera:camera-view:1.1.0-beta02")
+    implementation(com.easy.version.dependencies.AndroidX.Camera.camera)
+    implementation(com.easy.version.dependencies.AndroidX.Camera.cameraLife)
+    implementation(com.easy.version.dependencies.AndroidX.Camera.cameraView)
 
     composeUI()
     unitTestDependencies()

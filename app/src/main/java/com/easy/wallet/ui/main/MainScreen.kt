@@ -27,8 +27,6 @@ import com.easy.core.ui.R
 import com.easy.core.ui.common.QRCodeGenerate
 import com.easy.dapp.presentation.list.DAppPagerScreen
 import com.easy.wallet.BuildConfig
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -74,7 +72,7 @@ fun MainScreen(
                 }
                 is MainUIEvent.OnSettingsClick -> onNavigateTo.invoke(Navigator(router = AssetRouter.SETTINGS))
                 is MainUIEvent.OnReceiveClick -> bottomSheetState.show()
-                is MainUIEvent.OnSendClick -> Unit
+                else -> Unit
             }
         }
     }
@@ -89,9 +87,7 @@ fun MainScreen(
     }
     ModalBottomSheetLayout(
         sheetState = bottomSheetState,
-        modifier = Modifier
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+        modifier = Modifier,
         sheetShape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
         sheetContent = {
             Box(

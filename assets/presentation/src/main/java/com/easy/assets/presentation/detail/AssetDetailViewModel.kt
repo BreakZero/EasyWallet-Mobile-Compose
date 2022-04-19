@@ -19,6 +19,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class AssetDetailViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,
@@ -101,7 +102,7 @@ class AssetDetailViewModel @AssistedInject constructor(
                 gasLimit = 21000L,
                 contract = null
             ))
-            Log.d("=======", "$rawData")
+            Timber.d("raw data: $rawData")
         }
     }
 }

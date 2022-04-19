@@ -46,16 +46,16 @@ object AndroidX {
     }
 
     object Room {
-        private const val room_version = "2.4.1"
+        private const val room_version = "2.4.2"
         const val roomRuntime = "androidx.room:room-runtime:$room_version"
         const val roomCompiler = "androidx.room:room-compiler:$room_version"
         const val roomKtx = "androidx.room:room-ktx:$room_version"
     }
 
     object Camera {
-        private const val camera_version = "1.0.0-beta12"
+        private const val camera_version = "1.1.0-beta03"
         const val camera = "androidx.camera:camera-camera2:$camera_version"
         const val cameraLife = "androidx.camera:camera-lifecycle:$camera_version"
-        const val cameraView = "androidx.camera:camera-view:1.0.0-alpha19"
+        const val cameraView = "androidx.camera:camera-view:$camera_version"
     }
 }

@@ -1,12 +1,3 @@
-/*buildscript {
-    repositories {
-        mavenCentral()
-        google()
-    }
-    dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.6.10"))
-    }
-}*/
 plugins {
     `kotlin-dsl`
 }
@@ -21,8 +12,16 @@ dependencies {
     compileOnly("com.android.tools.build:gradle-api:7.0.4")
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.10")
 }
+tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_11.toString()
+    }
+}
 
-java.sourceCompatibility = JavaVersion.VERSION_11
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+    targetCompatibility = JavaVersion.VERSION_11
+}
 
 gradlePlugin {
     plugins {

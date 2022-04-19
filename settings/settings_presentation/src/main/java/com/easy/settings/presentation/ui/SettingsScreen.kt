@@ -4,9 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -19,14 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.common.Navigator
 import com.easy.core.common.parameter
-import com.easy.settings.presentation.components.MenuBlockView
-import com.easy.settings.presentation.model.MenuItem
-import com.easy.core.ext.toast
 import com.easy.core.ui.R
 import com.easy.core.ui.components.EasyAppBar
 import com.easy.settings.presentation.SettingsRouter
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
+import com.easy.settings.presentation.components.MenuBlockView
+import com.easy.settings.presentation.model.MenuItem
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
@@ -46,14 +42,10 @@ fun SettingsScreen(
     val scrollState = rememberScrollState()
     Scaffold(
         modifier = Modifier
-            .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding(),
+            .fillMaxSize(),
         topBar = {
             EasyAppBar(
-                navIcon = Icons.Filled.ArrowBack,
-                title = title,
-                backgroundColor = Color.White
+                title = title
             ) {
                 navigateUp()
             }
@@ -86,15 +78,11 @@ fun SettingsScreen(
                     MenuItem(title = "Recovery Phrase", subTitle = "Wallet Name")
                 )
             ) {
-                val msg = when (it) {
-                    0 -> "protect"
-                    else -> "recovery"
-                }
             }
             MenuBlockView(
                 modifier = Modifier.fillMaxWidth(), header = "Account", menus = listOf(
                     MenuItem(title = "Display Currency", endValue = settingsState.displayCurrency),
-                    MenuItem(title = "Network Settings", endValue = settingsState.currentNetwork)
+                    MenuItem(title = "Network Settings", endValue = settingsState.currentNetwork.label)
                 )
             ) {
                 when(it) {

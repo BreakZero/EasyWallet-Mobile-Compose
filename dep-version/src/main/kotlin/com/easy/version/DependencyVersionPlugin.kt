@@ -39,6 +39,10 @@ class DependencyVersionPlugin : Plugin<Project> {
         packagingOptions {
             resources.excludes.add("META-INF/INDEX.LIST")
         }
+        lint {
+            isCheckDependencies = true
+        }
+
         defaultConfig {
             minSdk = BuildConfig.minSdkVersion
             targetSdk = BuildConfig.targetSdkVersion
@@ -68,7 +72,7 @@ class DependencyVersionPlugin : Plugin<Project> {
                 }
                 debug {
                     isMinifyEnabled = false
-
+                    isTestCoverageEnabled = true
                     proguardFiles(
                         getDefaultProguardFile("proguard-android-optimize.txt"),
                         "proguard-rules.pro"
@@ -94,6 +98,7 @@ class DependencyVersionPlugin : Plugin<Project> {
                         getDefaultProguardFile("proguard-android-optimize.txt"),
                         "proguard-rules.pro"
                     )
+                    isTestCoverageEnabled = true
                 }
             }
         }

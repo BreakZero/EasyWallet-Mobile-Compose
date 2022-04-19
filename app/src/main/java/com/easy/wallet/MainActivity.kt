@@ -8,24 +8,24 @@ import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Scaffold
-import androidx.compose.material.rememberScaffoldState
+import androidx.compose.material.Surface
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
-import com.easy.settings.presentation.settingsGraph
 import com.easy.assets.presentation.routers.assetsGraph
 import com.easy.core.ui.globalGraph
 import com.easy.dapp.presentation.routers.DAppRouter
 import com.easy.dapp.presentation.routers.dappGraph
 import com.easy.intro.IntroRouter
 import com.easy.intro.introGraph
+import com.easy.settings.presentation.settingsGraph
 import com.easy.wallet.ui.main.MainScreen
 import com.easy.wallet.ui.splash.SplashScreen
 import com.easy.wallet.ui.theme.EasyTheme
 import com.google.accompanist.insets.ProvideWindowInsets
+import com.google.accompanist.insets.navigationBarsPadding
+import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
@@ -46,16 +46,17 @@ class MainActivity : ComponentActivity() {
                         systemUIController.setStatusBarColor(Color.Transparent, darkIcons = true)
                     }
                     val navController = rememberAnimatedNavController()
-                    val scaffoldState = rememberScaffoldState()
                     // A surface container using the 'background' color from the theme
-                    Scaffold(
-                        scaffoldState = scaffoldState,
-                        modifier = Modifier.fillMaxSize()
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .statusBarsPadding()
+                            .navigationBarsPadding()
                     ) {
                         AnimatedNavHost(
                             navController = navController,
                             startDestination = "splash-screen",
-                            modifier = Modifier.padding(it)
+                            modifier = Modifier
                         ) {
                             composable(
                                 "splash-screen",
@@ -126,7 +127,7 @@ class MainActivity : ComponentActivity() {
                                 }
                             }
                             globalGraph(navController)
-                            introGraph(navController, scaffoldState)
+                            introGraph(navController)
                             assetsGraph(navController)
                             dappGraph(navController)
                             settingsGraph(navController)
