@@ -130,7 +130,7 @@ internal class EthereumChain(
             }.body()
             response.result.clearHexPrefix().toBigInteger(16)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Timber.e(e)
             BigInteger.ZERO
         }
     }

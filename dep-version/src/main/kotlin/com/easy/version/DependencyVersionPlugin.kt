@@ -21,9 +21,6 @@ class DependencyVersionPlugin : Plugin<Project> {
             target.afterEvaluate {
                 extensions.getByType(LibraryExtension::class).run {
                     moduleConfig(target.name == "core")
-                    this.libraryVariants.all {
-                        createVariantCoverage(target, variant = this)
-                    }
                 }
             }
         }
@@ -34,7 +31,6 @@ class DependencyVersionPlugin : Plugin<Project> {
         apply(plugin = "kotlin-android")
         apply(plugin = "kotlin-kapt")
         apply(plugin = "kotlin-parcelize")
-        apply(plugin = "org.gradle.jacoco")
     }
 
     @Suppress("UnstableApiUsage")
