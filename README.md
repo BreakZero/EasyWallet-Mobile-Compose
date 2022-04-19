@@ -1,3 +1,5 @@
+[![Checking Build](https://github.com/BreakZero/EasyWallet-Mobile-Compose/actions/workflows/check.yml/badge.svg?branch=main)](https://github.com/BreakZero/EasyWallet-Mobile-Compose/actions/workflows/check.yml)
+
 # EasyWallet
 
 ## Setup
