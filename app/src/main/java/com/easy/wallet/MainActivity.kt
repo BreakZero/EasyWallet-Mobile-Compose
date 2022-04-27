@@ -3,10 +3,8 @@ package com.easy.wallet
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
 import androidx.compose.runtime.SideEffect
@@ -61,28 +59,16 @@ class MainActivity : ComponentActivity() {
                             composable(
                                 "splash-screen",
                                 enterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { 1000 },
-                                        animationSpec = tween(700)
-                                    )
+                                    fadeIn(animationSpec = tween(500))
                                 },
                                 exitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { -1000 },
-                                        animationSpec = tween(700)
-                                    )
+                                    fadeOut(animationSpec = tween(500))
                                 },
                                 popEnterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { -1000 },
-                                        animationSpec = tween(700)
-                                    )
+                                    fadeIn(animationSpec = tween(500))
                                 },
                                 popExitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { 1000 },
-                                        animationSpec = tween(700)
-                                    )
+                                    fadeOut(animationSpec = tween(500))
                                 }) {
                                 SplashScreen { created ->
                                     navController.navigate(if (created) "main-screen" else IntroRouter.ROUTER_INTRO_INDEX) {
@@ -95,28 +81,16 @@ class MainActivity : ComponentActivity() {
                             composable(
                                 "main-screen",
                                 enterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { 1000 },
-                                        animationSpec = tween(700)
-                                    )
+                                    fadeIn(animationSpec = tween(500))
                                 },
                                 exitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { -1000 },
-                                        animationSpec = tween(700)
-                                    )
+                                    fadeOut(animationSpec = tween(500))
                                 },
                                 popEnterTransition = {
-                                    slideInHorizontally(
-                                        initialOffsetX = { -1000 },
-                                        animationSpec = tween(700)
-                                    )
+                                    fadeIn(animationSpec = tween(500))
                                 },
                                 popExitTransition = {
-                                    slideOutHorizontally(
-                                        targetOffsetX = { 1000 },
-                                        animationSpec = tween(700)
-                                    )
+                                    fadeOut(animationSpec = tween(500))
                                 }) {
                                 MainScreen {
                                     if (it.router == DAppRouter.ROUTER_DETAIL) {

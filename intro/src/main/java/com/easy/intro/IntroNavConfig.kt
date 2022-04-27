@@ -1,9 +1,7 @@
 package com.easy.intro
 
-import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.material.ScaffoldState
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
@@ -27,16 +25,16 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
         composable(
             IntroRouter.ROUTER_INTRO,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             }) {
             IntroMainScreen(
                 title = stringResource(id = com.easy.core.ui.R.string.app_name), intros = listOf<IntroInfo>(
@@ -62,16 +60,16 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
         composable(
             IntroRouter.ROUTER_WALLET_SETUP,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             }) {
             WalletSetupScreen(title = stringResource(id = com.easy.core.ui.R.string.app_name)) {
                 when (it) {
@@ -84,16 +82,16 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
         composable(
             IntroRouter.ROUTER_WALLET_CREATE,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             }) {
             WalletCreateScreen(onNavigate = {
                 navController.navigate(it.router())
@@ -104,16 +102,16 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
         composable(
             IntroRouter.ROUTER_WALLET_IMPORT,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             }) {
             WalletImportScreen(
                 onNavigateUp = {
@@ -131,16 +129,16 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
         composable(
             IntroRouter.ROUTER_WALLET_PROTECT,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             }) { it->
             val passcode = it.savedStateHandle.get<String>("passcode")
             WalletProtectScreen(
@@ -164,16 +162,16 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
         composable(
             IntroRouter.ROUTER_PASSCODE,
             enterTransition = {
-                slideInHorizontally(initialOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             exitTransition = {
-                slideOutHorizontally(targetOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             },
             popEnterTransition = {
-                slideInHorizontally(initialOffsetX = { -1000 }, animationSpec = tween(700))
+                fadeIn(animationSpec = tween(500))
             },
             popExitTransition = {
-                slideOutHorizontally(targetOffsetX = { 1000 }, animationSpec = tween(700))
+                fadeOut(animationSpec = tween(500))
             }) {
             PasscodeScreen {
                 navController.previousBackStackEntry?.savedStateHandle?.set("passcode", it)
