@@ -17,7 +17,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.ui.components.ActionType
-import com.easy.core.ui.components.Passcode
+import com.easy.core.ui.components.NumberKeyboard
 import com.easy.intro.R
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -119,7 +119,7 @@ fun PasscodeScreen(
                     )
                 }
             }
-            Passcode(
+            NumberKeyboard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White),

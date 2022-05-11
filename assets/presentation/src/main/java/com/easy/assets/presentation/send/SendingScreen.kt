@@ -1,22 +1,30 @@
 package com.easy.assets.presentation.send
 
 import android.app.Activity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.GridCells
+import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil.compose.rememberImagePainter
+import coil.transform.CircleCropTransformation
 import com.easy.assets.presentation.di.ViewModelFactoryProvider
 import com.easy.core.common.Navigator
 import com.easy.core.ui.components.EasyAppBar
+import com.easy.core.ui.components.NumberKeyboard
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
 
@@ -54,13 +62,7 @@ fun SendingScreen(
             .fillMaxSize(),
         sheetState = bottomSheetState,
         sheetContent = {
-            Column() {
-                Text(text = "Item 1")
-                Text(text = "Item 2")
-                Text(text = "Item 3")
-                Text(text = "Item 4")
-                Text(text = "Item 3")
-            }
+            EnterAmountKeyboard()
         }
     ) {
         Scaffold(
@@ -80,7 +82,12 @@ fun SendingScreen(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Image(imageVector = Icons.Filled.ArrowBack, contentDescription = null)
+                    Image(painter = rememberImagePainter(
+                        data = sendViewModel.sendingState.assetInfo?.icon,
+                        builder = {
+                            transformations(CircleCropTransformation())
+                        }
+                    ), modifier = Modifier.size(64.dp), contentDescription = null)
                     Text(text = "Enter Amount")
                     BasicTextField(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -107,6 +114,60 @@ fun SendingScreen(
                     }) {
                         Text(text = "Send")
                     }
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+private fun EnterAmountKeyboard(
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Row(horizontalArrangement = Arrangement.Center) {
+            Text(text = "Remaining Balance")
+            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = null)
+        }
+        Text(text = "xxx ETH")
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(192.dp)
+        ) {
+            NumberKeyboard(
+                modifier = Modifier
+                    .fillMaxWidth(0.75F),
+                showDivider = false
+            ) {
+
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+            ) {
+                Button(
+                    onClick = { },
+                    modifier = Modifier
+                        .padding(vertical = 2.dp, horizontal = 8.dp)
+                        .fillMaxHeight(0.75F)
+                        .fillMaxWidth()
+                ) {
+                    Text(text = "Enter")
+                }
+                Button(
+                    onClick = { }, modifier = Modifier
+                        .padding(vertical = 2.dp, horizontal = 8.dp)
+                        .fillMaxHeight()
+                        .fillMaxWidth()
+                ) {
+                    Text(text = "All")
                 }
             }
         }

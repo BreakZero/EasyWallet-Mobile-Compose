@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.use_case.AssetsUseCases
-import com.easy.assets.presentation.send.SendFlowState
+import com.easy.assets.presentation.send.SendingState
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -35,7 +35,7 @@ class SendAddressViewModel @AssistedInject constructor(
         }
     }
 
-    var sendFlowState by mutableStateOf(SendFlowState())
+    var sendFlowState by mutableStateOf(SendingState())
 
     init {
         viewModelScope.launch {
