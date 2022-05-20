@@ -3,7 +3,6 @@ package com.easy.assets.presentation.assets
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -19,12 +18,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.presentation.assets.components.CollapsableToolbar
@@ -32,7 +32,7 @@ import com.easy.core.ui.components.EasyActionBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalCoilApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun WalletPagerScreen(
     viewModel: WalletAssetViewModel = hiltViewModel(),
@@ -157,14 +157,13 @@ private fun AssetItemView(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Image(
+                AsyncImage(
                     modifier = Modifier.size(40.dp),
-                    painter = rememberImagePainter(
-                        data = data.icon,
-                        builder = {
-                            transformations(CircleCropTransformation())
-                        }
-                    ),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(data.icon)
+                        .crossfade(true)
+                        .transformations(CircleCropTransformation())
+                        .build(),
                     contentScale = ContentScale.FillWidth,
                     contentDescription = null
                 )

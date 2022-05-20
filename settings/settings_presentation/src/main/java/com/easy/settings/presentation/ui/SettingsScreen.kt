@@ -56,6 +56,7 @@ fun SettingsScreen(
                 .padding(start = 16.dp, end = 16.dp)
                 .verticalScroll(scrollState)
         ) {
+            
             Image(
                 painter = painterResource(id = R.mipmap.avatar_generic_1),
                 contentDescription = null,

@@ -4,8 +4,9 @@ import androidx.annotation.Keep
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.GridCells
-import androidx.compose.foundation.lazy.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
@@ -54,7 +55,7 @@ fun NumberKeyboard(
         modifier = modifier,
         horizontalArrangement = Arrangement.Center,
         verticalArrangement = Arrangement.Center,
-        cells = GridCells.Fixed(3)
+        columns = GridCells.Fixed(3)
     ) {
         itemsIndexed(KEYBOARD_NUMBERS) { index, item ->
             Row(Modifier.height(IntrinsicSize.Min)) {
