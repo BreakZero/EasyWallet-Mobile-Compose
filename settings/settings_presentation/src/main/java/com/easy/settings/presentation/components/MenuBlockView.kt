@@ -5,16 +5,18 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
-import androidx.compose.material.Divider
+import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material.Text
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.easy.settings.presentation.model.MenuItem
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun MenuBlockView(
     modifier: Modifier,
@@ -28,7 +30,8 @@ internal fun MenuBlockView(
         Text(
             text = header,
             fontSize = 12.sp,
-            color = Color.Gray,
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(top = 16.dp, bottom = 8.dp)
         )
         Card(
