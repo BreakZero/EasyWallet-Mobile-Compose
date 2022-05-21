@@ -45,4 +45,8 @@ class SendingViewModel @AssistedInject constructor(
     fun onAmountChanged(amount: String) {
         sendingState = sendingState.copy(amount = amount)
     }
+
+    fun onActionChanged(action: Action) {
+        sendingState = sendingState.copy(action = action)
+    }
 }

@@ -3,22 +3,22 @@ package com.easy.assets.presentation.receive
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.easy.core.ui.common.QRCodeGenerate
 import com.easy.core.ui.components.EasyAppBar
-import com.google.accompanist.insets.statusBarsPadding
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.easy.core.ui.spacing
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ReceiveScreen(
     address: String,
@@ -27,10 +27,7 @@ fun ReceiveScreen(
     val showMenu by remember {
         mutableStateOf(false)
     }
-    val systemUIController = rememberSystemUiController()
-    LaunchedEffect(key1 = true) {
-        systemUIController.setStatusBarColor(Color.White, true)
-    }
+
     Scaffold(
         modifier = Modifier,
         topBar = {
@@ -43,18 +40,19 @@ fun ReceiveScreen(
                 }) {
                 navigateUp()
             }
-        }) {
+        }) { paddingValue ->
         QRCodeGenerate.genQRCode(address)?.let {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(32.dp),
+                    .padding(paddingValue)
+                    .padding(MaterialTheme.spacing.spaceLarge),
                 shape = MaterialTheme.shapes.medium
             ) {
                 Column {
                     Text(
                         text = address,
-                        modifier = Modifier.padding(start = 12.dp, top = 12.dp, end = 12.dp),
+                        modifier = Modifier.padding(MaterialTheme.spacing.space12),
                         textAlign = TextAlign.Center
                     )
                     Image(
@@ -63,7 +61,7 @@ fun ReceiveScreen(
                         contentDescription = null,
                         alignment = Alignment.Center
                     )
-                    Divider()
+                    Divider(modifier = Modifier.padding(top = MaterialTheme.spacing.space12))
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier

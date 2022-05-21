@@ -2,10 +2,7 @@ package com.easy.intro.walletsetup
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -13,7 +10,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.easy.core.ui.components.EasyAppBar
+import com.easy.core.ui.spacing
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WalletSetupScreen(
     title: String,
@@ -34,12 +33,17 @@ fun WalletSetupScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(it)
+                .padding(
+                    start = MaterialTheme.spacing.spaceMedium,
+                    end = MaterialTheme.spacing.spaceMedium,
+                    bottom = MaterialTheme.spacing.spaceMedium
+                )
         ) {
             Text(
                 modifier = Modifier
                     .align(Alignment.CenterHorizontally)
-                    .padding(top = 32.dp),
+                    .padding(top = MaterialTheme.spacing.spaceLarge),
                 text = "Wallet setup"
             )
             Text(

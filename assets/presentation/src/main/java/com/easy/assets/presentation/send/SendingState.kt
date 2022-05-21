@@ -7,5 +7,10 @@ data class SendingState(
     val toAddress: String = "",
     val amount: String = "",
     val fee: String? = null,
-    val memo: String? = null
+    val memo: String? = null,
+    val action: Action = Action.ADVANCED
 )
+
+enum class Action {
+    ADVANCED, MODEL_INFO
+}

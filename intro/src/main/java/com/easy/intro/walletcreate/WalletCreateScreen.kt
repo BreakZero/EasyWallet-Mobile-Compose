@@ -4,13 +4,12 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -19,6 +18,7 @@ import com.easy.core.common.Navigator
 import com.easy.core.ui.components.EasyAppBar
 import com.easy.intro.IntroRouter
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WalletCreateScreen(
     viewModel: WalletCreateViewModel = hiltViewModel(),
@@ -36,7 +36,9 @@ fun WalletCreateScreen(
     ) {
         val checked = viewModel.state
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
             verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column() {
@@ -56,7 +58,7 @@ fun WalletCreateScreen(
                         .padding(start = 16.dp, end = 16.dp, top = 12.dp, bottom = 12.dp)
                         .border(
                             width = 0.1.dp,
-                            color = Color.Gray,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
                             shape = RoundedCornerShape(12.dp)
                         )
                 ) {

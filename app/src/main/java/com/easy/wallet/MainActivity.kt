@@ -3,12 +3,13 @@ package com.easy.wallet
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.animation.*
+import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.Surface
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,8 +43,12 @@ class MainActivity : ComponentActivity() {
             EasyTheme {
                 ProvideWindowInsets {
                     val systemUIController = rememberSystemUiController()
+                    val useDarkIcons = !isSystemInDarkTheme()
                     SideEffect {
-                        systemUIController.setStatusBarColor(Color.Transparent, darkIcons = true)
+                        systemUIController.setStatusBarColor(
+                            Color.Transparent,
+                            darkIcons = useDarkIcons
+                        )
                     }
                     val navController = rememberAnimatedNavController()
                     // A surface container using the 'background' color from the theme

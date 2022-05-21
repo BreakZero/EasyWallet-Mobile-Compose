@@ -7,7 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowRight
@@ -30,6 +30,7 @@ import com.easy.core.ui.common.BiometricUtil
 import com.easy.intro.IntroRouter
 import com.easy.intro.R
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun WalletProtectScreen(
     viewModel: WalletProtectViewModel = hiltViewModel(),
@@ -93,7 +94,7 @@ fun WalletProtectScreen(
                 }
             }
         }
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().padding(it)) {
             Text(
                 modifier = Modifier.padding(start = 16.dp),
                 text = "Protect your wallet",
@@ -119,8 +120,7 @@ fun WalletProtectScreen(
                     .height(64.dp)
                     .clickable {
                         onNavigate.invoke(Navigator(router = IntroRouter.ROUTER_PASSCODE))
-                    },
-                elevation = 2.dp
+                    }
             ) {
                 Row(
                     modifier = Modifier
@@ -149,8 +149,7 @@ fun WalletProtectScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 16.dp, top = 12.dp, end = 16.dp)
-                    .height(64.dp),
-                elevation = 2.dp
+                    .height(64.dp)
             ) {
                 Row(
                     modifier = Modifier
