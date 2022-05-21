@@ -28,7 +28,7 @@ fun CollapsableToolbar(
     val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
 
     BoxWithConstraints(modifier = Modifier
-        .background(Color(0xFF192B5E))
+        .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
         .fillMaxSize()) {
         val heightInPx = with(LocalDensity.current) { maxHeight.toPx() } // Get height of screen
         val connection = remember {

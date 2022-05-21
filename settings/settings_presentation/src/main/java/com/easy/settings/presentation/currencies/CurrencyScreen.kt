@@ -7,6 +7,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -39,7 +40,10 @@ fun CurrencyScreen(
                     IconButton(onClick = {
                         currencyViewModel.onEvent(CurrencyEvent.OnDone)
                     }) {
-                        Icon(imageVector = Icons.Filled.Done, contentDescription = null)
+                        Icon(
+                            imageVector = Icons.Filled.Done, contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onBackground
+                        )
                     }
                 }) {
                 onNavigateUp()

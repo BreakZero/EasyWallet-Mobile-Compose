@@ -9,14 +9,15 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Text
+import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -32,7 +33,7 @@ import com.easy.core.ui.components.EasyActionBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
-@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun WalletPagerScreen(
     viewModel: WalletAssetViewModel = hiltViewModel(),
@@ -54,8 +55,8 @@ fun WalletPagerScreen(
         EasyActionBar(
             navIcon = com.easy.core.ui.R.mipmap.avatar_generic_1,
             menuIcons = listOf(com.easy.core.ui.R.drawable.ic_scan_white),
-            backgroundColor = Color(0xFF192B5E),
-            tint = Color.White,
+            backgroundColor = MaterialTheme.colorScheme.primary,
+            tint = MaterialTheme.colorScheme.onPrimary,
             onNavClick = {
                 onNavigateTo(MainUIEvent.OnSettingsClick)
             },
@@ -89,7 +90,7 @@ fun WalletPagerScreen(
                                 modifier = Modifier
                                     .fillMaxSize()
                                     .background(
-                                        color = Color.White,
+                                        color = MaterialTheme.colorScheme.background,
                                         shape = RoundedCornerShape(
                                             topEnd = 24.dp,
                                             topStart = 24.dp
@@ -110,7 +111,7 @@ fun WalletPagerScreen(
                             modifier = Modifier
                                 .fillMaxSize()
                                 .background(
-                                    color = Color.White,
+                                    color = MaterialTheme.colorScheme.surface,
                                     shape = RoundedCornerShape(
                                         topEnd = 24.dp,
                                         topStart = 24.dp
@@ -132,6 +133,7 @@ fun WalletPagerScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun AssetItemView(
     data: AssetInfo,
@@ -144,12 +146,11 @@ private fun AssetItemView(
             .clickable {
                 onItemClick.invoke(data)
             },
-        shape = RoundedCornerShape(8.dp),
-        elevation = 2.dp
+        shape = RoundedCornerShape(8.dp)
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(start = 8.dp, end = 8.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
@@ -178,7 +179,7 @@ private fun AssetItemView(
                             .padding(start = 8.dp)
                             .background(
                                 shape = RoundedCornerShape(12.dp),
-                                color = Color(0xFF4FC3F7)
+                                color = MaterialTheme.colorScheme.secondaryContainer
                             )
                             .padding(
                                 start = 4.dp,

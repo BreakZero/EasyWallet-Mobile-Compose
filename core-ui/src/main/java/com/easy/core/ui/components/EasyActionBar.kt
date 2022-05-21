@@ -3,11 +3,11 @@ package com.easy.core.ui.components
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,7 +54,11 @@ fun EasyActionBar(
                     text = "Wallet Name",
                     color = tint
                 )
-                Text(text = "View Settings", fontSize = 12.sp, color = Color.Gray)
+                Text(
+                    text = "View Settings",
+                    fontSize = 12.sp,
+                    color = MaterialTheme.colorScheme.onTertiaryContainer
+                )
             }
         }
         menuIcons.forEachIndexed { index, icon ->
