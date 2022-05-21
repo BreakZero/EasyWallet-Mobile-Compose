@@ -1,7 +1,10 @@
 package com.easy.assets.presentation.detail
 
 import android.app.Activity
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
@@ -13,7 +16,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -23,7 +25,8 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.presentation.di.ViewModelFactoryProvider
@@ -132,15 +135,12 @@ fun AssetDetailScreen(
                                     color = Color.Gray
                                 )
                             }
-                            Image(
+                            AsyncImage(
                                 modifier = Modifier.size(40.dp),
-                                contentScale = ContentScale.FillWidth,
-                                painter = rememberImagePainter(
-                                    data = state.assetInfo?.icon,
-                                    builder = {
-                                        transformations(CircleCropTransformation())
-                                    }
-                                ),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(state.assetInfo?.icon)
+                                    .transformations(CircleCropTransformation())
+                                    .build(),
                                 contentDescription = null
                             )
                         }
