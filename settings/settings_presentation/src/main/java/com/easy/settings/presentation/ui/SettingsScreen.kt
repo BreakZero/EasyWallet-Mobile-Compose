@@ -43,9 +43,9 @@ fun SettingsScreen(
     val versionName = context.packageManager.getPackageInfo(context.packageName, 0).versionName
     val systemUIController = rememberSystemUiController()
     val useDarkIcons = !isSystemInDarkTheme()
-    val color = TopAppBarDefaults.smallTopAppBarColors().containerColor(scrollFraction = 0f).value
+    val statusColor = MaterialTheme.colorScheme.surface
     LaunchedEffect(key1 = null) {
-        systemUIController.setStatusBarColor(color = color, darkIcons = useDarkIcons)
+        systemUIController.setStatusBarColor(color = statusColor, darkIcons = useDarkIcons)
     }
     val settingsState = settingsViewModel.settingsState
     val scrollState = rememberScrollState()

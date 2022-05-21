@@ -68,8 +68,7 @@ fun AssetDetailScreen(
 ) {
     val systemUIController = rememberSystemUiController()
     val useDarkIcons = !isSystemInDarkTheme()
-    val statusColor =
-        TopAppBarDefaults.smallTopAppBarColors().containerColor(scrollFraction = 0f).value
+    val statusColor = MaterialTheme.colorScheme.surface
     LaunchedEffect(key1 = true) {
         systemUIController.setStatusBarColor(statusColor, useDarkIcons)
     }
