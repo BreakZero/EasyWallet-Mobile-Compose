@@ -36,11 +36,30 @@ internal data class FeeCalculator(
 )
 
 internal data class SolTransactionDto(
-    val blockTime: Long,
-    val slot: Long,
-    val txHash: String,
-    val fee: Long,
+    @SerializedName("blockTime")
+    val blockTime: Int,
+    @SerializedName("fee")
+    val fee: Int,
+    @SerializedName("lamport")
+    val lamport: Int,
+    @SerializedName("parsedInstruction")
+    val parsedInstruction: List<ParsedInstruction>,
+    @SerializedName("signer")
+    val signer: List<String>,
+    @SerializedName("slot")
+    val slot: Int,
+    @SerializedName("status")
     val status: String,
-    val lamport: Int
+    @SerializedName("txHash")
+    val txHash: String
+)
+
+internal data class ParsedInstruction(
+    @SerializedName("program")
+    val program: String,
+    @SerializedName("programId")
+    val programId: String,
+    @SerializedName("type")
+    val type: String
 )
 

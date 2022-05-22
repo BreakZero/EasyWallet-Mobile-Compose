@@ -1,6 +1,7 @@
 package com.easy.assets.data.mapper
 
 import com.easy.assets.data.remote.dto.EthTxDto
+import com.easy.assets.data.remote.dto.SolTransactionDto
 import com.easy.assets.domain.model.Transaction
 
 internal fun EthTxDto.toTransaction(address: String): Transaction {
@@ -12,5 +13,19 @@ internal fun EthTxDto.toTransaction(address: String): Transaction {
         isReceive = this.to.equals(address, true),
         timeStamp = this.timeStamp,
         inputData = this.input
+    )
+}
+
+internal fun SolTransactionDto.toTransaction(
+    address: String
+): Transaction {
+    return Transaction(
+        txHash = this.txHash,
+        value = "0",
+        from = address,
+        to = "",
+        isReceive = false,
+        timeStamp = this.blockTime.toString(),
+        inputData = ""
     )
 }

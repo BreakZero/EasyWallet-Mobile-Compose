@@ -2,13 +2,16 @@ package com.easy.assets.data.provider
 
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
+import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.remote.BaseRpcRequest
+import com.easy.assets.data.remote.dto.*
 import com.easy.assets.data.remote.dto.BaseRpcResponseDto
-import com.easy.assets.data.remote.dto.EthTxResponseDto
 import com.easy.assets.data.remote.dto.RecentBlockHashResult
 import com.easy.assets.data.remote.dto.SolBalanceDto
+import com.easy.assets.data.remote.dto.SolTransactionDto
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
+import com.easy.core.BuildConfig
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.enums.ChainNetwork
@@ -21,6 +24,7 @@ import io.ktor.client.request.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
+import timber.log.Timber
 import wallet.core.java.AnySigner
 import wallet.core.jni.CoinType
 import wallet.core.jni.proto.Solana
@@ -86,13 +90,32 @@ internal class SolanaChain(
         limit: Int,
         contract: String?
     ): NetworkResponse<List<Transaction>> {
-        return NetworkResponse.Error(NetworkResponseCode.checkError(NullPointerException()))
+        val explorerUrl = getExplorerUrl()
+        return try {
+            val response: List<SolTransactionDto> = ktorClient.get {
+                url("${explorerUrl}/account/transactions")
+                parameter("account", address())
+                parameter("limit", limit)
+            }.body()
+            NetworkResponse.Success(response.map {
+                it.toTransaction(address())
+            })
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            NetworkResponse.Error(NetworkResponseCode.checkError(e))
+        }
     }
 
     private suspend fun getRpc(): String {
         return when (appSettings.data.first().network) {
             ChainNetwork.MAIN -> HttpRoutes.SOLANA_MAINNET_RPC
             else -> HttpRoutes.SOLANA_TESTNET_RPC
+        }
+    }
+    private suspend fun getExplorerUrl(): String {
+        return when (appSettings.data.first().network) {
+            ChainNetwork.MAIN -> HttpRoutes.SOLANA_MAINNET_EXPLORER
+            else -> HttpRoutes.SOLANA_TESTNET_EXPLORER
         }
     }
 }
