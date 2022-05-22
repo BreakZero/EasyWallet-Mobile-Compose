@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -25,7 +25,7 @@ import com.easy.core.ui.components.EasyAppBar
 import com.easy.core.ui.spacing
 import timber.log.Timber
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun WalletImportScreen(
     viewModel: WalletImportViewModel = hiltViewModel(),
@@ -62,7 +62,9 @@ fun WalletImportScreen(
             }
         }
     ) {
-        Column() {
+        Column(
+            modifier = Modifier.padding(it)
+        ) {
             TextField(
                 value = state.phrase,
                 onValueChange = {

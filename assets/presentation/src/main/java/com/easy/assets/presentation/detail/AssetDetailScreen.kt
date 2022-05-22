@@ -2,21 +2,20 @@ package com.easy.assets.presentation.detail
 
 import android.app.Activity
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.ArrowCircleDown
 import androidx.compose.material.icons.outlined.ArrowCircleUp
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -26,7 +25,8 @@ import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.items
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
+import coil.compose.AsyncImage
+import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.presentation.di.ViewModelFactoryProvider
@@ -58,7 +58,10 @@ fun assetDetailViewModel(
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalCoilApi::class)
+@OptIn(
+    ExperimentalFoundationApi::class, ExperimentalCoilApi::class,
+    ExperimentalMaterial3Api::class
+)
 @Composable
 fun AssetDetailScreen(
     slug: String,
@@ -67,8 +70,10 @@ fun AssetDetailScreen(
     onNavigateTo: (Navigator) -> Unit
 ) {
     val systemUIController = rememberSystemUiController()
+    val useDarkIcons = !isSystemInDarkTheme()
+    val statusColor = MaterialTheme.colorScheme.surface
     LaunchedEffect(key1 = true) {
-        systemUIController.setStatusBarColor(Color.White, true)
+        systemUIController.setStatusBarColor(statusColor, useDarkIcons)
     }
     val state = viewModel.state
     val lazyPagingItems = viewModel.state.pager?.flow?.collectAsLazyPagingItems()
@@ -85,7 +90,11 @@ fun AssetDetailScreen(
     ) {
         val isRefreshing = lazyPagingItems?.loadState == null ||
                 lazyPagingItems.loadState.refresh == LoadState.Loading
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it)
+        ) {
             SwipeRefresh(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -108,13 +117,13 @@ fun AssetDetailScreen(
                                 Row() {
                                     Text(
                                         text = state.balance.getOrNull() ?: "--",
-                                        style = MaterialTheme.typography.h4,
+                                        style = MaterialTheme.typography.titleLarge,
                                         modifier = Modifier.alignByBaseline()
                                     )
                                     Text(
                                         textAlign = TextAlign.Justify,
                                         text = state.assetInfo?.symbol.orEmpty(),
-                                        style = MaterialTheme.typography.body2,
+                                        style = MaterialTheme.typography.bodyMedium,
                                         modifier = Modifier
                                             .padding(start = 4.dp)
                                             .alignByBaseline()
@@ -122,19 +131,16 @@ fun AssetDetailScreen(
                                 }
                                 Text(
                                     text = "$ 3.84",
-                                    style = MaterialTheme.typography.caption,
+                                    style = MaterialTheme.typography.bodySmall,
                                     color = Color.Gray
                                 )
                             }
-                            Image(
+                            AsyncImage(
                                 modifier = Modifier.size(40.dp),
-                                contentScale = ContentScale.FillWidth,
-                                painter = rememberImagePainter(
-                                    data = state.assetInfo?.icon,
-                                    builder = {
-                                        transformations(CircleCropTransformation())
-                                    }
-                                ),
+                                model = ImageRequest.Builder(LocalContext.current)
+                                    .data(state.assetInfo?.icon)
+                                    .transformations(CircleCropTransformation())
+                                    .build(),
                                 contentDescription = null
                             )
                         }
@@ -142,11 +148,12 @@ fun AssetDetailScreen(
                     stickyHeader {
                         Text(
                             text = "Tx history",
+                            textAlign = TextAlign.Start,
                             modifier = Modifier
                                 .height(24.dp)
                                 .fillMaxWidth()
                                 .background(Color(0x22888888))
-                                .padding(start = 32.dp),
+                                .padding(start = 16.dp),
                             color = Color.Gray
                         )
                     }
@@ -223,7 +230,7 @@ fun AssetDetailScreen(
                                 }
                             })
                     },
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Green)
+                    colors = ButtonDefaults.buttonColors()
                 ) {
                     Text(text = "Receive", color = Color.White)
                 }
@@ -238,7 +245,7 @@ fun AssetDetailScreen(
                         })
                     }, modifier = Modifier
                         .weight(1f),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.Blue)
+                    colors = ButtonDefaults.buttonColors()
                 ) {
                     Text(text = "Send", color = Color.White)
                 }
@@ -258,7 +265,7 @@ fun TransactionItemView(transactionInfo: Transaction, decimal: Int, click: (Tran
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(modifier = Modifier) {
+        Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = if (transactionInfo.isReceive) Icons.Outlined.ArrowCircleDown
                 else Icons.Outlined.ArrowCircleUp,

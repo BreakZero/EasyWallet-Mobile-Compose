@@ -20,4 +20,7 @@ internal object HttpRoutes {
     const val POLYGON_MAINNET_EXPLORER = "https://api.polygonscan.com/api"
     const val POLYGON_TESTNET_RPC = "https://polygon-rpc.com"
     const val POLYGON_TESTNET_EXPLORER = "https://api.polygonscan.com/api"
+
+    const val SOLANA_MAINNET_RPC = "https://api.testnet.solana.com"
+    const val SOLANA_TESTNET_RPC = "https://api.testnet.solana.com"
 }

@@ -53,37 +53,8 @@ fun MotionLayoutHeader(
                 .padding(top = 32.dp, bottom = 24.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Row(
-                modifier = Modifier.scale(1f - progress)
-            ) {
-                Text(text = "Total balance".uppercase(), color = Color.White)
-                Icon(
-                    imageVector = Icons.Filled.Visibility,
-                    contentDescription = null,
-                    tint = Color.White
-                )
-            }
-            Row(modifier = Modifier.scale(1f - progress)) {
-                Text(text = "Total balance".uppercase(), color = Color.White)
-            }
-            Row(modifier = Modifier.scale(1f - (progress / 1.5f))) {
-                IconWithLabel(
-                    imageVector = Icons.Filled.CallReceived,
-                    labelRes = R.string.text_receive_upper_start,
-                    iconTint = Color.Blue,
-                    textColor = Color.White
-                ) {
-                    onReceive()
-                }
-                Spacer(modifier = Modifier.width(12.dp))
-                IconWithLabel(
-                    imageVector = Icons.Filled.Send,
-                    labelRes = R.string.text_send_upper_start,
-                    iconTint = Color.Blue,
-                    textColor = Color.White
-                ) {
-                    onSend()
-                }
+            Box(modifier = Modifier.height(128.dp)) {
+                
             }
         }
         Box(

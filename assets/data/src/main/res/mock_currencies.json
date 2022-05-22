@@ -1,0 +1,62 @@
+{
+    "code": 0,
+    "data": [
+    {
+        "coinSlug": "ethereum",
+        "coinSymbol": "ETH",
+        "decimal": 18,
+        "iconUrl": "https://easywallet.s3.amazonaws.com/wallet-icons/ethereum.png",
+        "contractAddress": null,
+        "tag": null
+    },
+    {
+        "coinSlug": "erc20-uni",
+        "coinSymbol": "UNI",
+        "decimal": 18,
+        "iconUrl": "https://easywallet.s3.amazonaws.com/wallet-icons/UNI_4x.png",
+        "contractAddress": "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984",
+        "tag": "ERC20"
+    },
+    {
+        "coinSlug": "erc20-dai",
+        "coinSymbol": "DAI",
+        "decimal": 18,
+        "iconUrl": "https://easywallet.s3.amazonaws.com/wallet-icons/DAIxxxhdpi.png",
+        "contractAddress": "0x6b175474e89094c44da98b954eedeac495271d0f",
+        "tag": "ERC20"
+    },
+    {
+        "coinSlug": "cardano",
+        "coinSymbol": "ADA",
+        "decimal": 6,
+        "iconUrl": "https://easywallet.s3.amazonaws.com/wallet-icons/cardano.png",
+        "contractAddress": null,
+        "tag": null
+    },
+    {
+        "coinSlug": "bitcoin",
+        "coinSymbol": "BTC",
+        "decimal": 8,
+        "iconUrl": "https://easywallet.s3.amazonaws.com/wallet-icons/bitcoin.png",
+        "contractAddress": null,
+        "tag": null
+    },
+    {
+        "coinSlug": "erc20-crv",
+        "coinSymbol": "CRV",
+        "decimal": 18,
+        "iconUrl": "https://easywallet.s3.amazonaws.com/wallet-icons/CRVxxxhdpi.png",
+        "contractAddress": "0xD533a949740bb3306d119CC777fa900bA034cd52",
+        "tag": "ERC20"
+    },
+    {
+        "coinSlug": "erc20-cro",
+        "coinSymbol": "CRO",
+        "decimal": 8,
+        "iconUrl": "https://easywallet.s3.amazonaws.com/wallet-icons/cro.png",
+        "contractAddress": "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
+        "tag": "ERC20"
+    }
+    ],
+    "error": null
+}

@@ -4,10 +4,9 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.ui.components.ActionType
-import com.easy.core.ui.components.Passcode
+import com.easy.core.ui.components.NumberKeyboard
 import com.easy.intro.R
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
@@ -26,13 +25,6 @@ fun PasscodeScreen(
     viewModel: PasscodeViewModel = hiltViewModel(),
     onNavigateUp: (String) -> Unit
 ) {
-    val systemUIController = rememberSystemUiController()
-    DisposableEffect(key1 = viewModel) {
-        systemUIController.setStatusBarColor(Color(0xFF192B5E), darkIcons = false)
-        onDispose {
-            systemUIController.setStatusBarColor(Color.Transparent, darkIcons = true)
-        }
-    }
     LaunchedEffect(key1 = null) {
         viewModel.uiEvent.collect {
             val passcode = it.getOrNull().orEmpty()
@@ -119,7 +111,7 @@ fun PasscodeScreen(
                     )
                 }
             }
-            Passcode(
+            NumberKeyboard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(Color.White),

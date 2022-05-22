@@ -42,7 +42,7 @@ fun DependencyHandlerScope.roomDependencies() {
 
 fun DependencyHandlerScope.composeUI() {
     "implementation"(Compose.ui)
-    "implementation"(Compose.material)
+    "implementation"(Compose.Material3.material3)
     "implementation"(Compose.preview)
     "implementation"(Compose.icons)
     "implementation"(Compose.coil)

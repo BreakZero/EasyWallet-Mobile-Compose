@@ -23,7 +23,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.content.ContextCompat
 import com.easy.core.ui.common.QRCodeAnalyzer
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun ScannerView(
@@ -34,7 +33,6 @@ fun ScannerView(
     val cameraProviderFuture = remember {
         ProcessCameraProvider.getInstance(context)
     }
-    val systemUIController = rememberSystemUiController()
     var hasCamPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -50,7 +48,6 @@ fun ScannerView(
         }
     )
     LaunchedEffect(key1 = true) {
-        systemUIController.setStatusBarColor(Color.Transparent, false)
         launcher.launch(Manifest.permission.CAMERA)
     }
     Column(

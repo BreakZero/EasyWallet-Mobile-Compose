@@ -54,7 +54,6 @@ class WalletProtectViewModel @Inject constructor(
                     _uiEvent.send(UiEvent.Success)
                 }
             }
-            else -> Unit
         }
     }
 }

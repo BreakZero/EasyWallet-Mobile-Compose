@@ -26,13 +26,9 @@ class AssetRepositoryImpl @Inject constructor(
         limit: Int,
         contract: String?
     ): Result<List<Transaction>> {
-        return when (val networkTxs = assetsManager.find(slug).transactions(offset, limit, contract)) {
-            is NetworkResponse.Success -> Result.success(networkTxs.data.result.map {
-                it.toTransaction(
-                    assetsManager.find(slug).address()
-                )
-            })
-            is NetworkResponse.Error -> Result.failure(IllegalArgumentException(networkTxs.code.toString()))
+        return when (val result = assetsManager.find(slug).transactions(offset, limit, contract)) {
+            is NetworkResponse.Success -> Result.success(result.data)
+            is NetworkResponse.Error -> Result.failure(IllegalArgumentException(result.code.toString()))
             else -> Result.failure(UnknownError())
         }
     }

@@ -1,11 +1,10 @@
 package com.easy.dapp.presentation.detail
 
 import android.annotation.SuppressLint
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.AlertDialog
-import androidx.compose.material.Scaffold
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -15,8 +14,10 @@ import com.easy.core.ui.components.WebView
 import com.easy.core.ui.components.rememberWebViewState
 import com.easy.dapp.presentation.R
 import com.easy.dapp.presentation.common.WebAppInterface
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import kotlinx.coroutines.launch
 
+@OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
 fun DAppWebViewScreen(
@@ -58,6 +59,13 @@ fun DAppWebViewScreen(
         val state = rememberWebViewState(url = url)
         val scope = rememberCoroutineScope()
 
+        val systemUIController = rememberSystemUiController()
+        val useDarkIcons = !isSystemInDarkTheme()
+        val statusColor = MaterialTheme.colorScheme.surface
+        LaunchedEffect(key1 = null) {
+            systemUIController.setStatusBarColor(color = statusColor, darkIcons = useDarkIcons)
+        }
+
         var showDialog by remember {
             mutableStateOf(false)
         }
@@ -82,8 +90,11 @@ fun DAppWebViewScreen(
             )
         }
 
-        WebView(state = state,
-            modifier = Modifier.fillMaxSize(),
+        WebView(
+            state = state,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(it),
             startScript = {
                 evaluateJavascript(providerJs, null)
                 evaluateJavascript(initJs, null)

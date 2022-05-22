@@ -6,7 +6,7 @@ import com.easy.version.hiltDependencies
 import com.easy.version.unitTestDependencies
 
 plugins {
-    kotlin("plugin.serialization") version "1.6.10"
+    kotlin("plugin.serialization") version "1.6.21"
 }
 
 dependencies {

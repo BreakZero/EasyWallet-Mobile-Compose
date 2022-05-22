@@ -39,7 +39,31 @@ class AssetsManager @Inject constructor(
                     decimal = 18,
                     iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/ethereum.png",
                     tag = null
-                )
+                ),
+                CoinConfigDto(
+                    coinSlug = "erc20-dai",
+                    coinSymbol = "DAI",
+                    contractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f",
+                    decimal = 18,
+                    iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/DAIxxxhdpi.png",
+                    tag = "ERC20"
+                ),
+                CoinConfigDto(
+                    coinSlug = "erc20-cro",
+                    coinSymbol = "CRO",
+                    contractAddress = "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
+                    decimal = 18,
+                    iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/cro.png",
+                    tag = "ERC20"
+                ),
+                CoinConfigDto(
+                    coinSlug = "solana",
+                    coinSymbol = "SOL",
+                    contractAddress = null,
+                    decimal = 9,
+                    iconUrl = "https://cryptologos.cc/logos/solana-sol-logo.png",
+                    tag = null
+                ),
             )
         }.map { item ->
             mutex.withLock {
@@ -60,6 +84,7 @@ class AssetsManager @Inject constructor(
                 slug == "cardano" -> chains[slug] = CardanoChain(ktorClient, walletRepository)
                 slug == "polygon" -> chains[slug] = PolygonChain(appSettings, ktorClient, walletRepository)
                 slug == "cronos" -> chains[slug] = CronosChain(appSettings, ktorClient, walletRepository)
+                slug == "solana" -> chains[slug] = SolanaChain(appSettings, ktorClient, walletRepository)
                 else -> Unit
             }
         }

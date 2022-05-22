@@ -4,11 +4,13 @@ import androidx.annotation.Keep
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.errors.InsufficientBalanceException
+import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.remote.BaseRpcRequest
 import com.easy.assets.data.remote.CallBalance
 import com.easy.assets.data.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.remote.dto.EthTxResponseDto
 import com.easy.assets.data.remote.dto.FeeHistoryDto
+import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.BuildConfig
 import com.easy.core.common.NetworkResponse
@@ -139,7 +141,7 @@ internal class EthereumChain(
         offset: Int,
         limit: Int,
         contract: String?
-    ): NetworkResponse<EthTxResponseDto> = withContext(Dispatchers.IO) {
+    ): NetworkResponse<List<Transaction>> = withContext(Dispatchers.IO) {
         val explorerUrl = getExplorerUrl()
         try {
             val response: EthTxResponseDto = ktorClient.get {
@@ -155,7 +157,9 @@ internal class EthereumChain(
                     parameter("contractaddress", contract)
                 }
             }.body()
-            NetworkResponse.Success(response)
+            NetworkResponse.Success(response.result.map {
+                it.toTransaction(address())
+            })
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
