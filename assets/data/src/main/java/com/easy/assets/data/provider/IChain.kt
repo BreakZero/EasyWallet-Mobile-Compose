@@ -14,5 +14,5 @@ internal interface IChain {
         offset: Int,
         limit: Int,
         contract: String?
-    ): NetworkResponse<EthTxResponseDto>
+    ): NetworkResponse<List<Transaction>>
 }

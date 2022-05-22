@@ -1,5 +1,6 @@
 package com.easy.assets.data.di
 
+import android.content.Context
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.AssetsManager
 import com.easy.assets.data.repository.AssetRepositoryImpl
@@ -12,6 +13,7 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import javax.inject.Singleton

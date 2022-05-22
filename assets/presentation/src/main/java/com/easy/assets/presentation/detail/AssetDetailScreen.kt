@@ -265,7 +265,7 @@ fun TransactionItemView(transactionInfo: Transaction, decimal: Int, click: (Tran
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(modifier = Modifier) {
+        Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = if (transactionInfo.isReceive) Icons.Outlined.ArrowCircleDown
                 else Icons.Outlined.ArrowCircleUp,
