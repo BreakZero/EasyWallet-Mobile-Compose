@@ -4,14 +4,12 @@ import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.remote.BaseRpcRequest
-import com.easy.assets.data.remote.dto.*
 import com.easy.assets.data.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.remote.dto.RecentBlockHashResult
 import com.easy.assets.data.remote.dto.SolBalanceDto
 import com.easy.assets.data.remote.dto.SolTransactionDto
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
-import com.easy.core.BuildConfig
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
 import com.easy.core.enums.ChainNetwork
@@ -28,7 +26,6 @@ import timber.log.Timber
 import wallet.core.java.AnySigner
 import wallet.core.jni.CoinType
 import wallet.core.jni.proto.Solana
-import java.lang.NullPointerException
 import java.math.BigInteger
 
 internal class SolanaChain(
@@ -49,6 +46,7 @@ internal class SolanaChain(
                 setBody(reqBody)
             }.body()
             val recentBlock = result.result.value.blockhash
+            Timber.tag("easy").d("==== $recentBlock")
             val prvKey = ByteString.copyFrom(walletRepository.hdWallet.getKeyForCoin(CoinType.SOLANA).data())
             val transferMessage = Solana.Transfer.newBuilder().apply {
                 recipient = plan.to

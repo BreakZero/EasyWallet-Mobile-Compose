@@ -11,9 +11,11 @@ import androidx.compose.material.ModalBottomSheetLayout
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -28,6 +30,7 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.easy.assets.presentation.di.ViewModelFactoryProvider
 import com.easy.core.common.Navigator
+import com.easy.core.common.UiEvent
 import com.easy.core.ui.components.EasyAppBar
 import com.easy.core.ui.spacing
 import dagger.hilt.android.EntryPointAccessors
@@ -67,6 +70,20 @@ fun SendingScreen(
     )
     val uiState = sendViewModel.sendingState
     val scope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = null) {
+        sendViewModel.uiEvent.collect {
+            when(it) {
+                UiEvent.Success -> {
+                    bottomSheetState.show()
+                }
+                else -> {
+
+                }
+            }
+        }
+    }
+
     ModalBottomSheetLayout(
         modifier = Modifier
             .fillMaxSize(),
@@ -74,13 +91,13 @@ fun SendingScreen(
         sheetContent = {
             when(uiState.action) {
                 Action.ADVANCED -> {
-                    Box {
-                        Text(text = "advanced")
+                    Box(modifier = Modifier.padding(MaterialTheme.spacing.space12)) {
+                        Text(text = "Hello world")
                     }
                 }
                 else -> {
-                    Box() {
-                        Text(text = "Send")
+                    Box(modifier = Modifier.padding(MaterialTheme.spacing.space12)) {
+                        Text(text = uiState.toString())
                     }
                 }
             }
@@ -90,7 +107,7 @@ fun SendingScreen(
             modifier = Modifier
                 .fillMaxSize(),
             topBar = {
-                EasyAppBar(title = "Send ETH") {
+                EasyAppBar(title = "Send $slug") {
                     navigateUp.invoke()
                 }
             }
@@ -139,6 +156,7 @@ fun SendingScreen(
                 ) {
                     Row(
                         modifier = Modifier.clickable {
+                            keyboardController?.hide()
                             sendViewModel.onActionChanged(Action.ADVANCED)
                             scope.launch {
                                 bottomSheetState.show()
@@ -148,16 +166,68 @@ fun SendingScreen(
                         Text(text = "Advanced")
                         Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
                     }
-                    Row() {
 
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = MaterialTheme.spacing.spaceMedium,
+                                end = MaterialTheme.spacing.spaceMedium
+                            )
+                    ) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(IntrinsicSize.Min),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            TextField(
+                                modifier = Modifier.weight(1F),
+                                value = uiState.toAddress,
+                                keyboardActions = KeyboardActions(
+                                    onDone = {
+                                        keyboardController?.hide()
+                                    }
+                                ),
+                                keyboardOptions = KeyboardOptions(
+                                    keyboardType = KeyboardType.Text,
+                                    imeAction = ImeAction.Done
+                                ),
+                                onValueChange = {
+                                    sendViewModel.onToAddressChanged(it)
+                                })
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxHeight()
+                                    .clickable {
+
+                                    },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Icon(
+                                    modifier = Modifier
+                                        .padding(
+                                            end = MaterialTheme.spacing.space12,
+                                            start = MaterialTheme.spacing.space12
+                                        )
+                                        .size(MaterialTheme.spacing.spaceLarge),
+                                    imageVector = Icons.Filled.QrCode,
+                                    contentDescription = null
+                                )
+                            }
+                        }
                     }
                     OutlinedButton(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(
+                                start = MaterialTheme.spacing.spaceMedium,
+                                end = MaterialTheme.spacing.spaceMedium
+                            ),
                         onClick = {
+                            keyboardController?.hide()
                             sendViewModel.onActionChanged(Action.MODEL_INFO)
-                            scope.launch {
-                                bottomSheetState.show()
-                            }
+                            sendViewModel.onSign()
                         }
                     ) {
                         Text(text = "Send")

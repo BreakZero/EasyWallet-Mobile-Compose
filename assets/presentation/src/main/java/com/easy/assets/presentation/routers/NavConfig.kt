@@ -11,8 +11,6 @@ import androidx.navigation.navArgument
 import com.easy.assets.presentation.detail.AssetDetailScreen
 import com.easy.assets.presentation.receive.ReceiveScreen
 import com.easy.assets.presentation.send.SendingScreen
-import com.easy.assets.presentation.send.address.NormalSendAddressScreen
-import com.easy.assets.presentation.send.amount.NormalSendAmountScreen
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.navigation
 
@@ -97,27 +95,6 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
                 }
             ) {
                 navController.navigate(it.router())
-            }
-        }
-        composable(route = AssetRouter.SEND_SECOND,
-            enterTransition = {
-                fadeIn(animationSpec = tween(700))
-            },
-            exitTransition = {
-                fadeOut(animationSpec = tween(700))
-            },
-            popEnterTransition = {
-                fadeIn(animationSpec = tween(700))
-            },
-            popExitTransition = {
-                fadeOut(animationSpec = tween(700))
-            }) {
-            NormalSendAmountScreen(
-                navigateUp = {
-                    navController.navigateUp()
-                }
-            ) {
-                navController.navigateUp()
             }
         }
     }
