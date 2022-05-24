@@ -26,7 +26,7 @@ fun DAppWebViewScreen(
 ) {
     val context = LocalContext.current
     val providerJs = remember {
-        context.resources.openRawResource(R.raw.trust_min_new).readBytes().decodeToString()
+        context.resources.openRawResource(R.raw.trust_min).readBytes().decodeToString()
     }
 
     val initJs = remember {

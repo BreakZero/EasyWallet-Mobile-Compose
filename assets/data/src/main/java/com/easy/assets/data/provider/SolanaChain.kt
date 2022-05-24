@@ -41,26 +41,34 @@ internal class SolanaChain(
                 method = "getRecentBlockhash",
                 params = emptyList<String>()
             )
-            val result: BaseRpcResponseDto<RecentBlockHashResult> = ktorClient.post {
-                url(getRpc())
-                setBody(reqBody)
-            }.body()
-            val recentBlock = result.result.value.blockhash
-            Timber.tag("easy").d("==== $recentBlock")
-            val prvKey = ByteString.copyFrom(walletRepository.hdWallet.getKeyForCoin(CoinType.SOLANA).data())
-            val transferMessage = Solana.Transfer.newBuilder().apply {
-                recipient = plan.to
-                value = plan.amount.toLong()
-            }.build()
-            val signingInput = Solana.SigningInput.newBuilder().apply {
-                transferTransaction = transferMessage
-                recentBlockhash = recentBlock
-                privateKey = prvKey
-            }.build()
+            try {
+                val result: BaseRpcResponseDto<RecentBlockHashResult> = ktorClient.post {
+                    url(getRpc())
+                    setBody(reqBody)
+                }.body()
+                val recentBlock = result.result.value.blockhash
+                Timber.tag("easy").d("==== $recentBlock")
+                val prvKey = ByteString.copyFrom(
+                    walletRepository.hdWallet.getKeyForCoin(CoinType.SOLANA).data()
+                )
+                val transferMessage = Solana.Transfer.newBuilder().apply {
+                    recipient = plan.to
+                    value = plan.amount.toLong()
+                }.build()
+                val signingInput = Solana.SigningInput.newBuilder().apply {
+                    transferTransaction = transferMessage
+                    recentBlockhash = recentBlock
+                    privateKey = prvKey
+                }.build()
 
-            val output = AnySigner.sign(signingInput, CoinType.SOLANA, Solana.SigningOutput.parser())
-            val rawData = output.encoded
-            rawData
+                val output =
+                    AnySigner.sign(signingInput, CoinType.SOLANA, Solana.SigningOutput.parser())
+                val rawData = output.encoded
+                rawData
+            } catch (e: Exception) {
+                Timber.e(e)
+                ""
+            }
         }
     }
 
@@ -75,12 +83,15 @@ internal class SolanaChain(
             method = "getBalance",
             params = listOf(address())
         )
-        val resp: BaseRpcResponseDto<SolBalanceDto> = ktorClient.post {
-            url(getRpc())
-            setBody(reqbody)
-        }.body()
-
-        return resp.result.value.toBigInteger()
+        try {
+            val resp: BaseRpcResponseDto<SolBalanceDto> = ktorClient.post {
+                url(getRpc())
+                setBody(reqbody)
+            }.body()
+            return resp.result.value.toBigInteger()
+        } catch (e: java.lang.Exception) {
+            return BigInteger.ZERO
+        }
     }
 
     override suspend fun transactions(

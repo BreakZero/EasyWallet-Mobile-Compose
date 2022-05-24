@@ -7,6 +7,5 @@ sealed class MainUIEvent {
     object OnScanClick: MainUIEvent()
     object OnReceiveClick: MainUIEvent()
     object OnSendClick: MainUIEvent()
-    object OnDAppDetail: MainUIEvent()
     data class OnItemClicked(val assetInfo: AssetInfo): MainUIEvent()
 }
