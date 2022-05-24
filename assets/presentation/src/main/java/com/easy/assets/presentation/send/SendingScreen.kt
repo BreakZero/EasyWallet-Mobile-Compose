@@ -15,6 +15,7 @@ import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -23,6 +24,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
@@ -30,8 +33,10 @@ import coil.transform.CircleCropTransformation
 import com.easy.assets.presentation.di.ViewModelFactoryProvider
 import com.easy.core.common.Navigator
 import com.easy.core.common.UiEvent
+import com.easy.core.ui.GlobalRouter
 import com.easy.core.ui.components.EasyAppBar
 import com.easy.core.ui.spacing
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
 
@@ -59,6 +64,7 @@ fun assetSendViewModel(
 @Composable
 fun SendingScreen(
     slug: String,
+    savedStateHandle: SavedStateHandle?,
     sendViewModel: SendingViewModel = assetSendViewModel(slug),
     navigateUp: () -> Unit,
     onNavigateTo: (Navigator) -> Unit
@@ -69,10 +75,17 @@ fun SendingScreen(
     )
     val uiState = sendViewModel.sendingState
     val scope = rememberCoroutineScope()
+    savedStateHandle?.also {
+        val backResult =
+            it.getLiveData<String>("QR_CODE_CONTENT").asFlow().collectAsState(initial = "")
+        LaunchedEffect(key1 = backResult) {
+            sendViewModel.onEvent(SendingFormEvent.AddressChanged(backResult.value))
+        }
+    }
 
     LaunchedEffect(key1 = null) {
         sendViewModel.uiEvent.collect {
-            when(it) {
+            when (it) {
                 UiEvent.Success -> {
                     bottomSheetState.show()
                 }
@@ -104,6 +117,7 @@ fun SendingScreen(
     ) {
         Scaffold(
             modifier = Modifier
+                .navigationBarsWithImePadding()
                 .fillMaxSize(),
             topBar = {
                 EasyAppBar(title = "Send $slug") {
@@ -129,7 +143,7 @@ fun SendingScreen(
                         contentDescription = null
                     )
                     Text(text = "Enter Amount")
-                    OutlinedTextField(
+                    TextField(
                         modifier = Modifier
                             .padding(
                                 start = MaterialTheme.spacing.spaceMedium,
@@ -193,7 +207,6 @@ fun SendingScreen(
                         ) {
                             TextField(
                                 modifier = Modifier.weight(1F),
-                                maxLines = 1,
                                 isError = uiState.addressError != null,
                                 value = uiState.toAddress,
                                 keyboardActions = KeyboardActions(
@@ -207,12 +220,13 @@ fun SendingScreen(
                                 ),
                                 onValueChange = {
                                     sendViewModel.onEvent(SendingFormEvent.AddressChanged(it))
-                                })
+                                }
+                            )
                             Box(
                                 modifier = Modifier
                                     .fillMaxHeight()
                                     .clickable {
-
+                                        onNavigateTo.invoke(Navigator(GlobalRouter.GLOBAL_SCAN))
                                     },
                                 contentAlignment = Alignment.Center
                             ) {

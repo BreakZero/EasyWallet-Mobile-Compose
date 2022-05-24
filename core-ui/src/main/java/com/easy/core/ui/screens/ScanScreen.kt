@@ -6,11 +6,11 @@ import com.easy.core.ui.components.ScannerView
 
 @Composable
 fun ScanScreen(
-    callback: () -> Unit
+    onResult: (String) -> Unit
 ) {
     Surface {
         ScannerView(callback = {
-            callback.invoke()
+            onResult.invoke(it)
         })
     }
 }

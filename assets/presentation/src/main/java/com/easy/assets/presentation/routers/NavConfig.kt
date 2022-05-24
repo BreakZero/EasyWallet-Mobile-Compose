@@ -90,6 +90,7 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             val slug = it.arguments?.getString("slug")!!
             SendingScreen(
                 slug = slug,
+                savedStateHandle = navController.currentBackStackEntry?.savedStateHandle,
                 navigateUp = {
                     navController.navigateUp()
                 }
