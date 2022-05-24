@@ -91,7 +91,7 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             SendingScreen(
                 slug = slug,
                 savedStateHandle = navController.currentBackStackEntry?.savedStateHandle,
-                navigateUp = {
+                onBackPressed = {
                     navController.navigateUp()
                 }
             ) {

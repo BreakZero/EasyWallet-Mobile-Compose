@@ -8,7 +8,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.use_case.AssetsUseCases
-import com.easy.assets.domain.use_case.ValidateAddress
 import com.easy.assets.domain.use_case.validation.ValidateAmount
 import com.easy.core.common.UiEvent
 import com.easy.core.common.UiText
@@ -18,6 +17,7 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SendingViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,
@@ -97,6 +97,7 @@ class SendingViewModel @AssistedInject constructor(
                         contract = null
                     )
                 )
+                Timber.tag("Easy").d(rawData)
                 _uiEvent.send(UiEvent.Success)
             } ?: kotlin.run {
                 _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("somethings went wrong")))

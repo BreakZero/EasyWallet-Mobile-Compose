@@ -13,10 +13,7 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.QrCode
 import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
@@ -66,7 +63,7 @@ fun SendingScreen(
     slug: String,
     savedStateHandle: SavedStateHandle?,
     sendViewModel: SendingViewModel = assetSendViewModel(slug),
-    navigateUp: () -> Unit,
+    onBackPressed: () -> Unit,
     onNavigateTo: (Navigator) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -74,7 +71,9 @@ fun SendingScreen(
         initialValue = ModalBottomSheetValue.Hidden
     )
     val uiState = sendViewModel.sendingState
+    val snackbarHostState = remember { SnackbarHostState() }
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
     savedStateHandle?.also {
         val backResult =
             it.getLiveData<String>("QR_CODE_CONTENT").asFlow().collectAsState(initial = "")
@@ -89,9 +88,12 @@ fun SendingScreen(
                 UiEvent.Success -> {
                     bottomSheetState.show()
                 }
-                else -> {
-
+                is UiEvent.ShowSnackbar -> {
+                    snackbarHostState.showSnackbar(
+                        it.message.asString(context)
+                    )
                 }
+                else -> Unit
             }
         }
     }
@@ -116,12 +118,15 @@ fun SendingScreen(
         }
     ) {
         Scaffold(
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            },
             modifier = Modifier
                 .navigationBarsWithImePadding()
                 .fillMaxSize(),
             topBar = {
                 EasyAppBar(title = "Send $slug") {
-                    navigateUp.invoke()
+                    onBackPressed()
                 }
             }
         ) {
