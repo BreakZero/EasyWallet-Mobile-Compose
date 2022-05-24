@@ -3,7 +3,6 @@ package com.easy.assets.presentation.send
 import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
@@ -33,6 +32,7 @@ import com.easy.core.common.Navigator
 import com.easy.core.common.UiEvent
 import com.easy.core.ui.components.EasyAppBar
 import com.easy.core.ui.spacing
+import com.google.accompanist.insets.navigationBarsWithImePadding
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
 
@@ -130,10 +130,14 @@ fun SendingScreen(
                         contentDescription = null
                     )
                     Text(text = "Enter Amount")
-                    BasicTextField(
+                    OutlinedTextField(
                         modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .height(MaterialTheme.spacing.spaceLarge),
+                            .padding(
+                                start = MaterialTheme.spacing.spaceMedium,
+                                end = MaterialTheme.spacing.spaceMedium
+                            )
+                            .fillMaxWidth()
+                            .align(Alignment.CenterHorizontally),
                         value = uiState.amount,
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,

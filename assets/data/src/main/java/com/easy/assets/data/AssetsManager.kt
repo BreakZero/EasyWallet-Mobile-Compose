@@ -2,6 +2,7 @@ package com.easy.assets.data
 
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.mapper.toAsset
+import com.easy.assets.data.model.local.AssetsDatabase
 import com.easy.assets.data.provider.*
 import com.easy.assets.data.model.remote.dto.CoinConfigDto
 import com.easy.assets.data.model.remote.dto.CoinConfigResponseDto
