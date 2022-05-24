@@ -32,7 +32,6 @@ import com.easy.core.common.Navigator
 import com.easy.core.common.UiEvent
 import com.easy.core.ui.components.EasyAppBar
 import com.easy.core.ui.spacing
-import com.google.accompanist.insets.navigationBarsWithImePadding
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
 
@@ -148,9 +147,16 @@ fun SendingScreen(
                                 keyboardController?.hide()
                             }
                         ),
+                        isError = uiState.amountError != null,
                         onValueChange = {
-                            sendViewModel.onAmountChanged(it)
+                            sendViewModel.onEvent(SendingFormEvent.AmountChanged(it))
                         })
+                    if (uiState.amountError != null) {
+                        Text(
+                            text = uiState.amountError,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                 }
                 Column(
                     modifier = Modifier
@@ -161,7 +167,7 @@ fun SendingScreen(
                     Row(
                         modifier = Modifier.clickable {
                             keyboardController?.hide()
-                            sendViewModel.onActionChanged(Action.ADVANCED)
+                            sendViewModel.onEvent(SendingFormEvent.ActionChanged(Action.ADVANCED))
                             scope.launch {
                                 bottomSheetState.show()
                             }
@@ -187,6 +193,8 @@ fun SendingScreen(
                         ) {
                             TextField(
                                 modifier = Modifier.weight(1F),
+                                maxLines = 1,
+                                isError = uiState.addressError != null,
                                 value = uiState.toAddress,
                                 keyboardActions = KeyboardActions(
                                     onDone = {
@@ -198,7 +206,7 @@ fun SendingScreen(
                                     imeAction = ImeAction.Done
                                 ),
                                 onValueChange = {
-                                    sendViewModel.onToAddressChanged(it)
+                                    sendViewModel.onEvent(SendingFormEvent.AddressChanged(it))
                                 })
                             Box(
                                 modifier = Modifier
@@ -221,6 +229,12 @@ fun SendingScreen(
                             }
                         }
                     }
+                    if (uiState.addressError != null) {
+                        Text(
+                            text = uiState.addressError,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                     OutlinedButton(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -230,8 +244,8 @@ fun SendingScreen(
                             ),
                         onClick = {
                             keyboardController?.hide()
-                            sendViewModel.onActionChanged(Action.MODEL_INFO)
-                            sendViewModel.onSign()
+                            sendViewModel.onEvent(SendingFormEvent.ActionChanged(Action.MODEL_INFO))
+                            sendViewModel.onEvent(SendingFormEvent.Submit)
                         }
                     ) {
                         Text(text = "Send")

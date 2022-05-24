@@ -8,6 +8,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.use_case.AssetsUseCases
+import com.easy.assets.domain.use_case.ValidateAddress
+import com.easy.assets.domain.use_case.validation.ValidateAmount
 import com.easy.core.common.UiEvent
 import com.easy.core.common.UiText
 import dagger.assisted.Assisted
@@ -16,7 +18,6 @@ import dagger.assisted.AssistedInject
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class SendingViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,
@@ -39,6 +40,8 @@ class SendingViewModel @AssistedInject constructor(
         }
     }
 
+    private val validateAmount: ValidateAmount = ValidateAmount()
+
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
 
@@ -51,19 +54,38 @@ class SendingViewModel @AssistedInject constructor(
         }
     }
 
-    fun onAmountChanged(amount: String) {
-        sendingState = sendingState.copy(amount = amount)
+    fun onEvent(event: SendingFormEvent) {
+        when(event) {
+            is SendingFormEvent.AmountChanged -> {
+                sendingState = sendingState.copy(amount = event.amount)
+            }
+            is SendingFormEvent.AddressChanged -> {
+                sendingState = sendingState.copy(toAddress = event.address)
+            }
+            is SendingFormEvent.ActionChanged -> {
+                sendingState = sendingState.copy(action = event.action)
+            }
+            is SendingFormEvent.Submit -> {
+                signTransaction()
+            }
+        }
     }
 
-    fun onToAddressChanged(address: String) {
-        sendingState = sendingState.copy(toAddress = address)
-    }
+    private fun signTransaction() {
+        val amountResult = validateAmount.execute(sendingState.amount)
+        val addressResult = assetsUseCases.validateAddress.invoke(slug, sendingState.toAddress)
 
-    fun onActionChanged(action: Action) {
-        sendingState = sendingState.copy(action = action)
-    }
+        val hasError = listOf(amountResult, addressResult).any {
+            !it.successful
+        }
+        sendingState = sendingState.copy(
+            amountError = amountResult.errorMessage,
+            addressError = addressResult.errorMessage
+        )
+        if (hasError) {
+            return
+        }
 
-    fun onSign() {
         viewModelScope.launch {
             assetsUseCases.assets().find { it.slug == slug }?.run {
                 val rawData = assetsUseCases.signTransaction(

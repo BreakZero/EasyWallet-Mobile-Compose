@@ -73,7 +73,11 @@ internal class SolanaChain(
     }
 
     override fun address(): String {
-        return walletRepository.hdWallet.getAddressForCoin(CoinType.SOLANA)
+        return walletRepository.hdWallet.getAddressForCoin(coinType())
+    }
+
+    override fun coinType(): CoinType {
+        return CoinType.SOLANA
     }
 
     override suspend fun balance(contract: String?): BigInteger {

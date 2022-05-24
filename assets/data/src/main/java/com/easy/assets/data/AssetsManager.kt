@@ -17,6 +17,41 @@ import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 import kotlin.collections.set
 
+private val default_coins = listOf(
+    CoinConfigDto(
+        coinSlug = "ethereum",
+        coinSymbol = "ETH",
+        contractAddress = null,
+        decimal = 18,
+        iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/ethereum.png",
+        tag = null
+    ),
+    CoinConfigDto(
+        coinSlug = "erc20-dai",
+        coinSymbol = "DAI",
+        contractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f",
+        decimal = 18,
+        iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/DAIxxxhdpi.png",
+        tag = "ERC20"
+    ),
+    CoinConfigDto(
+        coinSlug = "erc20-cro",
+        coinSymbol = "CRO",
+        contractAddress = "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
+        decimal = 18,
+        iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/cro.png",
+        tag = "ERC20"
+    ),
+    CoinConfigDto(
+        coinSlug = "solana",
+        coinSymbol = "SOL",
+        contractAddress = null,
+        decimal = 9,
+        iconUrl = "https://cryptologos.cc/logos/solana-sol-logo.png",
+        tag = null
+    ),
+)
+
 class AssetsManager @Inject constructor(
     private val ktorClient: HttpClient,
     private val appSettings: DataStore<AppSettings>,
@@ -32,40 +67,7 @@ class AssetsManager @Inject constructor(
             ).body()
             responseDto.result
         }.getOrElse {
-            listOf(
-                CoinConfigDto(
-                    coinSlug = "ethereum",
-                    coinSymbol = "ETH",
-                    contractAddress = null,
-                    decimal = 18,
-                    iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/ethereum.png",
-                    tag = null
-                ),
-                CoinConfigDto(
-                    coinSlug = "erc20-dai",
-                    coinSymbol = "DAI",
-                    contractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f",
-                    decimal = 18,
-                    iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/DAIxxxhdpi.png",
-                    tag = "ERC20"
-                ),
-                CoinConfigDto(
-                    coinSlug = "erc20-cro",
-                    coinSymbol = "CRO",
-                    contractAddress = "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
-                    decimal = 18,
-                    iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/cro.png",
-                    tag = "ERC20"
-                ),
-                CoinConfigDto(
-                    coinSlug = "solana",
-                    coinSymbol = "SOL",
-                    contractAddress = null,
-                    decimal = 9,
-                    iconUrl = "https://cryptologos.cc/logos/solana-sol-logo.png",
-                    tag = null
-                ),
-            )
+            default_coins
         }.map { item ->
             mutex.withLock {
                 syncChains(item)

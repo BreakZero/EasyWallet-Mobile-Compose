@@ -8,5 +8,6 @@ class AssetsUseCases @Inject constructor(
     val assetsWithBalance: AssetsWithBalance,
     val balance: AssetBalance,
     val transactions: AssetTransactions,
-    val signTransaction: SignTransaction
+    val signTransaction: SignTransaction,
+    val validateAddress: ValidateAddress
 )

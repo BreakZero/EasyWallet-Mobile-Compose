@@ -24,7 +24,11 @@ internal class BitcoinChain(
     }
 
     override fun address(): String {
-        return walletRepository.hdWallet.getAddressForCoin(CoinType.BITCOIN)
+        return walletRepository.hdWallet.getAddressForCoin(coinType())
+    }
+
+    override fun coinType(): CoinType {
+        return CoinType.BITCOIN
     }
 
     override suspend fun balance(contract: String?): BigInteger {

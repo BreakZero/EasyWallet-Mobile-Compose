@@ -24,7 +24,11 @@ internal class CardanoChain(
     }
 
     override fun address(): String {
-        return walletRepository.hdWallet.getAddressForCoin(CoinType.CARDANO)
+        return walletRepository.hdWallet.getAddressForCoin(coinType())
+    }
+
+    override fun coinType(): CoinType {
+        return CoinType.CARDANO
     }
 
     override suspend fun balance(contract: String?): BigInteger {

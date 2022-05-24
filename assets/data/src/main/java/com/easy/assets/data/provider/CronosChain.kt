@@ -91,7 +91,11 @@ internal class CronosChain(
     }
 
     override fun address(): String {
-        return walletRepository.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
+        return walletRepository.hdWallet.getAddressForCoin(coinType())
+    }
+
+    override fun coinType(): CoinType {
+        return CoinType.ETHEREUM
     }
 
     override suspend fun balance(contract: String?): BigInteger = withContext(Dispatchers.IO) {
