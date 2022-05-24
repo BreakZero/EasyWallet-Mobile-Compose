@@ -1,6 +1,6 @@
 package com.easy.assets.data.provider
 
-import com.easy.assets.data.remote.dto.EthTxResponseDto
+import com.easy.assets.data.model.remote.dto.EthTxResponseDto
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.common.NetworkResponse

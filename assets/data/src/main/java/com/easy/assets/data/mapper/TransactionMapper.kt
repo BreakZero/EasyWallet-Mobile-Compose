@@ -1,7 +1,7 @@
 package com.easy.assets.data.mapper
 
-import com.easy.assets.data.remote.dto.EthTxDto
-import com.easy.assets.data.remote.dto.SolTransactionDto
+import com.easy.assets.data.model.remote.dto.EthTxDto
+import com.easy.assets.data.model.remote.dto.SolTransactionDto
 import com.easy.assets.domain.model.Transaction
 
 internal fun EthTxDto.toTransaction(address: String): Transaction {

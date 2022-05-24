@@ -22,6 +22,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun DAppWebViewScreen(
     url: String,
+    chain: Int,
+    rpc: String,
     navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
@@ -33,8 +35,8 @@ fun DAppWebViewScreen(
         """
         (function() {
             var config = {
-                chainId: 1,
-                rpcUrl: "https://mainnet.infura.io/v3/${BuildConfig.INFURA_APIKEY}",
+                chainId: $chain,
+                rpcUrl: "$rpc",
                 isDebug: true
             };
             window.ethereum = new trustwallet.Provider(config);

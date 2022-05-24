@@ -14,7 +14,6 @@ data class Navigator(
 
     fun routerWithParameter(): String {
         return params.let {
-            // /${info.contractAddress}/${info.symbol}
             buildString {
                 append(router)
                 append("?")
@@ -24,8 +23,7 @@ data class Navigator(
                     append(it.value)
                     append("&")
                 }
-                dropLast(1)
-            }
+            }.removeSuffix("&")
         }
     }
 

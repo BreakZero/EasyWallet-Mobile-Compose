@@ -4,11 +4,11 @@ import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.errors.InsufficientBalanceException
 import com.easy.assets.data.mapper.toTransaction
-import com.easy.assets.data.remote.BaseRpcRequest
-import com.easy.assets.data.remote.CallBalance
-import com.easy.assets.data.remote.dto.BaseRpcResponseDto
-import com.easy.assets.data.remote.dto.EthTxResponseDto
-import com.easy.assets.data.remote.dto.FeeHistoryDto
+import com.easy.assets.data.model.remote.BaseRpcRequest
+import com.easy.assets.data.model.remote.CallBalance
+import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
+import com.easy.assets.data.model.remote.dto.EthTxResponseDto
+import com.easy.assets.data.model.remote.dto.FeeHistoryDto
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.BuildConfig

@@ -75,7 +75,6 @@ class SendingViewModel @AssistedInject constructor(
                         contract = null
                     )
                 )
-                Timber.tag("easy").d("==== $rawData")
                 _uiEvent.send(UiEvent.Success)
             } ?: kotlin.run {
                 _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("somethings went wrong")))

@@ -1,4 +1,4 @@
-package com.easy.assets.data.remote.dto
+package com.easy.assets.data.model.remote.dto
 
 import com.google.gson.annotations.SerializedName
 

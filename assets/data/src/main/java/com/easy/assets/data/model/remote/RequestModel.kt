@@ -1,4 +1,4 @@
-package com.easy.assets.data.remote
+package com.easy.assets.data.model.remote
 
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName

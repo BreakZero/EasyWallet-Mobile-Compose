@@ -2,8 +2,8 @@ package com.easy.assets.data.repository
 
 import com.easy.assets.data.AssetsManager
 import com.easy.assets.data.mapper.toAsset
-import com.easy.assets.data.remote.dto.CoinConfigDto
-import com.easy.assets.data.remote.dto.CoinConfigResponseDto
+import com.easy.assets.data.model.remote.dto.CoinConfigDto
+import com.easy.assets.data.model.remote.dto.CoinConfigResponseDto
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.domain.repository.CoinRepository
 import io.ktor.client.*
