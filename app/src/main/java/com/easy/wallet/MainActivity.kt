@@ -7,8 +7,10 @@ import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.core.view.WindowCompat
@@ -28,6 +30,7 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
@@ -40,6 +43,14 @@ class MainActivity : ComponentActivity() {
         setContent {
             EasyTheme {
                 ProvideWindowInsets {
+                    val systemUIController = rememberSystemUiController()
+                    val useDarkIcons = !isSystemInDarkTheme()
+                    SideEffect {
+                        systemUIController.setStatusBarColor(
+                            Color.Transparent,
+                            darkIcons = useDarkIcons
+                        )
+                    }
                     val navController = rememberAnimatedNavController()
                     // A surface container using the 'background' color from the theme
                     Surface(

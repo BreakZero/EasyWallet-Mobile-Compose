@@ -14,6 +14,7 @@ import com.easy.core.common.UiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -41,6 +42,7 @@ class SendingViewModel @AssistedInject constructor(
     }
 
     private val validateAmount: ValidateAmount = ValidateAmount()
+    private var rawData: String? = null
 
     private val _uiEvent = Channel<UiEvent>()
     val uiEvent = _uiEvent.receiveAsFlow()
@@ -67,6 +69,11 @@ class SendingViewModel @AssistedInject constructor(
             }
             is SendingFormEvent.Submit -> {
                 signTransaction()
+            }
+            is SendingFormEvent.Broadcast -> {
+                rawData?.also {
+                    broadcastTransaction(it)
+                }
             }
         }
     }
@@ -101,6 +108,17 @@ class SendingViewModel @AssistedInject constructor(
                 _uiEvent.send(UiEvent.Success)
             } ?: kotlin.run {
                 _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("somethings went wrong")))
+            }
+        }
+    }
+
+    private fun broadcastTransaction(rawData: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = assetsUseCases.broadcast.invoke(slug, rawData)
+            if (result.isSuccess) {
+                _uiEvent.send(UiEvent.Success)
+            } else {
+                _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("broadcast transaction failed")))
             }
         }
     }

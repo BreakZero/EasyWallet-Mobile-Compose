@@ -3,6 +3,7 @@ package com.easy.assets.data.provider
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.errors.InsufficientBalanceException
+import com.easy.assets.data.errors.UnSupportChainException
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.model.remote.BaseRpcRequest
 import com.easy.assets.data.model.remote.CallBalance
@@ -164,6 +165,10 @@ internal class PolygonChain(
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
+    }
+
+    override suspend fun broadcast(data: String): Result<String> {
+        return Result.failure(UnSupportChainException())
     }
 
     private suspend fun estimateGasLimit() = withContext(Dispatchers.IO) {

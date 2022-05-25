@@ -32,4 +32,8 @@ class AssetRepositoryImpl @Inject constructor(
             else -> Result.failure(UnknownError())
         }
     }
+
+    override suspend fun broadcastTransaction(slug: String, data: String): Result<String> {
+        return assetsManager.find(slug).broadcast(data)
+    }
 }

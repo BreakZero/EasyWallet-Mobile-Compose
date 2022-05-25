@@ -2,6 +2,7 @@ package com.easy.assets.data.provider
 
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
+import com.easy.assets.data.errors.UnSupportChainException
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.model.remote.BaseRpcRequest
 import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
@@ -117,6 +118,10 @@ internal class SolanaChain(
             e.printStackTrace()
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
+    }
+
+    override suspend fun broadcast(data: String): Result<String> {
+        return Result.failure(UnSupportChainException())
     }
 
     private suspend fun getRpc(): String {

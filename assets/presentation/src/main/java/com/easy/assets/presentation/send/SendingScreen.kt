@@ -184,13 +184,16 @@ fun SendingScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Row(
-                        modifier = Modifier.clickable {
-                            keyboardController?.hide()
-                            sendViewModel.onEvent(SendingFormEvent.ActionChanged(Action.ADVANCED))
-                            scope.launch {
-                                bottomSheetState.show()
-                            }
-                        }
+                        modifier = Modifier
+                            .padding(MaterialTheme.spacing.spaceExtraSmall)
+                            .clickable {
+                                keyboardController?.hide()
+                                sendViewModel.onEvent(SendingFormEvent.ActionChanged(Action.ADVANCED))
+                                scope.launch {
+                                    bottomSheetState.show()
+                                }
+                            },
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
                         Text(text = "Advanced")
                         Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
@@ -198,6 +201,7 @@ fun SendingScreen(
 
                     Card(
                         modifier = Modifier
+                            .padding(top = MaterialTheme.spacing.spaceSmall)
                             .fillMaxWidth()
                             .padding(
                                 start = MaterialTheme.spacing.spaceMedium,
@@ -256,6 +260,7 @@ fun SendingScreen(
                     }
                     OutlinedButton(
                         modifier = Modifier
+                            .padding(top = MaterialTheme.spacing.spaceSmall)
                             .fillMaxWidth()
                             .padding(
                                 start = MaterialTheme.spacing.spaceMedium,

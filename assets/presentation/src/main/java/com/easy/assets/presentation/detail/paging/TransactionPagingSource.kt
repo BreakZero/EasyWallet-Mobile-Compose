@@ -22,7 +22,7 @@ class TransactionPagingSource(
         val nextPage = params.key ?: 1
         val result = assetTransactions(asset.slug, 20, nextPage, asset.contractAddress)
         return if (result.isFailure) {
-            LoadResult.Error(result.exceptionOrNull() ?: Throwable(""))
+            LoadResult.Error(result.exceptionOrNull() ?: RuntimeException("loading paging error"))
         } else {
             val txs = result.getOrNull() ?: emptyList()
             LoadResult.Page(

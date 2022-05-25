@@ -33,4 +33,8 @@ internal object DefaultChain: IChain {
     ): NetworkResponse<List<Transaction>> {
         return NetworkResponse.Error(NetworkResponseCode.checkError(UnSupportChainException()))
     }
+
+    override suspend fun broadcast(data: String): Result<String> {
+        return Result.failure(UnSupportChainException())
+    }
 }
