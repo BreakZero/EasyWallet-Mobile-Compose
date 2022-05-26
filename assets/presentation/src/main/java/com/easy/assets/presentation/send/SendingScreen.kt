@@ -199,6 +199,13 @@ fun SendingScreen(
                         Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
                     }
 
+                    if (uiState.addressError != null) {
+                        Text(
+                            modifier = Modifier.padding(MaterialTheme.spacing.spaceLarge),
+                            text = uiState.addressError,
+                            color = MaterialTheme.colorScheme.error
+                        )
+                    }
                     Card(
                         modifier = Modifier
                             .padding(top = MaterialTheme.spacing.spaceSmall)
@@ -251,12 +258,6 @@ fun SendingScreen(
                                 )
                             }
                         }
-                    }
-                    if (uiState.addressError != null) {
-                        Text(
-                            text = uiState.addressError,
-                            color = MaterialTheme.colorScheme.error
-                        )
                     }
                     OutlinedButton(
                         modifier = Modifier

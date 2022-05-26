@@ -13,7 +13,7 @@ internal data class BaseRpcRequest(
 )
 
 @Keep
-internal data class CallBalance(
+internal data class EthCall(
     val data: String,
     val from: String,
     val to: String

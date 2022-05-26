@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.easy.assets.domain.errors.InsufficientBalanceException
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.use_case.AssetsUseCases
 import com.easy.assets.domain.use_case.validation.ValidateAmount
@@ -95,17 +96,27 @@ class SendingViewModel @AssistedInject constructor(
 
         viewModelScope.launch {
             assetsUseCases.assets().find { it.slug == slug }?.run {
-                val rawData = assetsUseCases.signTransaction(
-                    slug, TransactionPlan(
-                        amount = sendingState.amount.toBigDecimal().movePointRight(this.decimal)
-                            .toBigInteger(),
-                        to = sendingState.toAddress,
-                        gasLimit = 21000L,
-                        contract = null
+                try {
+                    val rawData = assetsUseCases.signTransaction(
+                        slug, TransactionPlan(
+                            amount = sendingState.amount.toBigDecimal().movePointRight(this.decimal)
+                                .toBigInteger(),
+                            to = sendingState.toAddress,
+                            contract = this.contractAddress
+                        )
                     )
-                )
-                Timber.tag("Easy").d(rawData)
-                _uiEvent.send(UiEvent.Success)
+                    Timber.tag("Easy").d(rawData)
+                    _uiEvent.send(UiEvent.Success)
+                } catch (e: Exception) {
+                    when (e) {
+                        is InsufficientBalanceException -> {
+                            _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString(e.message ?: "insufficient balance")))
+                        }
+                        else -> {
+                            _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("signing transaction with unknown error")))
+                        }
+                    }
+                }
             } ?: kotlin.run {
                 _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("somethings went wrong")))
             }

@@ -18,7 +18,7 @@ class ValidateAddress @Inject constructor(
         if (!coinType.validate(address)) {
             return ValidationResult(
                 successful = false,
-                errorMessage = "Not match coin address"
+                errorMessage = "The ${coinType.blockchain().name} address you entered is invalid. Make sure your address is correct and try again"
             )
         }
         return ValidationResult(successful = true)

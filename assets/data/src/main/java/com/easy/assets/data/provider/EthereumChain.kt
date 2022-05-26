@@ -3,11 +3,11 @@ package com.easy.assets.data.provider
 import androidx.annotation.Keep
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
-import com.easy.assets.data.errors.InsufficientBalanceException
-import com.easy.assets.data.errors.UnSupportChainException
+import com.easy.assets.domain.errors.InsufficientBalanceException
+import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.model.remote.BaseRpcRequest
-import com.easy.assets.data.model.remote.CallBalance
+import com.easy.assets.data.model.remote.EthCall
 import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.model.remote.dto.EthTxResponseDto
 import com.easy.assets.data.model.remote.dto.FeeHistoryDto
@@ -49,7 +49,9 @@ internal class EthereumChain(
             val chainId = getChainId()
             val (baseFee, priorityFee) = feeHistory()
             Timber.d(message = "base: $baseFee, priority: $priorityFee")
-            val gasLimit = estimateGasLimit()
+            val gasLimit = estimateGasLimit(plan).also {
+                Timber.tag("Easy").d("===== $it")
+            }
             if (balance < plan.amount) throw InsufficientBalanceException()
             val prvKey =
                 ByteString.copyFrom(walletRepository.hdWallet.getKeyForCoin(CoinType.ETHEREUM).data())
@@ -123,7 +125,7 @@ internal class EthereumChain(
                     jsonrpc = "2.0",
                     method = "eth_call",
                     params = listOf(
-                        CallBalance(
+                        EthCall(
                             from = address(),
                             to = contract,
                             data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
@@ -174,8 +176,26 @@ internal class EthereumChain(
         return Result.failure(UnSupportChainException())
     }
 
-    private suspend fun estimateGasLimit() = withContext(Dispatchers.IO) {
-        21000L
+    private suspend fun estimateGasLimit(plan: TransactionPlan) = withContext(Dispatchers.IO) {
+        return@withContext if (plan.contract.isNullOrEmpty()) {
+            21000L
+        } else {
+            val requestBody = BaseRpcRequest(
+                id = 1,
+                jsonrpc = "2.0",
+                method = "eth_estimateGas",
+                params = listOf(EthCall(
+                    from = address(),
+                    to = plan.contract ?: plan.to,
+                    data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
+                ), "latest")
+            )
+            val response: BaseRpcResponseDto<String> = ktorClient.post {
+                url(getRpc())
+                setBody(requestBody)
+            }.body()
+            response.result.clearHexPrefix().toLong(16)
+        }
     }
 
     private suspend fun getChainId(): Int {

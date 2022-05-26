@@ -1,4 +1,4 @@
-package com.easy.assets.data.errors
+package com.easy.assets.domain.errors
 
 /**
  * Created by Dougie

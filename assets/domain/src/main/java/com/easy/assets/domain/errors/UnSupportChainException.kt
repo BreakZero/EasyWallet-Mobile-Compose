@@ -1,3 +1,3 @@
-package com.easy.assets.data.errors
+package com.easy.assets.domain.errors
 
 class UnSupportChainException: RuntimeException("un-support chain")
