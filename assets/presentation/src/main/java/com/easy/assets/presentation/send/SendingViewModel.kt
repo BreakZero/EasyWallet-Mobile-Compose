@@ -97,7 +97,7 @@ class SendingViewModel @AssistedInject constructor(
         viewModelScope.launch {
             assetsUseCases.assets().find { it.slug == slug }?.run {
                 try {
-                    val rawData = assetsUseCases.signTransaction(
+                    rawData = assetsUseCases.signTransaction(
                         slug, TransactionPlan(
                             amount = sendingState.amount.toBigDecimal().movePointRight(this.decimal)
                                 .toBigInteger(),
@@ -105,7 +105,6 @@ class SendingViewModel @AssistedInject constructor(
                             contract = this.contractAddress
                         )
                     )
-                    Timber.tag("Easy").d(rawData)
                     _uiEvent.send(UiEvent.Success)
                 } catch (e: Exception) {
                     when (e) {
@@ -125,6 +124,7 @@ class SendingViewModel @AssistedInject constructor(
 
     private fun broadcastTransaction(rawData: String) {
         viewModelScope.launch(Dispatchers.IO) {
+            Timber.tag("Easy").d(rawData)
             val result = assetsUseCases.broadcast.invoke(slug, rawData)
             if (result.isSuccess) {
                 _uiEvent.send(UiEvent.Success)

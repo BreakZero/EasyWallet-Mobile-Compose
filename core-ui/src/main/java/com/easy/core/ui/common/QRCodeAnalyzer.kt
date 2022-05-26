@@ -16,6 +16,7 @@ class QRCodeAnalyzer(
         ImageFormat.YUV_422_888,
         ImageFormat.YUV_444_888
     )
+    private var finished = false
 
     override fun analyze(image: ImageProxy) {
         if (image.format in supportedImageFormats) {
@@ -41,28 +42,15 @@ class QRCodeAnalyzer(
                         )
                     )
                 }.decode(binaryBmp)
-                onCodeScanned(result.text)
+                if (result.text.isNotBlank() && !finished) {
+                    onCodeScanned(result.text)
+                    finished = true
+                }
             } catch (e: Exception) {
                 e.printStackTrace()
             } finally {
                 image.close()
             }
-            /*kotlin.runCatching {
-                val result = MultiFormatReader().apply {
-                    setHints(
-                        mapOf(
-                            DecodeHintType.POSSIBLE_FORMATS to arrayListOf(
-                                BarcodeFormat.QR_CODE
-                            )
-                        )
-                    )
-                }.decode(binaryBmp)
-                onCodeScanned(result.text)
-            }.onFailure {
-                it.printStackTrace()
-            }.also {
-                image.close()
-            }*/
         }
     }
 

@@ -3,6 +3,7 @@ package com.easy.assets.presentation.send
 import android.app.Activity
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
@@ -21,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.asFlow
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -102,16 +104,35 @@ fun SendingScreen(
         modifier = Modifier
             .fillMaxSize(),
         sheetState = bottomSheetState,
+        sheetShape = RoundedCornerShape(
+            topStart = 24.dp,
+            topEnd = 24.dp
+        ),
         sheetContent = {
-            when(uiState.action) {
+            when (uiState.action) {
                 Action.ADVANCED -> {
-                    Box(modifier = Modifier.padding(MaterialTheme.spacing.space12)) {
+                    Box(
+                        modifier = Modifier
+                    ) {
                         Text(text = "Hello world")
                     }
                 }
                 else -> {
-                    Box(modifier = Modifier.padding(MaterialTheme.spacing.space12)) {
+                    Column(modifier = Modifier.padding(MaterialTheme.spacing.space12)) {
                         Text(text = uiState.toString())
+                        FilledTonalButton(modifier = Modifier
+                            .padding(top = MaterialTheme.spacing.spaceSmall)
+                            .fillMaxWidth()
+                            .padding(
+                                start = MaterialTheme.spacing.spaceMedium,
+                                end = MaterialTheme.spacing.spaceMedium
+                            ), onClick = {
+                            sendViewModel.onEvent(SendingFormEvent.Broadcast)
+                        }) {
+                            Text(
+                                text = "Broadcast"
+                            )
+                        }
                     }
                 }
             }

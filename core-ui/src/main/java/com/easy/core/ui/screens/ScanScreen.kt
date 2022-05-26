@@ -9,8 +9,8 @@ fun ScanScreen(
     onResult: (String) -> Unit
 ) {
     Surface {
-        ScannerView(callback = {
+        ScannerView {
             onResult.invoke(it)
-        })
+        }
     }
 }
