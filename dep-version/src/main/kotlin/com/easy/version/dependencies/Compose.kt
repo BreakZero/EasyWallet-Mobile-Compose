@@ -33,13 +33,14 @@ object Compose {
     }
 
     object Accompanist {
-        private const val version = "0.24.1-alpha"
+        private const val version = "0.24.9-beta"
         const val windowInsets = "com.google.accompanist:accompanist-insets:$version"
         const val uiController = "com.google.accompanist:accompanist-systemuicontroller:$version"
         const val permission = "com.google.accompanist:accompanist-permissions:$version"
         const val navigation = "com.google.accompanist:accompanist-navigation-material:$version"
         const val swiperefresh = "com.google.accompanist:accompanist-swiperefresh:$version"
         const val navigationAnimation = "com.google.accompanist:accompanist-navigation-animation:$version"
+        const val webView = "com.google.accompanist:accompanist-webview:$version"
         const val pager = "com.google.accompanist:accompanist-pager:$version"
         const val pager_indicators = "com.google.accompanist:accompanist-pager-indicators:$version"
     }

@@ -3,7 +3,6 @@ package com.easy.dapp.presentation.common
 import android.content.Context
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
-import android.widget.Toast
 import com.easy.core.common.hex
 import com.easy.core.ext.toHexBytes
 import org.json.JSONObject
@@ -15,7 +14,7 @@ class WebAppInterface(
     private val context: Context,
     private val webView: WebView,
     private val dappUrl: String,
-    val callback: (String, String) -> Unit
+    val callback: (MessageInfo) -> Unit
 ) {
     private val privateKey =
         PrivateKey("0x4646464646464646464646464646464646464646464646464646464646464646".toHexBytes())
@@ -28,30 +27,32 @@ class WebAppInterface(
         when (val method = DAppMethod.fromValue(obj.getString("name"))) {
             DAppMethod.REQUESTACCOUNTS -> {
                 callback.invoke(
-                    "Request Accounts",
-                    "DApp(${dappUrl}) need to get your address"
+                    MessageInfo(
+                        title = "Request Accounts",
+                        methodId = id,
+                        data = "DApp(${dappUrl}) need to get your address",
+                        method = method
+                    )
                 )
-                val setAddress = "window.ethereum.setAddress(\"$addr\");"
-                val callback = "window.ethereum.sendResponse($id, [\"$addr\"])"
-                webView.post {
-                    webView.evaluateJavascript(setAddress) {
-                        // ignore
-                    }
-                    webView.evaluateJavascript(callback) { _ ->
-                    }
-                }
             }
             DAppMethod.SIGNTRANSACTION -> {
                 val data = extractMessage(obj)
-                Toast.makeText(context, data.hex, Toast.LENGTH_SHORT).show()
+                callback.invoke(
+                    MessageInfo(
+                        title = "Confirm Transaction",
+                        methodId = id,
+                        data = data.hex,
+                        method = method
+                    )
+                )
             }
             DAppMethod.SIGNMESSAGE -> {
                 val data = extractMessage(obj)
-                handleSignMessage(id, data, addPrefix = false)
+                handleSignMessage(id, data, method, addPrefix = false)
             }
             DAppMethod.SIGNPERSONALMESSAGE -> {
                 val data = extractMessage(obj)
-                handleSignMessage(id, data, addPrefix = true)
+                handleSignMessage(id, data, method, addPrefix = true)
             }
             DAppMethod.SIGNTYPEDMESSAGE -> {
                 val data = extractMessage(obj)
@@ -60,8 +61,12 @@ class WebAppInterface(
             }
             else -> {
                 callback.invoke(
-                    "Error",
-                    "$method not implemented"
+                    MessageInfo(
+                        title = "Errors",
+                        methodId = id,
+                        data = "$method not implemented",
+                        method = method
+                    )
                 )
             }
         }
@@ -78,13 +83,21 @@ class WebAppInterface(
         return param.getString("raw")
     }
 
-    private fun handleSignMessage(id: Long, data: ByteArray, addPrefix: Boolean) {
+    private fun handleSignMessage(id: Long, data: ByteArray, method: DAppMethod, addPrefix: Boolean) {
         Timber.d("id: $id, data: $data, addPrefix: $addPrefix ")
+        callback.invoke(
+            MessageInfo(
+                title = "Sign Message",
+                methodId = id,
+                data = data.hex,
+                method = method
+            )
+        )
     }
 
     private fun handleSignTypedMessage(id: Long, data: ByteArray, raw: String) {
         Timber.d("raw: $raw")
-        webView.sendResult(signEthereumMessage(data, false), id)
+        webView.sendResult(id, signEthereumMessage(data, false))
     }
 
     private fun signEthereumMessage(message: ByteArray, addPrefix: Boolean): String {

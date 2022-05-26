@@ -1,21 +1,34 @@
 package com.easy.dapp.presentation.detail
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
+import android.webkit.WebView
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.easy.core.BuildConfig
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.ui.components.EasyAppBar
-import com.easy.core.ui.components.WebView
-import com.easy.core.ui.components.rememberWebViewState
 import com.easy.dapp.presentation.R
+import com.easy.dapp.presentation.common.DAppMethod
 import com.easy.dapp.presentation.common.WebAppInterface
+import com.easy.dapp.presentation.common.sendError
+import com.easy.dapp.presentation.common.sendResult
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.google.accompanist.web.AccompanistWebViewClient
+import com.google.accompanist.web.WebView
+import com.google.accompanist.web.rememberWebViewState
 import kotlinx.coroutines.launch
+import timber.log.Timber
+
+private var webView: WebView? = null
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
@@ -24,6 +37,7 @@ fun DAppWebViewScreen(
     url: String,
     chain: Int,
     rpc: String,
+    dappViewModel: DAppDetailViewModel = hiltViewModel(),
     navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
@@ -52,12 +66,13 @@ fun DAppWebViewScreen(
             .fillMaxSize(),
         topBar = {
             EasyAppBar(
-                title = "DAPP"
+                title = "DApp"
             ) {
                 navigateUp.invoke()
             }
         }
     ) {
+        val uiState = dappViewModel.dAppDetailState
         val state = rememberWebViewState(url = url)
         val scope = rememberCoroutineScope()
 
@@ -68,50 +83,70 @@ fun DAppWebViewScreen(
             systemUIController.setStatusBarColor(color = statusColor, darkIcons = useDarkIcons)
         }
 
-        var showDialog by remember {
-            mutableStateOf(false)
-        }
-        if (showDialog) {
-            AlertDialog(
-                onDismissRequest = {
-                },
-                confirmButton = {
+        if (uiState.showDialog) {
+            uiState.messageInfo?.let {
+                AlertDialog(onDismissRequest = {}, confirmButton = {
                     TextButton(onClick = {
-                        showDialog = false
-                    })
-                    { Text(text = "OK") }
-                },
-                dismissButton = {
+                        if (it.method == DAppMethod.REQUESTACCOUNTS) {
+                            Timber.tag("Easy").d("webview: $webView")
+                            val setAddress =
+                                "window.ethereum.setAddress(\"0x81080a7e991bcdddba8c2302a70f45d6bd369ab5\");"
+                            val sendAddress = "window.ethereum.sendResponse(${it.methodId}, [\"0x81080a7e991bcdddba8c2302a70f45d6bd369ab5\"])"
+                            webView?.post {
+                                webView?.evaluateJavascript(setAddress) {
+                                    // ignore
+                                }
+                                webView?.evaluateJavascript(sendAddress) { _ ->
+                                }
+                            }
+                        } else {
+                            webView?.sendResult(it.methodId,"")
+                        }
+                        dappViewModel.approve()
+                    }) { Text(text = "Approve") }
+                }, dismissButton = {
                     TextButton(onClick = {
-                        showDialog = false
-                    })
-                    { Text(text = "Cancel") }
-                },
-                title = { Text(text = "Please confirm") },
-                text = { Text(text = "Should I continue with the requested action?") }
-            )
+                        dappViewModel.reject()
+                        webView?.sendError(it.methodId, "User reject the action")
+                    }) { Text(text = "Reject") }
+                }, title = { Text(text = it.title) }, text = { Text(text = it.data) })
+            }
         }
 
+        val webClient = remember {
+            object : AccompanistWebViewClient() {
+                override fun onPageStarted(view: WebView?, url: String?, favicon: Bitmap?) {
+                    super.onPageStarted(view, url, favicon)
+                    view?.also { webView ->
+                        webView.evaluateJavascript(providerJs, null)
+                        webView.evaluateJavascript(initJs, null)
+                    }
+                }
+
+                override fun onPageFinished(view: WebView?, url: String?) {
+                    super.onPageFinished(view, url)
+                    webView = view
+                }
+            }
+        }
         WebView(
             state = state,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(it),
-            startScript = {
-                evaluateJavascript(providerJs, null)
-                evaluateJavascript(initJs, null)
-                val script = "window.ethereum.request({method: \"eth_requestAccounts\"})"
-                evaluateJavascript(script) {
-                }
-            },
+            client = webClient,
             onCreated = {
+                webView = it
+                Timber.tag("Easy").d("set webview: $webView")
                 it.settings.javaScriptEnabled = true
                 it.settings.domStorageEnabled = true
-                it.addJavascriptInterface(WebAppInterface(context, it, url) { _, _ ->
+                it.addJavascriptInterface(WebAppInterface(context, it, url) {
                     scope.launch {
-                        showDialog = true
+                        dappViewModel.onReceiveMethod(it)
                     }
                 }, "_tw_")
+                val script = "window.ethereum.request({method: \"eth_requestAccounts\"})"
+                it.evaluateJavascript(script) { }
             })
     }
 }

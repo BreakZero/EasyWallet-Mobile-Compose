@@ -12,6 +12,7 @@ import javax.inject.Inject
 @HiltViewModel
 class DAppViewModel @Inject constructor(): ViewModel() {
     var dAppState by mutableStateOf(DAppState(dApps = Result.success(emptyList()), isLoading = true))
+    private set
 
     init {
         dAppState = dAppState.copy(

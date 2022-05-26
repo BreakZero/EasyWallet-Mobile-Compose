@@ -35,7 +35,6 @@ import com.easy.core.common.UiEvent
 import com.easy.core.ui.GlobalRouter
 import com.easy.core.ui.components.EasyAppBar
 import com.easy.core.ui.spacing
-import com.google.accompanist.insets.navigationBarsWithImePadding
 import dagger.hilt.android.EntryPointAccessors
 import kotlinx.coroutines.launch
 
@@ -153,7 +152,8 @@ fun SendingScreen(
                 SnackbarHost(snackbarHostState)
             },
             modifier = Modifier
-                .navigationBarsWithImePadding()
+                .navigationBarsPadding()
+                .imePadding()
                 .fillMaxSize(),
             topBar = {
                 EasyAppBar(title = "Send $slug") {

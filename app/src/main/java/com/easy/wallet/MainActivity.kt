@@ -9,6 +9,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Modifier
@@ -24,15 +26,11 @@ import com.easy.settings.presentation.settingsGraph
 import com.easy.wallet.ui.main.MainScreen
 import com.easy.wallet.ui.splash.SplashScreen
 import com.easy.wallet.ui.theme.EasyTheme
-import com.google.accompanist.insets.ProvideWindowInsets
-import com.google.accompanist.insets.navigationBarsPadding
-import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.navigation.animation.AnimatedNavHost
 import com.google.accompanist.navigation.animation.composable
 import com.google.accompanist.navigation.animation.rememberAnimatedNavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.AndroidEntryPoint
-import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -42,78 +40,76 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
             EasyTheme {
-                ProvideWindowInsets {
-                    val systemUIController = rememberSystemUiController()
-                    val useDarkIcons = !isSystemInDarkTheme()
-                    SideEffect {
-                        systemUIController.setStatusBarColor(
-                            Color.Transparent,
-                            darkIcons = useDarkIcons
-                        )
-                    }
-                    val navController = rememberAnimatedNavController()
-                    // A surface container using the 'background' color from the theme
-                    Surface(
+                val systemUIController = rememberSystemUiController()
+                val useDarkIcons = !isSystemInDarkTheme()
+                SideEffect {
+                    systemUIController.setStatusBarColor(
+                        Color.Transparent,
+                        darkIcons = useDarkIcons
+                    )
+                }
+                val navController = rememberAnimatedNavController()
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .statusBarsPadding()
+                        .navigationBarsPadding()
+                ) {
+                    AnimatedNavHost(
+                        navController = navController,
+                        startDestination = "splash-screen",
                         modifier = Modifier
-                            .fillMaxSize()
-                            .statusBarsPadding()
-                            .navigationBarsPadding()
                     ) {
-                        AnimatedNavHost(
-                            navController = navController,
-                            startDestination = "splash-screen",
-                            modifier = Modifier
-                        ) {
-                            composable(
-                                "splash-screen",
-                                enterTransition = {
-                                    fadeIn(animationSpec = tween(500))
-                                },
-                                exitTransition = {
-                                    fadeOut(animationSpec = tween(500))
-                                },
-                                popEnterTransition = {
-                                    fadeIn(animationSpec = tween(500))
-                                },
-                                popExitTransition = {
-                                    fadeOut(animationSpec = tween(500))
-                                }) {
-                                SplashScreen { created ->
-                                    navController.navigate(if (created) "main-screen" else IntroRouter.ROUTER_INTRO_INDEX) {
-                                        popUpTo("splash-screen") {
-                                            inclusive = true
-                                        }
+                        composable(
+                            "splash-screen",
+                            enterTransition = {
+                                fadeIn(animationSpec = tween(500))
+                            },
+                            exitTransition = {
+                                fadeOut(animationSpec = tween(500))
+                            },
+                            popEnterTransition = {
+                                fadeIn(animationSpec = tween(500))
+                            },
+                            popExitTransition = {
+                                fadeOut(animationSpec = tween(500))
+                            }) {
+                            SplashScreen { created ->
+                                navController.navigate(if (created) "main-screen" else IntroRouter.ROUTER_INTRO_INDEX) {
+                                    popUpTo("splash-screen") {
+                                        inclusive = true
                                     }
                                 }
                             }
-                            composable(
-                                "main-screen",
-                                enterTransition = {
-                                    fadeIn(animationSpec = tween(500))
-                                },
-                                exitTransition = {
-                                    fadeOut(animationSpec = tween(500))
-                                },
-                                popEnterTransition = {
-                                    fadeIn(animationSpec = tween(500))
-                                },
-                                popExitTransition = {
-                                    fadeOut(animationSpec = tween(500))
-                                }) {
-                                MainScreen {
-                                    if (it.router == DAppRouter.ROUTER_DETAIL) {
-                                        navController.navigate(it.routerWithParameter())
-                                    } else {
-                                        navController.navigate(it.router())
-                                    }
-                                }
-                            }
-                            globalGraph(navController)
-                            introGraph(navController)
-                            assetsGraph(navController)
-                            dappGraph(navController)
-                            settingsGraph(navController)
                         }
+                        composable(
+                            "main-screen",
+                            enterTransition = {
+                                fadeIn(animationSpec = tween(500))
+                            },
+                            exitTransition = {
+                                fadeOut(animationSpec = tween(500))
+                            },
+                            popEnterTransition = {
+                                fadeIn(animationSpec = tween(500))
+                            },
+                            popExitTransition = {
+                                fadeOut(animationSpec = tween(500))
+                            }) {
+                            MainScreen {
+                                if (it.router == DAppRouter.ROUTER_DETAIL) {
+                                    navController.navigate(it.routerWithParameter())
+                                } else {
+                                    navController.navigate(it.router())
+                                }
+                            }
+                        }
+                        globalGraph(navController)
+                        introGraph(navController)
+                        assetsGraph(navController)
+                        dappGraph(navController)
+                        settingsGraph(navController)
                     }
                 }
             }
