@@ -121,7 +121,27 @@ internal class SolanaChain(
     }
 
     override suspend fun broadcast(data: String): Result<String> {
-        return Result.failure(UnSupportChainException())
+        val requestBody = BaseRpcRequest(
+            id = 1,
+            jsonrpc = "2.0",
+            method = "sendTransaction",
+            params = listOf(data)
+        )
+
+        return try {
+            val response: BaseRpcResponseDto<String> = ktorClient.post {
+                url(getRpc())
+                setBody(requestBody)
+            }.body()
+            if (response.error != null) {
+                Result.failure(RuntimeException(response.error.message))
+            } else {
+                Result.success(response.result)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            Result.failure(UnSupportChainException())
+        }
     }
 
     private suspend fun getRpc(): String {

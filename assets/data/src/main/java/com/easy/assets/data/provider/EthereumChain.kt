@@ -16,6 +16,7 @@ import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.BuildConfig
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
+import com.easy.core.common.Numeric
 import com.easy.core.common.hex
 import com.easy.core.enums.Chain
 import com.easy.core.enums.ChainNetwork
@@ -173,7 +174,27 @@ internal class EthereumChain(
     }
 
     override suspend fun broadcast(data: String): Result<String> {
-        return Result.failure(UnSupportChainException())
+        val requestBody = BaseRpcRequest(
+            id = 1,
+            jsonrpc = "2.0",
+            method = "eth_sendRawTransaction",
+            params = listOf(Numeric.formatWithHexPrefix(data))
+        )
+
+        return try {
+            val response: BaseRpcResponseDto<String> = ktorClient.post {
+                url(getRpc())
+                setBody(requestBody)
+            }.body()
+            if (response.error != null) {
+                Result.failure(RuntimeException(response.error.message))
+            } else {
+                Result.success(response.result)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            Result.failure(UnSupportChainException())
+        }
     }
 
     private suspend fun estimateGasLimit(plan: TransactionPlan) = withContext(Dispatchers.IO) {

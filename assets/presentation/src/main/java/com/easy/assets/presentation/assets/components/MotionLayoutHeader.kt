@@ -27,8 +27,6 @@ import com.easy.assets.presentation.R
 @Composable
 fun MotionLayoutHeader(
     progress: Float,
-    onSend: () -> Unit,
-    onReceive: () -> Unit,
     scrollableBody: @Composable () -> Unit
 ) {
     MotionLayout(

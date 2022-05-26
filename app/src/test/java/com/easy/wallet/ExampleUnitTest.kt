@@ -1,6 +1,5 @@
 package com.easy.wallet
 
-import com.easy.wallet.ui.main.MainViewModel
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -14,11 +13,5 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
         assertEquals(4, 2 + 2)
-    }
-
-    @Test
-    fun test() {
-        val viewModel = MainViewModel()
-        assertEquals("hello", viewModel.test())
     }
 }

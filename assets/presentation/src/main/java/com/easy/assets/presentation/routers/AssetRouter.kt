@@ -6,7 +6,5 @@ object AssetRouter {
     const val ASSET_RECEIVE = "asset-receive"
     const val SETTINGS = "settings-index"
 
-    const val SEND_FIRST = "send-flow-1"
-    const val SEND_SECOND = "send-flow-2"
-    const val SEND_THIRD = "send-flow-3"
+    const val SENDING = "sending"
 }

@@ -81,6 +81,7 @@ fun SendingScreen(
             it.getLiveData<String>("QR_CODE_CONTENT").asFlow().collectAsState(initial = "")
         LaunchedEffect(key1 = backResult) {
             sendViewModel.onEvent(SendingFormEvent.AddressChanged(backResult.value))
+            it.remove<String>("QR_CODE_CONTENT")
         }
     }
 
@@ -94,6 +95,9 @@ fun SendingScreen(
                     snackbarHostState.showSnackbar(
                         it.message.asString(context)
                     )
+                }
+                is UiEvent.NavigateUp -> {
+                    onBackPressed.invoke()
                 }
                 else -> Unit
             }
@@ -120,15 +124,21 @@ fun SendingScreen(
                 else -> {
                     Column(modifier = Modifier.padding(MaterialTheme.spacing.space12)) {
                         Text(text = uiState.toString())
-                        FilledTonalButton(modifier = Modifier
-                            .padding(top = MaterialTheme.spacing.spaceSmall)
-                            .fillMaxWidth()
-                            .padding(
-                                start = MaterialTheme.spacing.spaceMedium,
-                                end = MaterialTheme.spacing.spaceMedium
-                            ), onClick = {
-                            sendViewModel.onEvent(SendingFormEvent.Broadcast)
-                        }) {
+                        FilledTonalButton(
+                            modifier = Modifier
+                                .padding(top = MaterialTheme.spacing.spaceSmall)
+                                .fillMaxWidth()
+                                .padding(
+                                    start = MaterialTheme.spacing.spaceMedium,
+                                    end = MaterialTheme.spacing.spaceMedium
+                                ),
+                            onClick = {
+                                scope.launch {
+                                    bottomSheetState.hide()
+                                }
+                                sendViewModel.onEvent(SendingFormEvent.Broadcast)
+                            }
+                        ) {
                             Text(
                                 text = "Broadcast"
                             )

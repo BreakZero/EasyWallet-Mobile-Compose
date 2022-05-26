@@ -30,6 +30,8 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.presentation.assets.components.CollapsableToolbar
+import com.easy.core.common.Navigator
+import com.easy.core.common.UiEvent
 import com.easy.core.ui.components.EasyActionBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -38,14 +40,13 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @Composable
 fun WalletPagerScreen(
     viewModel: WalletAssetViewModel = hiltViewModel(),
-    onNavigateTo: (MainUIEvent) -> Unit
+    onNavigateTo: (Navigator) -> Unit
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                is AssetUIEvent.OnItemClick -> onNavigateTo.invoke(MainUIEvent.OnItemClicked(event.assetInfo))
-                is AssetUIEvent.OnReceiveClick -> onNavigateTo.invoke(MainUIEvent.OnReceiveClick)
-                is AssetUIEvent.OnSendClick -> onNavigateTo.invoke(MainUIEvent.OnSendClick)
+                is UiEvent.NavigateTo -> onNavigateTo.invoke(event.navigator)
+                else -> Unit
             }
         }
     }
@@ -59,20 +60,13 @@ fun WalletPagerScreen(
             backgroundColor = MaterialTheme.colorScheme.primary,
             tint = MaterialTheme.colorScheme.onPrimary,
             onNavClick = {
-                onNavigateTo(MainUIEvent.OnSettingsClick)
+                viewModel.onEvent(AssetEvent.SettingsClicked)
             },
             onMenuClick = {
-                onNavigateTo(MainUIEvent.OnScanClick)
+                viewModel.onEvent(AssetEvent.ScanClicked)
             }
         )
-        CollapsableToolbar(
-            onSend = {
-                viewModel.onEvent(AssetEvent.OnSend)
-            },
-            onReceive = {
-                viewModel.onEvent(AssetEvent.OnReceive)
-            }
-        ) {
+        CollapsableToolbar {
             AnimatedContent(
                 targetState = state,
                 transitionSpec = {
@@ -85,7 +79,7 @@ fun WalletPagerScreen(
                             state = rememberSwipeRefreshState(state.isLoading),
                             swipeEnabled = it,
                             onRefresh = {
-                                viewModel.onEvent(AssetEvent.OnRefresh)
+                                viewModel.onEvent(AssetEvent.SwipeToRefresh)
                             }) {
                             LazyColumn(
                                 modifier = Modifier
@@ -105,7 +99,7 @@ fun WalletPagerScreen(
                                 val assets = state.tokenLists.getOrElse { emptyList() }
                                 items(items = assets) {
                                     AssetItemView(data = it) {
-                                        viewModel.onEvent(AssetEvent.OnItemClick(it))
+                                        viewModel.onEvent(AssetEvent.ItemClicked(it))
                                     }
                                 }
                             }
@@ -123,7 +117,7 @@ fun WalletPagerScreen(
                                     )
                                 )
                                 .clickable {
-                                    viewModel.onEvent(AssetEvent.OnRefresh)
+                                    viewModel.onEvent(AssetEvent.SwipeToRefresh)
                                 }, contentAlignment = Alignment.TopCenter
                         ) {
                             Text(

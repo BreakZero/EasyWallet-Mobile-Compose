@@ -124,12 +124,18 @@ class SendingViewModel @AssistedInject constructor(
 
     private fun broadcastTransaction(rawData: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            Timber.tag("Easy").d(rawData)
             val result = assetsUseCases.broadcast.invoke(slug, rawData)
             if (result.isSuccess) {
-                _uiEvent.send(UiEvent.Success)
+                Timber.tag("Easy").d("===${result.getOrNull().orEmpty()}")
+                _uiEvent.send(UiEvent.NavigateUp)
             } else {
-                _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("broadcast transaction failed")))
+                _uiEvent.send(
+                    UiEvent.ShowSnackbar(
+                        UiText.DynamicString(
+                            result.exceptionOrNull()?.message ?: "broadcast transaction failed"
+                        )
+                    )
+                )
             }
         }
     }

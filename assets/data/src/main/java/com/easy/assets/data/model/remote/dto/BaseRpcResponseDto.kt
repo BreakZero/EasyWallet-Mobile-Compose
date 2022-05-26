@@ -10,5 +10,13 @@ internal data class BaseRpcResponseDto<T>(
     @SerializedName("jsonrpc")
     val jsonrpc: String,
     @SerializedName("result")
-    val result: T
+    val result: T,
+    @SerializedName("error")
+    val error: RpcError?
+)
+
+@Keep
+internal data class RpcError(
+    val code: Int,
+    val message: String
 )

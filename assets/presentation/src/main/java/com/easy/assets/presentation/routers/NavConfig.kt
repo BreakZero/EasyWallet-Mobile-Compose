@@ -70,7 +70,7 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             }
         }
         composable(
-            route = AssetRouter.SEND_FIRST + "/{slug}",
+            route = AssetRouter.SENDING + "/{slug}",
             arguments = listOf(
                 navArgument("slug") {
                     type = NavType.StringType
