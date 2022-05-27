@@ -8,5 +8,6 @@ data class TransactionPlan(
     val amount: BigInteger,
     val to: String,
     val memo: String? = null,
-    val contract: String? = null
+    val contract: String? = null,
+    val payload: String? = null
 )

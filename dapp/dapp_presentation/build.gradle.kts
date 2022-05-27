@@ -7,6 +7,7 @@ dependencies {
   implementation(project(":core"))
   implementation(project(":core-ui"))
   implementation(project(":dapp:dapp_domain"))
+  implementation(project(":assets:domain"))
 
   composeUI()
   hiltDependencies()

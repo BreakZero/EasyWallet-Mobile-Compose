@@ -23,6 +23,7 @@ import com.easy.core.enums.ChainNetwork
 import com.easy.core.ext._16toNumber
 import com.easy.core.ext.clearHexPrefix
 import com.easy.core.ext.toHexByteArray
+import com.easy.core.ext.toHexBytes
 import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import com.google.protobuf.ByteString
@@ -77,7 +78,10 @@ internal class EthereumChain(
                 }
             } ?: kotlin.run {
                 val transfer = Ethereum.Transaction.Transfer.newBuilder().apply {
-                    amount = ByteString.copyFrom(plan.amount.toHexByteArray())
+                    this.amount = ByteString.copyFrom(plan.amount.toHexByteArray())
+                    plan.payload?.also {
+                        this.data = ByteString.copyFrom(it.toHexBytes())
+                    }
                 }
                 Ethereum.SigningInput.newBuilder().apply {
                     this.privateKey = prvKey

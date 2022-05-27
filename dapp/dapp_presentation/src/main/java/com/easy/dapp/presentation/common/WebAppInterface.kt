@@ -1,6 +1,5 @@
 package com.easy.dapp.presentation.common
 
-import android.content.Context
 import android.webkit.JavascriptInterface
 import android.webkit.WebView
 import com.easy.core.common.hex
@@ -11,14 +10,12 @@ import wallet.core.jni.Curve
 import wallet.core.jni.PrivateKey
 
 class WebAppInterface(
-    private val context: Context,
     private val webView: WebView,
     private val dappUrl: String,
     val callback: (MessageInfo) -> Unit
 ) {
     private val privateKey =
         PrivateKey("0x4646464646464646464646464646464646464646464646464646464646464646".toHexBytes())
-    private val addr = "0x81080a7e991bcdddba8c2302a70f45d6bd369ab5"
 
     @JavascriptInterface
     fun postMessage(json: String) {
@@ -36,12 +33,18 @@ class WebAppInterface(
                 )
             }
             DAppMethod.SIGNTRANSACTION -> {
-                val data = extractMessage(obj)
+                val param = obj.getJSONObject("object")
+                Timber.tag("Easy").d("=== $param")
+                val data = param.getString("data")
+                val from = param.getString("from")
+                val to = param.getString("to")
                 callback.invoke(
                     MessageInfo(
                         title = "Confirm Transaction",
                         methodId = id,
-                        data = data.hex,
+                        data = data,
+                        from = from,
+                        to = to,
                         method = method
                     )
                 )
@@ -74,6 +77,7 @@ class WebAppInterface(
 
     private fun extractMessage(json: JSONObject): ByteArray {
         val param = json.getJSONObject("object")
+        Timber.tag("Easy").d("=== $param")
         val data = param.getString("data")
         return data.toHexBytes()
     }

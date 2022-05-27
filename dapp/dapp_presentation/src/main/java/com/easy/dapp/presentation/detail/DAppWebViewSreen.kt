@@ -27,9 +27,6 @@ import com.google.accompanist.web.rememberWebViewState
 import kotlinx.coroutines.launch
 import timber.log.Timber
 
-private var webView: WebView? = null
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @SuppressLint("SetJavaScriptEnabled")
 @Composable
@@ -41,6 +38,7 @@ fun DAppWebViewScreen(
     navigateUp: () -> Unit
 ) {
     val context = LocalContext.current
+    // do not support right now. when recompose, will reset to null here
     val providerJs = remember {
         context.resources.openRawResource(R.raw.trust_min).readBytes().decodeToString()
     }
@@ -88,26 +86,26 @@ fun DAppWebViewScreen(
                 AlertDialog(onDismissRequest = {}, confirmButton = {
                     TextButton(onClick = {
                         if (it.method == DAppMethod.REQUESTACCOUNTS) {
-                            Timber.tag("Easy").d("webview: $webView")
+                            Timber.tag("Easy").d("webview: ${dappViewModel.webView}")
                             val setAddress =
                                 "window.ethereum.setAddress(\"0x81080a7e991bcdddba8c2302a70f45d6bd369ab5\");"
                             val sendAddress = "window.ethereum.sendResponse(${it.methodId}, [\"0x81080a7e991bcdddba8c2302a70f45d6bd369ab5\"])"
-                            webView?.post {
-                                webView?.evaluateJavascript(setAddress) {
+                            dappViewModel.webView?.post {
+                                dappViewModel.webView?.evaluateJavascript(setAddress) {
                                     // ignore
                                 }
-                                webView?.evaluateJavascript(sendAddress) { _ ->
+                                dappViewModel.webView?.evaluateJavascript(sendAddress) { _ ->
                                 }
                             }
                         } else {
-                            webView?.sendResult(it.methodId,"")
+                            dappViewModel.webView?.sendResult(it.methodId,"")
                         }
                         dappViewModel.approve()
                     }) { Text(text = "Approve") }
                 }, dismissButton = {
                     TextButton(onClick = {
                         dappViewModel.reject()
-                        webView?.sendError(it.methodId, "User reject the action")
+                        dappViewModel.webView?.sendError(it.methodId, "User reject the action")
                     }) { Text(text = "Reject") }
                 }, title = { Text(text = it.title) }, text = { Text(text = it.data) })
             }
@@ -122,11 +120,6 @@ fun DAppWebViewScreen(
                         webView.evaluateJavascript(initJs, null)
                     }
                 }
-
-                override fun onPageFinished(view: WebView?, url: String?) {
-                    super.onPageFinished(view, url)
-                    webView = view
-                }
             }
         }
         WebView(
@@ -135,18 +128,17 @@ fun DAppWebViewScreen(
                 .fillMaxSize()
                 .padding(it),
             client = webClient,
-            onCreated = {
-                webView = it
-                Timber.tag("Easy").d("set webview: $webView")
-                it.settings.javaScriptEnabled = true
-                it.settings.domStorageEnabled = true
-                it.addJavascriptInterface(WebAppInterface(context, it, url) {
+            onCreated = { webView ->
+                dappViewModel.injectWebView(webView)
+                webView.settings.javaScriptEnabled = true
+                webView.settings.domStorageEnabled = true
+                webView.addJavascriptInterface(WebAppInterface(webView, url) {
                     scope.launch {
                         dappViewModel.onReceiveMethod(it)
                     }
                 }, "_tw_")
                 val script = "window.ethereum.request({method: \"eth_requestAccounts\"})"
-                it.evaluateJavascript(script) { }
+                webView.evaluateJavascript(script) { }
             })
     }
 }
