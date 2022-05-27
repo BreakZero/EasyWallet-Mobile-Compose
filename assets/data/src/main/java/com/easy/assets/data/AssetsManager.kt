@@ -2,11 +2,11 @@ package com.easy.assets.data
 
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.mapper.toAsset
-import com.easy.assets.data.model.local.AssetsDatabase
-import com.easy.assets.data.provider.*
 import com.easy.assets.data.model.remote.dto.CoinConfigDto
 import com.easy.assets.data.model.remote.dto.CoinConfigResponseDto
+import com.easy.assets.data.provider.*
 import com.easy.assets.domain.model.AssetInfo
+import com.easy.core.consts.EasyAssetSlug
 import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import io.ktor.client.*
@@ -80,14 +80,28 @@ class AssetsManager @Inject constructor(
         val slug = config.coinSlug
         if (chains[slug] == null) {
             when {
-                slug == "ethereum" || config.tag.equals("ERC20", true) -> {
+                slug == EasyAssetSlug.SLUG_ETHEREUM ||
+                        config.tag.equals(
+                            EasyAssetSlug.TAG_ERC20,
+                            true
+                        ) -> {
                     chains[slug] = EthereumChain(appSettings, ktorClient, walletRepository)
                 }
-                slug == "bitcoin" -> chains[slug] = BitcoinChain(ktorClient, walletRepository)
-                slug == "cardano" -> chains[slug] = CardanoChain(ktorClient, walletRepository)
-                slug == "polygon" -> chains[slug] = PolygonChain(appSettings, ktorClient, walletRepository)
-                slug == "cronos" -> chains[slug] = CronosChain(appSettings, ktorClient, walletRepository)
-                slug == "solana" -> chains[slug] = SolanaChain(appSettings, ktorClient, walletRepository)
+                slug == EasyAssetSlug.SLUG_BITCOIN -> {
+                    chains[slug] = BitcoinChain(ktorClient, walletRepository)
+                }
+                slug == EasyAssetSlug.SLUG_CARDANO -> {
+                    chains[slug] = CardanoChain(ktorClient, walletRepository)
+                }
+                slug == EasyAssetSlug.SLUG_POLYGON -> {
+                    chains[slug] = PolygonChain(appSettings, ktorClient, walletRepository)
+                }
+                slug == EasyAssetSlug.SLUG_CRONOS -> {
+                    chains[slug] = CronosChain(appSettings, ktorClient, walletRepository)
+                }
+                slug == EasyAssetSlug.SLUG_SOLANA -> {
+                    chains[slug] = SolanaChain(appSettings, ktorClient, walletRepository)
+                }
                 else -> Unit
             }
         }
