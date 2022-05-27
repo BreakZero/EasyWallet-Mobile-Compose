@@ -1,6 +1,6 @@
 package com.easy.assets.data.mapper
 
-import com.easy.assets.data.remote.dto.CoinConfigDto
+import com.easy.assets.data.model.remote.dto.CoinConfigDto
 import com.easy.assets.domain.model.AssetInfo
 
 internal fun CoinConfigDto.toAsset(

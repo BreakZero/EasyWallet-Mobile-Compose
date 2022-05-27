@@ -16,6 +16,12 @@ object Numeric {
         }
     }
 
+    fun formatWithHexPrefix(input: String): String {
+        return if (containsHexPrefix(input)) {
+            input
+        } else "0x$input"
+    }
+
     fun hexStringToByteArray(input: String): ByteArray {
         val cleanInput = cleanHexPrefix(input)
 

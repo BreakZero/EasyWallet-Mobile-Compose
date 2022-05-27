@@ -14,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.easy.assets.presentation.assets.MainUIEvent
 import com.easy.assets.presentation.assets.WalletPagerScreen
 import com.easy.assets.presentation.assets.components.BottomMenuItem
 import com.easy.assets.presentation.routers.AssetRouter
@@ -40,27 +39,11 @@ val menus = listOf(
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun MainScreen(
-    viewModel: MainViewModel = hiltViewModel(), onNavigateTo: (Navigator) -> Unit
+    onNavigateTo: (Navigator) -> Unit
 ) {
     val pageState = rememberPagerState()
     val tabIndex = pageState.currentPage
     val scope = rememberCoroutineScope()
-    LaunchedEffect(key1 = null) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                is MainUIEvent.OnScanClick -> onNavigateTo.invoke(Navigator(router = GlobalRouter.GLOBAL_SCAN))
-                is MainUIEvent.OnItemClicked -> {
-                    onNavigateTo.invoke(Navigator(router = AssetRouter.ASSET_DETAIL) {
-                        parameter {
-                            "slug" to event.assetInfo.slug
-                        }
-                    })
-                }
-                is MainUIEvent.OnSettingsClick -> onNavigateTo.invoke(Navigator(router = AssetRouter.SETTINGS))
-                else -> Unit
-            }
-        }
-    }
 
     val systemUIController = rememberSystemUiController()
     val useDartIcons = isSystemInDarkTheme()
@@ -82,7 +65,7 @@ fun MainScreen(
             when (page) {
                 0 -> {
                     WalletPagerScreen(onNavigateTo = {
-                        viewModel.onUiEvent(it)
+                        onNavigateTo(it)
                     })
                 }
                 1 -> {

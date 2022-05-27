@@ -1,6 +1,6 @@
 package com.easy.assets.data.provider
 
-import com.easy.assets.data.remote.dto.EthTxResponseDto
+import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.common.NetworkResponse
@@ -10,7 +10,6 @@ import io.ktor.client.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import wallet.core.jni.CoinType
-import java.lang.NullPointerException
 import java.math.BigInteger
 
 internal class BitcoinChain(
@@ -24,7 +23,11 @@ internal class BitcoinChain(
     }
 
     override fun address(): String {
-        return walletRepository.hdWallet.getAddressForCoin(CoinType.BITCOIN)
+        return walletRepository.hdWallet.getAddressForCoin(coinType())
+    }
+
+    override fun coinType(): CoinType {
+        return CoinType.BITCOIN
     }
 
     override suspend fun balance(contract: String?): BigInteger {
@@ -37,5 +40,9 @@ internal class BitcoinChain(
         contract: String?
     ): NetworkResponse<List<Transaction>> {
         return NetworkResponse.Error(NetworkResponseCode.checkError(NullPointerException()))
+    }
+
+    override suspend fun broadcast(data: String): Result<String> {
+        return Result.failure(UnSupportChainException())
     }
 }

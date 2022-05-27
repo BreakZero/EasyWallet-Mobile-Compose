@@ -65,6 +65,8 @@ fun DAppPagerScreen(
                                     onNavigateTo.invoke(Navigator(DAppRouter.ROUTER_DETAIL) {
                                         parameter {
                                             "url" to it.url
+                                            "chain" to it.chain.toString()
+                                            "rpc" to it.rpc
                                         }
                                     })
                                 }

@@ -1,11 +1,12 @@
 package com.easy.assets.data.provider
 
-import com.easy.assets.data.errors.UnSupportChainException
-import com.easy.assets.data.remote.dto.EthTxResponseDto
+import com.easy.assets.domain.errors.UnSupportChainException
+import com.easy.assets.data.model.remote.dto.EthTxResponseDto
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
+import wallet.core.jni.CoinType
 import java.math.BigInteger
 
 internal object DefaultChain: IChain {
@@ -15,6 +16,10 @@ internal object DefaultChain: IChain {
 
     override fun address(): String {
         return ""
+    }
+
+    override fun coinType(): CoinType {
+        return CoinType.BITCOIN
     }
 
     override suspend fun balance(contract: String?): BigInteger {
@@ -27,5 +32,9 @@ internal object DefaultChain: IChain {
         contract: String?
     ): NetworkResponse<List<Transaction>> {
         return NetworkResponse.Error(NetworkResponseCode.checkError(UnSupportChainException()))
+    }
+
+    override suspend fun broadcast(data: String): Result<String> {
+        return Result.failure(UnSupportChainException())
     }
 }

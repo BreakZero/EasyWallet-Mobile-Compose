@@ -3,24 +3,27 @@ package com.easy.assets.data.provider
 import androidx.annotation.Keep
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
-import com.easy.assets.data.errors.InsufficientBalanceException
+import com.easy.assets.domain.errors.InsufficientBalanceException
+import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.data.mapper.toTransaction
-import com.easy.assets.data.remote.BaseRpcRequest
-import com.easy.assets.data.remote.CallBalance
-import com.easy.assets.data.remote.dto.BaseRpcResponseDto
-import com.easy.assets.data.remote.dto.EthTxResponseDto
-import com.easy.assets.data.remote.dto.FeeHistoryDto
+import com.easy.assets.data.model.remote.BaseRpcRequest
+import com.easy.assets.data.model.remote.EthCall
+import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
+import com.easy.assets.data.model.remote.dto.EthTxResponseDto
+import com.easy.assets.data.model.remote.dto.FeeHistoryDto
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.BuildConfig
 import com.easy.core.common.NetworkResponse
 import com.easy.core.common.NetworkResponseCode
+import com.easy.core.common.Numeric
 import com.easy.core.common.hex
 import com.easy.core.enums.Chain
 import com.easy.core.enums.ChainNetwork
 import com.easy.core.ext._16toNumber
 import com.easy.core.ext.clearHexPrefix
 import com.easy.core.ext.toHexByteArray
+import com.easy.core.ext.toHexBytes
 import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import com.google.protobuf.ByteString
@@ -48,7 +51,9 @@ internal class EthereumChain(
             val chainId = getChainId()
             val (baseFee, priorityFee) = feeHistory()
             Timber.d(message = "base: $baseFee, priority: $priorityFee")
-            val gasLimit = estimateGasLimit()
+            val gasLimit = estimateGasLimit(plan).also {
+                Timber.tag("Easy").d("===== $it")
+            }
             if (balance < plan.amount) throw InsufficientBalanceException()
             val prvKey =
                 ByteString.copyFrom(walletRepository.hdWallet.getKeyForCoin(CoinType.ETHEREUM).data())
@@ -73,7 +78,10 @@ internal class EthereumChain(
                 }
             } ?: kotlin.run {
                 val transfer = Ethereum.Transaction.Transfer.newBuilder().apply {
-                    amount = ByteString.copyFrom(plan.amount.toHexByteArray())
+                    this.amount = ByteString.copyFrom(plan.amount.toHexByteArray())
+                    plan.payload?.also {
+                        this.data = ByteString.copyFrom(it.toHexBytes())
+                    }
                 }
                 Ethereum.SigningInput.newBuilder().apply {
                     this.privateKey = prvKey
@@ -99,7 +107,11 @@ internal class EthereumChain(
     }
 
     override fun address(): String {
-        return walletRepository.hdWallet.getAddressForCoin(CoinType.ETHEREUM)
+        return walletRepository.hdWallet.getAddressForCoin(coinType())
+    }
+
+    override fun coinType(): CoinType {
+        return CoinType.ETHEREUM
     }
 
     override suspend fun balance(contract: String?): BigInteger = withContext(Dispatchers.IO) {
@@ -118,7 +130,7 @@ internal class EthereumChain(
                     jsonrpc = "2.0",
                     method = "eth_call",
                     params = listOf(
-                        CallBalance(
+                        EthCall(
                             from = address(),
                             to = contract,
                             data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
@@ -165,8 +177,50 @@ internal class EthereumChain(
         }
     }
 
-    private suspend fun estimateGasLimit() = withContext(Dispatchers.IO) {
-        21000L
+    override suspend fun broadcast(data: String): Result<String> {
+        val requestBody = BaseRpcRequest(
+            id = 1,
+            jsonrpc = "2.0",
+            method = "eth_sendRawTransaction",
+            params = listOf(Numeric.formatWithHexPrefix(data))
+        )
+
+        return try {
+            val response: BaseRpcResponseDto<String> = ktorClient.post {
+                url(getRpc())
+                setBody(requestBody)
+            }.body()
+            if (response.error != null) {
+                Result.failure(RuntimeException(response.error.message))
+            } else {
+                Result.success(response.result)
+            }
+        } catch (e: Exception) {
+            Timber.e(e)
+            Result.failure(UnSupportChainException())
+        }
+    }
+
+    private suspend fun estimateGasLimit(plan: TransactionPlan) = withContext(Dispatchers.IO) {
+        return@withContext if (plan.contract.isNullOrEmpty()) {
+            21000L
+        } else {
+            val requestBody = BaseRpcRequest(
+                id = 1,
+                jsonrpc = "2.0",
+                method = "eth_estimateGas",
+                params = listOf(EthCall(
+                    from = address(),
+                    to = plan.contract ?: plan.to,
+                    data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
+                ), "latest")
+            )
+            val response: BaseRpcResponseDto<String> = ktorClient.post {
+                url(getRpc())
+                setBody(requestBody)
+            }.body()
+            response.result.clearHexPrefix().toLong(16)
+        }
     }
 
     private suspend fun getChainId(): Int {

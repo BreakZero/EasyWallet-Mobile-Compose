@@ -1,6 +1,5 @@
 package com.easy.assets.presentation.detail
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -10,7 +9,6 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import com.easy.assets.domain.model.AssetInfo
-import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.use_case.AssetsUseCases
 import com.easy.assets.presentation.detail.paging.TransactionPagingSource
 import com.easy.core.ext.byDecimal
@@ -19,7 +17,6 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class AssetDetailViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,
@@ -38,7 +35,7 @@ class AssetDetailViewModel @AssistedInject constructor(
             assistedFactory: Factory,
             slug: String
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return assistedFactory.create(slug) as T
             }
         }
@@ -92,17 +89,5 @@ class AssetDetailViewModel @AssistedInject constructor(
 
     fun address(): String {
         return assetsUseCases.address(slug)
-    }
-
-    fun mockSign() {
-        viewModelScope.launch {
-            val rawData = assetsUseCases.signTransaction(slug, TransactionPlan(
-                amount = "10000000000000000".toBigInteger(),
-                to = "0x81080a7e991bcDdDBA8C2302A70f45d6Bd369Ab5",
-                gasLimit = 21000L,
-                contract = null
-            ))
-            Timber.d("raw data: $rawData")
-        }
     }
 }

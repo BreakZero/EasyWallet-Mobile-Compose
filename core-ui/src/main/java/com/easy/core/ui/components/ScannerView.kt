@@ -26,7 +26,7 @@ import com.easy.core.ui.common.QRCodeAnalyzer
 
 @Composable
 fun ScannerView(
-    callback: (String) -> Unit
+    onResult: (String) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -73,7 +73,7 @@ fun ScannerView(
                         imageAnalysis.setAnalyzer(
                             ContextCompat.getMainExecutor(context),
                             QRCodeAnalyzer { result ->
-                                if (result.isNotEmpty()) callback.invoke(result)
+                                if (result.isNotEmpty()) onResult.invoke(result)
                             }
                         )
                         kotlin.runCatching {

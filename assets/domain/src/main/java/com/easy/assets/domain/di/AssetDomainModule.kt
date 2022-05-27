@@ -25,7 +25,9 @@ object AssetDomainModule {
             balance = AssetBalance(assetRepository),
             assetsWithBalance = AssetsWithBalance(coinRepository, assetRepository),
             transactions = AssetTransactions(assetRepository),
-            signTransaction = SignTransaction(assetRepository)
+            signTransaction = SignTransaction(assetRepository),
+            validateAddress = ValidateAddress(coinRepository),
+            broadcast = BroadcastTransaction(assetRepository)
         )
     }
 }

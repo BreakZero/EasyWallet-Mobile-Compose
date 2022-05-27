@@ -8,7 +8,9 @@ data class SendingState(
     val amount: String = "",
     val fee: String? = null,
     val memo: String? = null,
-    val action: Action = Action.ADVANCED
+    val action: Action = Action.ADVANCED,
+    val amountError: String? = null,
+    val addressError: String? = null
 )
 
 enum class Action {

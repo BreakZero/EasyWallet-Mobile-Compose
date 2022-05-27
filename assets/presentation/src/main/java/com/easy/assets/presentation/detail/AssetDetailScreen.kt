@@ -237,8 +237,7 @@ fun AssetDetailScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
                     onClick = {
-                        viewModel.mockSign()
-                        onNavigateTo.invoke(Navigator(router = AssetRouter.SEND_FIRST) {
+                        onNavigateTo.invoke(Navigator(router = AssetRouter.SENDING) {
                             parameter {
                                 "slug" to viewModel.state.assetInfo?.slug
                             }

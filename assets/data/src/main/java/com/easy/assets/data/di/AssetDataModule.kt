@@ -1,8 +1,10 @@
 package com.easy.assets.data.di
 
-import android.content.Context
+import android.app.Application
 import androidx.datastore.core.DataStore
+import androidx.room.Room
 import com.easy.assets.data.AssetsManager
+import com.easy.assets.data.model.local.AssetsDatabase
 import com.easy.assets.data.repository.AssetRepositoryImpl
 import com.easy.assets.data.repository.CoinRepositoryImpl
 import com.easy.assets.domain.repository.AssetRepository
@@ -13,7 +15,6 @@ import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import io.ktor.client.*
 import javax.inject.Singleton
@@ -40,6 +41,15 @@ abstract class AssetDataModule {
             walletRepositoryImpl: WalletRepositoryImpl
         ): AssetsManager {
             return AssetsManager(ktorClient, appSettings, walletRepositoryImpl)
+        }
+
+        @Provides
+        @Singleton
+        fun provideAssetsDatabase(
+            app: Application
+        ): AssetsDatabase {
+            return Room.databaseBuilder(app, AssetsDatabase::class.java, "easy_wallet_assets.db")
+                .build()
         }
     }
 }

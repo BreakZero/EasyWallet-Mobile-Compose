@@ -12,7 +12,7 @@ android {
     compileSdk = BuildConfig.compileSdkVersion
 
     defaultConfig {
-        applicationId = "com.easy.wallet.c"
+        applicationId = "com.easy.wallet"
         minSdk = BuildConfig.minSdkVersion
         targetSdk = BuildConfig.targetSdkVersion
         versionCode = BuildConfig.versionCode

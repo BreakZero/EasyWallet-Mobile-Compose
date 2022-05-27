@@ -1,6 +1,6 @@
 package com.easy.assets.data.provider
 
-import com.easy.assets.data.remote.dto.EthTxResponseDto
+import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.common.NetworkResponse
@@ -24,7 +24,11 @@ internal class CardanoChain(
     }
 
     override fun address(): String {
-        return walletRepository.hdWallet.getAddressForCoin(CoinType.CARDANO)
+        return walletRepository.hdWallet.getAddressForCoin(coinType())
+    }
+
+    override fun coinType(): CoinType {
+        return CoinType.CARDANO
     }
 
     override suspend fun balance(contract: String?): BigInteger {
@@ -37,5 +41,9 @@ internal class CardanoChain(
         contract: String?
     ): NetworkResponse<List<Transaction>> {
         return NetworkResponse.Error(NetworkResponseCode.checkError(NullPointerException()))
+    }
+
+    override suspend fun broadcast(data: String): Result<String> {
+        return Result.failure(UnSupportChainException())
     }
 }

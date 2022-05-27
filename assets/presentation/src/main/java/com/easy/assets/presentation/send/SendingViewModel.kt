@@ -6,11 +6,20 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.easy.assets.domain.errors.InsufficientBalanceException
+import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.use_case.AssetsUseCases
+import com.easy.assets.domain.use_case.validation.ValidateAmount
+import com.easy.core.common.UiEvent
+import com.easy.core.common.UiText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import timber.log.Timber
 
 class SendingViewModel @AssistedInject constructor(
     private val assetsUseCases: AssetsUseCases,
@@ -27,11 +36,17 @@ class SendingViewModel @AssistedInject constructor(
             assistedFactory: Factory,
             slug: String
         ): ViewModelProvider.Factory = object : ViewModelProvider.Factory {
-            override fun <T : ViewModel?> create(modelClass: Class<T>): T {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return assistedFactory.create(slug) as T
             }
         }
     }
+
+    private val validateAmount: ValidateAmount = ValidateAmount()
+    private var rawData: String? = null
+
+    private val _uiEvent = Channel<UiEvent>()
+    val uiEvent = _uiEvent.receiveAsFlow()
 
     var sendingState by mutableStateOf(SendingState())
 
@@ -42,11 +57,86 @@ class SendingViewModel @AssistedInject constructor(
         }
     }
 
-    fun onAmountChanged(amount: String) {
-        sendingState = sendingState.copy(amount = amount)
+    fun onEvent(event: SendingFormEvent) {
+        when(event) {
+            is SendingFormEvent.AmountChanged -> {
+                sendingState = sendingState.copy(amount = event.amount)
+            }
+            is SendingFormEvent.AddressChanged -> {
+                sendingState = sendingState.copy(toAddress = event.address)
+            }
+            is SendingFormEvent.ActionChanged -> {
+                sendingState = sendingState.copy(action = event.action)
+            }
+            is SendingFormEvent.Submit -> {
+                signTransaction()
+            }
+            is SendingFormEvent.Broadcast -> {
+                rawData?.also {
+                    broadcastTransaction(it)
+                }
+            }
+        }
     }
 
-    fun onActionChanged(action: Action) {
-        sendingState = sendingState.copy(action = action)
+    private fun signTransaction() {
+        val amountResult = validateAmount.execute(sendingState.amount)
+        val addressResult = assetsUseCases.validateAddress.invoke(slug, sendingState.toAddress)
+
+        val hasError = listOf(amountResult, addressResult).any {
+            !it.successful
+        }
+        sendingState = sendingState.copy(
+            amountError = amountResult.errorMessage,
+            addressError = addressResult.errorMessage
+        )
+        if (hasError) {
+            return
+        }
+
+        viewModelScope.launch {
+            assetsUseCases.assets().find { it.slug == slug }?.run {
+                try {
+                    rawData = assetsUseCases.signTransaction(
+                        slug, TransactionPlan(
+                            amount = sendingState.amount.toBigDecimal().movePointRight(this.decimal)
+                                .toBigInteger(),
+                            to = sendingState.toAddress,
+                            contract = this.contractAddress
+                        )
+                    )
+                    _uiEvent.send(UiEvent.Success)
+                } catch (e: Exception) {
+                    when (e) {
+                        is InsufficientBalanceException -> {
+                            _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString(e.message ?: "insufficient balance")))
+                        }
+                        else -> {
+                            _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("signing transaction with unknown error")))
+                        }
+                    }
+                }
+            } ?: kotlin.run {
+                _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("somethings went wrong")))
+            }
+        }
+    }
+
+    private fun broadcastTransaction(rawData: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val result = assetsUseCases.broadcast.invoke(slug, rawData)
+            if (result.isSuccess) {
+                Timber.tag("Easy").d("===${result.getOrNull().orEmpty()}")
+                _uiEvent.send(UiEvent.NavigateUp)
+            } else {
+                _uiEvent.send(
+                    UiEvent.ShowSnackbar(
+                        UiText.DynamicString(
+                            result.exceptionOrNull()?.message ?: "broadcast transaction failed"
+                        )
+                    )
+                )
+            }
+        }
     }
 }

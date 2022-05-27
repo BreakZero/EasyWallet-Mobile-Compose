@@ -23,7 +23,10 @@ fun NavGraphBuilder.globalGraph(navController: NavController) {
         popExitTransition = {
             fadeOut(animationSpec = tween(500))
         }) {
-        ScanScreen {
+        ScanScreen { qrCodeContent ->
+            navController.previousBackStackEntry?.savedStateHandle?.let {
+                it.set("QR_CODE_CONTENT", qrCodeContent)
+            }
             navController.navigateUp()
         }
     }

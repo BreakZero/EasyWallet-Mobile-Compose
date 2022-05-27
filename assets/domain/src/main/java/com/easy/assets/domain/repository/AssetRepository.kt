@@ -13,4 +13,6 @@ interface AssetRepository {
         limit: Int,
         contract: String?
     ): Result<List<Transaction>>
+
+    suspend fun broadcastTransaction(slug: String, data: String): Result<String>
 }

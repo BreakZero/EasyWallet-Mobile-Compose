@@ -18,7 +18,7 @@
         <activity
             android:name="com.easy.wallet.MainActivity"
             android:exported="true"
-            android:label="@string/app_name"
+            android:windowSoftInputMode="adjustResize"
             android:theme="@style/Theme.EasyWallet">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -12,12 +12,13 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -29,6 +30,8 @@ import coil.request.ImageRequest
 import coil.transform.CircleCropTransformation
 import com.easy.assets.domain.model.AssetInfo
 import com.easy.assets.presentation.assets.components.CollapsableToolbar
+import com.easy.core.common.Navigator
+import com.easy.core.common.UiEvent
 import com.easy.core.ui.components.EasyActionBar
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
@@ -37,14 +40,13 @@ import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 @Composable
 fun WalletPagerScreen(
     viewModel: WalletAssetViewModel = hiltViewModel(),
-    onNavigateTo: (MainUIEvent) -> Unit
+    onNavigateTo: (Navigator) -> Unit
 ) {
     LaunchedEffect(key1 = true) {
         viewModel.uiEvent.collect { event ->
             when (event) {
-                is AssetUIEvent.OnItemClick -> onNavigateTo.invoke(MainUIEvent.OnItemClicked(event.assetInfo))
-                is AssetUIEvent.OnReceiveClick -> onNavigateTo.invoke(MainUIEvent.OnReceiveClick)
-                is AssetUIEvent.OnSendClick -> onNavigateTo.invoke(MainUIEvent.OnSendClick)
+                is UiEvent.NavigateTo -> onNavigateTo.invoke(event.navigator)
+                else -> Unit
             }
         }
     }
@@ -58,20 +60,13 @@ fun WalletPagerScreen(
             backgroundColor = MaterialTheme.colorScheme.primary,
             tint = MaterialTheme.colorScheme.onPrimary,
             onNavClick = {
-                onNavigateTo(MainUIEvent.OnSettingsClick)
+                viewModel.onEvent(AssetEvent.SettingsClicked)
             },
             onMenuClick = {
-                onNavigateTo(MainUIEvent.OnScanClick)
+                viewModel.onEvent(AssetEvent.ScanClicked)
             }
         )
-        CollapsableToolbar(
-            onSend = {
-                viewModel.onEvent(AssetEvent.OnSend)
-            },
-            onReceive = {
-                viewModel.onEvent(AssetEvent.OnReceive)
-            }
-        ) {
+        CollapsableToolbar {
             AnimatedContent(
                 targetState = state,
                 transitionSpec = {
@@ -84,23 +79,27 @@ fun WalletPagerScreen(
                             state = rememberSwipeRefreshState(state.isLoading),
                             swipeEnabled = it,
                             onRefresh = {
-                                viewModel.onEvent(AssetEvent.OnRefresh)
+                                viewModel.onEvent(AssetEvent.SwipeToRefresh)
                             }) {
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
-                                    .background(
-                                        color = MaterialTheme.colorScheme.background,
-                                        shape = RoundedCornerShape(
+                                    .clip(
+                                        RoundedCornerShape(
                                             topEnd = 24.dp,
                                             topStart = 24.dp
                                         )
                                     )
+                                    .background(
+                                        color = MaterialTheme.colorScheme.background
+                                    )
+                                    .padding(top = 12.dp)
+
                             ) {
                                 val assets = state.tokenLists.getOrElse { emptyList() }
                                 items(items = assets) {
                                     AssetItemView(data = it) {
-                                        viewModel.onEvent(AssetEvent.OnItemClick(it))
+                                        viewModel.onEvent(AssetEvent.ItemClicked(it))
                                     }
                                 }
                             }
@@ -118,7 +117,7 @@ fun WalletPagerScreen(
                                     )
                                 )
                                 .clickable {
-                                    viewModel.onEvent(AssetEvent.OnRefresh)
+                                    viewModel.onEvent(AssetEvent.SwipeToRefresh)
                                 }, contentAlignment = Alignment.TopCenter
                         ) {
                             Text(
