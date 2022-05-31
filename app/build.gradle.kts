@@ -114,12 +114,12 @@ dependencies {
     androidTestDependencies()
 }
 
-tasks.register("installGitHook", Copy::class.java) {
-    from(File(rootProject.rootDir, "scripts/pre-commit"))
-    into(File(rootProject.rootDir, ".git/hooks"))
-}
-
-tasks.getByPath(":app:preBuild").dependsOn("installGitHook")
+//tasks.register("installGitHook", Copy::class.java) {
+//    from(File(rootProject.rootDir, "scripts/pre-commit"))
+//    into(File(rootProject.rootDir, ".git/hooks"))
+//}
+//
+//tasks.getByPath(":app:preBuild").dependsOn("installGitHook")
 
 //tasks.register("gitVersion", GitVersionTask::class.java) {
 //    println(project.name)
