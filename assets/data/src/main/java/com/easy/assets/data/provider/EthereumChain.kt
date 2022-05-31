@@ -3,14 +3,14 @@ package com.easy.assets.data.provider
 import androidx.annotation.Keep
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
-import com.easy.assets.domain.errors.InsufficientBalanceException
-import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.model.remote.BaseRpcRequest
 import com.easy.assets.data.model.remote.EthCall
 import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.model.remote.dto.EthTxResponseDto
 import com.easy.assets.data.model.remote.dto.FeeHistoryDto
+import com.easy.assets.domain.errors.InsufficientBalanceException
+import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.BuildConfig
@@ -35,6 +35,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.withContext
 import timber.log.Timber
 import wallet.core.java.AnySigner
+import wallet.core.jni.AnyAddress
 import wallet.core.jni.CoinType
 import wallet.core.jni.proto.Ethereum
 import java.math.BigInteger
@@ -105,6 +106,9 @@ internal class EthereumChain(
     }
 
     override fun address(): String {
+        val publicKey = walletRepository.hdWallet.getDerivedKey(coinType(), 0, 0, 2).getPublicKeySecp256k1(false)
+        val address = AnyAddress(publicKey, coinType()).description()
+        Timber.tag("HELLO").d(address)
         return walletRepository.hdWallet.getAddressForCoin(coinType())
     }
 
