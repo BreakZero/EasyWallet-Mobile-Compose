@@ -116,7 +116,7 @@ dependencies {
 
 tasks.register("installGitHook", Copy::class.java) {
     from(File(rootProject.rootDir, "scripts/pre-commit"))
-    to(File(rootProject.rootDir, ".git/hooks"))
+    destinationDir = File(rootProject.rootDir, ".git/hooks")
     fileMode = 777
 }
 
