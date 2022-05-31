@@ -200,7 +200,8 @@ fun SendingScreen(
                         isError = uiState.amountError != null,
                         onValueChange = {
                             sendViewModel.onEvent(SendingFormEvent.AmountChanged(it))
-                        })
+                        }
+                    )
                     if (uiState.amountError != null) {
                         Text(
                             text = uiState.amountError,

@@ -98,7 +98,8 @@ class SendingViewModel @AssistedInject constructor(
             viewModelScope.launch {
                 try {
                     rawData = assetsUseCases.signTransaction(
-                        it.chain, TransactionPlan(
+                        it.chain,
+                        TransactionPlan(
                             amount = sendingState.amount.toBigDecimal().movePointRight(it.decimal)
                                 .toBigInteger(),
                             to = sendingState.toAddress,

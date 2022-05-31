@@ -69,7 +69,7 @@ fun NumberKeyboard(
                             },
                         contentAlignment = Alignment.Center
                     ) {
-                        when(item.actionType) {
+                        when (item.actionType) {
                             ActionType.NUMBER -> {
                                 Text(text = item.number, fontWeight = FontWeight.Bold)
                             }
@@ -85,11 +85,11 @@ fun NumberKeyboard(
                         }
                     }
                     if (showDivider) {
-                        Divider() //Horizontal divider
+                        Divider() // Horizontal divider
                     }
                 }
 
-                //Vertical divider avoiding the last cell in each row
+                // Vertical divider avoiding the last cell in each row
                 if (showDivider && (index + 1) % 3 != 0) {
                     Column() {
                         Divider(

@@ -34,7 +34,8 @@ fun SplashScreen(
                 durationMillis = 800,
                 easing = {
                     OvershootInterpolator(4f).getInterpolation(it)
-                })
+                }
+            )
         )
         splashViewModel.uiEvent.collect {
             navigateTo.invoke(it)
@@ -42,8 +43,10 @@ fun SplashScreen(
     }
 
     // Image
-    Box(contentAlignment = Alignment.Center,
-        modifier = Modifier.fillMaxSize()) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.fillMaxSize()
+    ) {
         Image(
             painter = painterResource(id = R.mipmap.laucher_intro),
             contentScale = ContentScale.FillWidth,
@@ -53,5 +56,4 @@ fun SplashScreen(
                 .fillMaxWidth()
         )
     }
-
 }

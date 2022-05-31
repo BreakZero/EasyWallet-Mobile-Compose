@@ -15,7 +15,6 @@ import io.ktor.serialization.gson.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -56,15 +55,18 @@ class AssetRepositoryTest {
             on { getAddressForCoin(CoinType.ETHEREUM) } doReturn "0xa4531dE99E22B2166d340E7221669DF565c52024"
         }
         appSettings = mock() {
-            on { data } doReturn flow { emit(
-                AppSettings(
-                    ChainNetwork.MAIN,
-                    Currency.getInstance(
-                        Locale.US
-                    ).let {
-                        EasyCurrency(it.symbol, it.currencyCode)
-                    })
-            ) }
+            on { data } doReturn flow {
+                emit(
+                    AppSettings(
+                        ChainNetwork.MAIN,
+                        Currency.getInstance(
+                            Locale.US
+                        ).let {
+                            EasyCurrency(it.symbol, it.currencyCode)
+                        }
+                    )
+                )
+            }
         }
         walletDao = mock()
 

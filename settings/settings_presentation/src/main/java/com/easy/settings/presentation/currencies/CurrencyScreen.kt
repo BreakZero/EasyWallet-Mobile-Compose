@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material3.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -25,7 +25,7 @@ fun CurrencyScreen(
     val state = currencyViewModel.currencyState
     LaunchedEffect(key1 = currencyViewModel) {
         currencyViewModel.uiEvent.collect {
-            when(it) {
+            when (it) {
                 CurrencyUIEvent.ActionDone -> {
                     onNavigateUp()
                 }
@@ -47,7 +47,8 @@ fun CurrencyScreen(
                             tint = MaterialTheme.colorScheme.onBackground
                         )
                     }
-                }) {
+                }
+            ) {
                 onNavigateUp()
             }
         }

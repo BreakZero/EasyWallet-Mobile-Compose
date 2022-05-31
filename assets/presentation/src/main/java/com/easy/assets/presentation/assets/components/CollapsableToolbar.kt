@@ -27,9 +27,11 @@ fun CollapsableToolbar(
 ) {
     val swipingState = rememberSwipeableState(initialValue = SwipingStates.EXPANDED)
 
-    BoxWithConstraints(modifier = Modifier
-        .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
-        .fillMaxSize()) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .background(androidx.compose.material3.MaterialTheme.colorScheme.primary)
+            .fillMaxSize()
+    ) {
         val heightInPx = with(LocalDensity.current) { maxHeight.toPx() } // Get height of screen
         val connection = remember {
             object : NestedScrollConnection {
@@ -88,7 +90,6 @@ fun CollapsableToolbar(
         }
     }
 }
-
 
 // Helper class defining swiping State
 enum class SwipingStates {

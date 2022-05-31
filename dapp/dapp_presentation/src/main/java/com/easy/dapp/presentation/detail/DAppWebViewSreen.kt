@@ -98,16 +98,16 @@ fun DAppWebViewScreen(
                                 }
                             }
                         } else {
-                            dappViewModel.webView?.sendResult(it.methodId,"")
+                            dappViewModel.webView?.sendResult(it.methodId, "")
                         }
                         dappViewModel.approve()
                     }) { Text(text = "Approve") }
                 }, dismissButton = {
-                    TextButton(onClick = {
-                        dappViewModel.reject()
-                        dappViewModel.webView?.sendError(it.methodId, "User reject the action")
-                    }) { Text(text = "Reject") }
-                }, title = { Text(text = it.title) }, text = { Text(text = it.data) })
+                        TextButton(onClick = {
+                            dappViewModel.reject()
+                            dappViewModel.webView?.sendError(it.methodId, "User reject the action")
+                        }) { Text(text = "Reject") }
+                    }, title = { Text(text = it.title) }, text = { Text(text = it.data) })
             }
         }
 
@@ -132,13 +132,17 @@ fun DAppWebViewScreen(
                 dappViewModel.injectWebView(webView)
                 webView.settings.javaScriptEnabled = true
                 webView.settings.domStorageEnabled = true
-                webView.addJavascriptInterface(WebAppInterface(webView, url) {
-                    scope.launch {
-                        dappViewModel.onReceiveMethod(it)
-                    }
-                }, "_tw_")
+                webView.addJavascriptInterface(
+                    WebAppInterface(webView, url) {
+                        scope.launch {
+                            dappViewModel.onReceiveMethod(it)
+                        }
+                    },
+                    "_tw_"
+                )
                 val script = "window.ethereum.request({method: \"eth_requestAccounts\"})"
                 webView.evaluateJavascript(script) { }
-            })
+            }
+        )
     }
 }

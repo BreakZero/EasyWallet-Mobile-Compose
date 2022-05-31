@@ -15,7 +15,6 @@ import io.ktor.serialization.gson.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
@@ -48,15 +47,18 @@ class CoinRepositoryTest {
     fun setUp() {
         val testDispatcher = StandardTestDispatcher()
         appSettings = mock() {
-            on { data } doReturn flow { emit(
-                AppSettings(
-                    ChainNetwork.MAIN,
-                    Currency.getInstance(
-                        Locale.US
-                    ).let {
-                        EasyCurrency(it.symbol, it.currencyCode)
-                    })
-            ) }
+            on { data } doReturn flow {
+                emit(
+                    AppSettings(
+                        ChainNetwork.MAIN,
+                        Currency.getInstance(
+                            Locale.US
+                        ).let {
+                            EasyCurrency(it.symbol, it.currencyCode)
+                        }
+                    )
+                )
+            }
         }
         Dispatchers.setMain(testDispatcher)
         hdWallet = mock() {
@@ -82,7 +84,7 @@ class CoinRepositoryTest {
                 }
             }
         }
-        assetsManager = AssetsManager(httpClient,appSettings, walletRepositoryImpl)
+        assetsManager = AssetsManager(httpClient, appSettings, walletRepositoryImpl)
     }
 
     @Test

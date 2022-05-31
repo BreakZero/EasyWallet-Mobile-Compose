@@ -9,7 +9,8 @@ class AssetBalance @Inject constructor(
     private val repository: AssetRepository
 ) {
     suspend operator fun invoke(
-        chain: NetworkChain, contract: String?
+        chain: NetworkChain,
+        contract: String?
     ): BigInteger {
         return repository.balance(chain = chain, contract = contract)
     }

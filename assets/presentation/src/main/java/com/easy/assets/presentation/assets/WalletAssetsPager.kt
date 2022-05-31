@@ -71,8 +71,9 @@ fun WalletPagerScreen(
                 targetState = state,
                 transitionSpec = {
                     fadeIn(animationSpec = tween(300, 300)) with
-                            fadeOut(animationSpec = tween(300, 300))
-                }) { state ->
+                        fadeOut(animationSpec = tween(300, 300))
+                }
+            ) { state ->
                 when {
                     state.tokenLists.isSuccess -> {
                         SwipeRefresh(
@@ -80,7 +81,8 @@ fun WalletPagerScreen(
                             swipeEnabled = it,
                             onRefresh = {
                                 viewModel.onEvent(AssetEvent.SwipeToRefresh)
-                            }) {
+                            }
+                        ) {
                             LazyColumn(
                                 modifier = Modifier
                                     .fillMaxSize()
@@ -118,7 +120,8 @@ fun WalletPagerScreen(
                                 )
                                 .clickable {
                                     viewModel.onEvent(AssetEvent.SwipeToRefresh)
-                                }, contentAlignment = Alignment.TopCenter
+                                },
+                            contentAlignment = Alignment.TopCenter
                         ) {
                             Text(
                                 text = "something went wrong",

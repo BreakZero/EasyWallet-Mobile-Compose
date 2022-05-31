@@ -5,7 +5,7 @@ import java.nio.channels.UnresolvedAddressException
 
 object NetworkResponseCode {
     fun checkError(e: Throwable): Int {
-        return when(e) {
+        return when (e) {
             is RedirectResponseException -> e.response.status.value
             is ClientRequestException -> e.response.status.value
             is ServerResponseException -> e.response.status.value

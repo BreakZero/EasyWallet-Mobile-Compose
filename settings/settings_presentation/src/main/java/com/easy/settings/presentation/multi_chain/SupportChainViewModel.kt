@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.datastore.core.DataStore
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.easy.core.enums.Chain
 import com.easy.core.enums.SUPPORT_NETWORKS
 import com.easy.core.model.AppSettings
 import dagger.hilt.android.lifecycle.HiltViewModel

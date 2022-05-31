@@ -15,7 +15,6 @@ import io.ktor.http.*
 import io.ktor.serialization.gson.*
 import io.ktor.utils.io.*
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
@@ -46,7 +45,8 @@ class AssetsManagerTest {
                             Locale.US
                         ).let {
                             EasyCurrency(it.symbol, it.currencyCode)
-                        })
+                        }
+                    )
                 )
             }
         }

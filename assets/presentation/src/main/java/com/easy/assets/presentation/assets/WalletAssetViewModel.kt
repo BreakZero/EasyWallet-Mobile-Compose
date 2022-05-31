@@ -20,7 +20,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletAssetViewModel @Inject constructor(
     private val assetsUseCases: AssetsUseCases
-): ViewModel() {
+) : ViewModel() {
     var assetState by mutableStateOf(AssetState(isLoading = true))
         private set
     private val _uiEvent = Channel<UiEvent>()

@@ -7,10 +7,10 @@ import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowRight
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -57,13 +57,15 @@ fun WalletProtectScreen(
                     )
                 }
                 if (passcode.orEmpty().isNotEmpty()) {
-                    Box(modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(end = 16.dp)
-                        .height(48.dp)
-                        .clickable {
-                            viewModel.onEvent(ProtectEvent.OnCreated)
-                        }, contentAlignment = Alignment.Center
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(end = 16.dp)
+                            .height(48.dp)
+                            .clickable {
+                                viewModel.onEvent(ProtectEvent.OnCreated)
+                            },
+                        contentAlignment = Alignment.Center
                     ) {
                         Text(
                             textAlign = TextAlign.Center,
@@ -167,7 +169,8 @@ fun WalletProtectScreen(
                         checked = viewModel.state.biometric,
                         onCheckedChange = {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-                                BiometricUtil.launchBiometric(context,
+                                BiometricUtil.launchBiometric(
+                                    context,
                                     @RequiresApi(Build.VERSION_CODES.P)
                                     object : BiometricPrompt.AuthenticationCallback() {
                                         override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult?) {
@@ -199,14 +202,16 @@ fun WalletProtectScreen(
                                         ) {
                                             super.onAuthenticationHelp(helpCode, helpString)
                                         }
-                                    }, onCancel = {
+                                    },
+                                    onCancel = {
                                         viewModel.onEvent(
                                             ProtectEvent.OnBiometricChanged(
                                                 error = "user canceled",
                                                 enabled = it.not()
                                             )
                                         )
-                                    })
+                                    }
+                                )
                             } else {
                                 viewModel.onEvent(
                                     ProtectEvent.OnBiometricChanged(

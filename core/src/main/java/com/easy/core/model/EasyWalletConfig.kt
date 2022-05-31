@@ -3,14 +3,12 @@
 package com.easy.core.model
 
 import androidx.datastore.core.Serializer
-import com.easy.core.enums.Chain
 import com.easy.core.enums.ChainNetwork
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.io.InputStream
 import java.io.OutputStream
 import java.util.*
-
 
 @Serializable
 data class AppSettings(

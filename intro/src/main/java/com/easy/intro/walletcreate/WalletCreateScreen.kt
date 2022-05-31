@@ -116,7 +116,8 @@ fun WalletCreateScreen(
                 enabled = checked,
                 onClick = {
                     onNavigate.invoke(Navigator(router = IntroRouter.ROUTER_WALLET_PROTECT))
-                }) {
+                }
+            ) {
                 Text(text = "Continue")
             }
         }

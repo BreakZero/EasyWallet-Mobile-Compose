@@ -77,11 +77,13 @@ class AssetDetailViewModel @AssistedInject constructor(
         when (event) {
             is AssetDetailEvent.OnRefresh -> {
                 currAsset?.let {
-                    state = state.copy(pager = Pager(
-                        PagingConfig(pageSize = 20)
-                    ) {
-                        TransactionPagingSource(assetsUseCases.transactions, it)
-                    })
+                    state = state.copy(
+                        pager = Pager(
+                            PagingConfig(pageSize = 20)
+                        ) {
+                            TransactionPagingSource(assetsUseCases.transactions, it)
+                        }
+                    )
                 }
             }
         }

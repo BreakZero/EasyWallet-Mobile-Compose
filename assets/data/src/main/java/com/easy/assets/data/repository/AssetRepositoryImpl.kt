@@ -1,7 +1,6 @@
 package com.easy.assets.data.repository
 
 import com.easy.assets.data.AssetsManager
-import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.repository.AssetRepository

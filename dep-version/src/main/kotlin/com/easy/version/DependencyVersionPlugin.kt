@@ -13,7 +13,7 @@ import java.io.InputStreamReader
 import java.util.*
 
 class DependencyVersionPlugin : Plugin<Project> {
-    private val ignoreList = listOf("app", "EasyWallet", "assets", "dapp", "settings")
+    private val ignoreList = listOf("app", "assets", "dapp", "settings")
 
     override fun apply(target: Project) {
         if (target.name !in ignoreList) {
@@ -27,6 +27,7 @@ class DependencyVersionPlugin : Plugin<Project> {
     }
 
     private fun Project.applyPlugin() {
+        apply(plugin = "org.jmailen.kotlinter")
         apply(plugin = "com.android.library")
         apply(plugin = "kotlin-android")
         apply(plugin = "kotlin-kapt")

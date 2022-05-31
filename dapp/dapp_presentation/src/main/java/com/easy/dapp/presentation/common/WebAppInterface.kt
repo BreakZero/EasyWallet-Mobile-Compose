@@ -27,7 +27,7 @@ class WebAppInterface(
                     MessageInfo(
                         title = "Request Accounts",
                         methodId = id,
-                        data = "DApp(${dappUrl}) need to get your address",
+                        data = "DApp($dappUrl) need to get your address",
                         method = method
                     )
                 )

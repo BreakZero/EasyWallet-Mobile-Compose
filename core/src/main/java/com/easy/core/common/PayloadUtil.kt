@@ -23,7 +23,7 @@ object PayloadUtil {
     ): EthereumAbiFunction {
         val function = EthereumAbiFunction(fnName)
         for (param in params) {
-            when(param.type) {
+            when (param.type) {
                 AbiParameterType.UINT, AbiParameterType.UINT256 -> {
                     function.addParamUInt256((param.value as String).toHexBytes(), false)
                 }

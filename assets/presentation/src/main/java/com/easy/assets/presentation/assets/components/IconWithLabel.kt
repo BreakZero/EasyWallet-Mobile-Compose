@@ -6,8 +6,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material.Text
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,10 +26,12 @@ fun IconWithLabel(
     textColor: Color = Color.Blue,
     onClick: () -> Unit
 ) {
-    Box(modifier = Modifier
-        .clickable {
-            onClick.invoke()
-        }) {
+    Box(
+        modifier = Modifier
+            .clickable {
+                onClick.invoke()
+            }
+    ) {
         Column(
             modifier = Modifier.padding(8.dp)
         ) {

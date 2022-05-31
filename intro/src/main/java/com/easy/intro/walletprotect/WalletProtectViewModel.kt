@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletProtectViewModel @Inject constructor(
     private val walletRepository: WalletRepositoryImpl
-): ViewModel() {
+) : ViewModel() {
     var state by mutableStateOf(ProtectState())
 
     private val _uiEvent = Channel<UiEvent>()

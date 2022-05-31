@@ -10,7 +10,6 @@ import androidx.compose.material.Text
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -81,14 +80,17 @@ fun SettingsScreen(
                 modifier = Modifier.align(Alignment.CenterHorizontally)
             )
             MenuBlockView(
-                modifier = Modifier.fillMaxWidth(), header = "Security", menus = listOf(
+                modifier = Modifier.fillMaxWidth(), header = "Security",
+                menus = listOf(
                     MenuItem(
                         title = "Protect Your Wallet", subTitle = "Passcode, Biometrics and 2FA"
-                    ), MenuItem(title = "Recovery Phrase", subTitle = "Wallet Name")
+                    ),
+                    MenuItem(title = "Recovery Phrase", subTitle = "Wallet Name")
                 )
             ) {}
             MenuBlockView(
-                modifier = Modifier.fillMaxWidth(), header = "Account", menus = listOf(
+                modifier = Modifier.fillMaxWidth(), header = "Account",
+                menus = listOf(
                     MenuItem(title = "Display Currency", endValue = settingsState.displayCurrency),
                     MenuItem(
                         title = "Network Settings",
@@ -107,31 +109,33 @@ fun SettingsScreen(
                 }
             }
             MenuBlockView(
-                modifier = Modifier.fillMaxWidth(), header = "Support", menus = listOf(
+                modifier = Modifier.fillMaxWidth(), header = "Support",
+                menus = listOf(
                     MenuItem(title = "Help Center"),
                     MenuItem(title = "New to DeFi"),
                     MenuItem(title = "Join Community"),
                     MenuItem(title = "Give Feedback")
                 )
             ) {
-
             }
             MenuBlockView(
-                modifier = Modifier.fillMaxWidth(), header = "About EasyWallet", menus = listOf(
+                modifier = Modifier.fillMaxWidth(), header = "About EasyWallet",
+                menus = listOf(
                     MenuItem(title = "Version", endValue = versionName, showIcon = false),
                     MenuItem(title = "Terms of Service"),
                     MenuItem(title = "Privacy Notice"),
                     MenuItem(title = "Visit our website")
                 )
             ) {
-                onNavigateTo.invoke(Navigator(SettingsRouter.SETTINGS_WEB) {
-                    parameter {
-                        "url" to "https://breakzero.github.io"
+                onNavigateTo.invoke(
+                    Navigator(SettingsRouter.SETTINGS_WEB) {
+                        parameter {
+                            "url" to "https://breakzero.github.io"
+                        }
                     }
-                })
+                )
             }
             Spacer(modifier = Modifier.height(24.dp))
         }
     }
 }
-

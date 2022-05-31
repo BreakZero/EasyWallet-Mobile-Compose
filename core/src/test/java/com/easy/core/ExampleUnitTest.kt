@@ -3,15 +3,11 @@ package com.easy.core
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.contextual
 import kotlinx.serialization.modules.polymorphic
 import org.junit.Assert.assertEquals
 import org.junit.Test
@@ -58,7 +54,8 @@ class ExampleUnitTest {
                     from = "from address",
                     to = "to address",
                     data = "0x70a08231000000000000000000000000"
-                ), StringParameter("latest")
+                ),
+                StringParameter("latest")
             )
         )
 
@@ -67,11 +64,9 @@ class ExampleUnitTest {
     }
 }
 
-interface Parameter {
+interface Parameter
 
-}
-
-object ParameterSerialize: JsonContentPolymorphicSerializer<Parameter>(Parameter::class) {
+object ParameterSerialize : JsonContentPolymorphicSerializer<Parameter>(Parameter::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out Parameter> {
         return when {
             "content" in element.jsonObject -> StringParameter.serializer()
@@ -91,11 +86,11 @@ data class TestBaseRpc(
 @Serializable
 data class StringParameter(
     val content: String
-): Parameter
+) : Parameter
 
 @Serializable
 data class TestCaller(
     val data: String,
     val from: String,
     val to: String
-): Parameter
+) : Parameter

@@ -51,7 +51,8 @@ class DAppDetailViewModel @Inject constructor(
 
     private suspend fun signTransaction(to: String, data: String) {
         assetsUseCases.signTransaction(
-            NetworkChain.Ethereum, TransactionPlan(
+            NetworkChain.Ethereum,
+            TransactionPlan(
                 amount = BigInteger.ZERO,
                 to = to,
                 payload = data

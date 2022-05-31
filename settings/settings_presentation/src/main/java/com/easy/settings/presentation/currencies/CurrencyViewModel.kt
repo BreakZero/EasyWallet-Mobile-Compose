@@ -60,9 +60,11 @@ class CurrencyViewModel @Inject constructor(
 
     private suspend fun updateCurrency() {
         appSettings.updateData { appSettings ->
-            appSettings.copy(localCurrency = currencyState.selected().let {
-                EasyCurrency(symbol = it.symbol, code = it.currencyCode)
-            })
+            appSettings.copy(
+                localCurrency = currencyState.selected().let {
+                    EasyCurrency(symbol = it.symbol, code = it.currencyCode)
+                }
+            )
         }
     }
 }

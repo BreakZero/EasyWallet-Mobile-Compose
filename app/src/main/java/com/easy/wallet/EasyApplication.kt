@@ -7,7 +7,7 @@ import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
 @HiltAndroidApp
-class EasyApplication: Application() {
+class EasyApplication : Application() {
     init {
         System.loadLibrary("TrustWalletCore")
     }

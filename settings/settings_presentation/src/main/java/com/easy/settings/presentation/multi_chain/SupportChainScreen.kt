@@ -42,7 +42,8 @@ fun SupportChainScreen(
                     }) {
                         Icon(imageVector = Icons.Filled.Done, contentDescription = null)
                     }
-                }) {
+                }
+            ) {
                 onNavigateUp()
             }
         }

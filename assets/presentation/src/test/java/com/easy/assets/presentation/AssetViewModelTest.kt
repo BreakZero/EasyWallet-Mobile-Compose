@@ -11,7 +11,6 @@ import com.easy.assets.presentation.assets.AssetUIEvent
 import com.easy.assets.presentation.assets.WalletAssetViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
@@ -21,7 +20,6 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.doThrow
 import org.mockito.kotlin.mock
 import java.math.BigInteger
 import kotlin.time.ExperimentalTime
@@ -102,7 +100,8 @@ class AssetViewModelTest {
     fun `test coin balance`() = runTest {
         assertEquals(BigInteger.ZERO, assetsUseCases.balance("", ""))
         assertEquals(
-            BigInteger.TEN, assetsUseCases.balance(
+            BigInteger.TEN,
+            assetsUseCases.balance(
                 "erc20-uni",
                 "0x1f9840a85d5af5bf1d1762f925bdaddc4201f984"
             )

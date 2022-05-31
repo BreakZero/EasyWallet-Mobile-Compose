@@ -1,7 +1,6 @@
 package com.easy.assets.data.provider
 
 import com.easy.assets.domain.errors.UnSupportChainException
-import com.easy.assets.data.model.remote.dto.EthTxResponseDto
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.common.NetworkResponse
@@ -9,7 +8,7 @@ import com.easy.core.common.NetworkResponseCode
 import wallet.core.jni.CoinType
 import java.math.BigInteger
 
-internal object DefaultChain: IChain {
+internal object DefaultChain : IChain {
     override suspend fun sign(plan: TransactionPlan): String {
         return ""
     }

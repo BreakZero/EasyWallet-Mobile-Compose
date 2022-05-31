@@ -89,7 +89,7 @@ fun AssetDetailScreen(
         }
     ) {
         val isRefreshing = lazyPagingItems?.loadState == null ||
-                lazyPagingItems.loadState.refresh == LoadState.Loading
+            lazyPagingItems.loadState.refresh == LoadState.Loading
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -102,7 +102,8 @@ fun AssetDetailScreen(
                 state = rememberSwipeRefreshState(isRefreshing),
                 onRefresh = {
                     viewModel.onEvent(AssetDetailEvent.OnRefresh)
-                }) {
+                }
+            ) {
                 LazyColumn(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -165,7 +166,6 @@ fun AssetDetailScreen(
                                     transactionInfo = it,
                                     state.assetInfo?.decimal ?: 0
                                 ) {
-
                                 }
                                 Divider(
                                     modifier = Modifier
@@ -228,7 +228,8 @@ fun AssetDetailScreen(
                                 parameter {
                                     "address" to viewModel.address()
                                 }
-                            })
+                            }
+                        )
                     },
                     colors = ButtonDefaults.buttonColors()
                 ) {
@@ -237,12 +238,15 @@ fun AssetDetailScreen(
                 Spacer(modifier = Modifier.width(16.dp))
                 Button(
                     onClick = {
-                        onNavigateTo.invoke(Navigator(router = AssetRouter.SENDING) {
-                            parameter {
-                                "slug" to viewModel.state.assetInfo?.slug
+                        onNavigateTo.invoke(
+                            Navigator(router = AssetRouter.SENDING) {
+                                parameter {
+                                    "slug" to viewModel.state.assetInfo?.slug
+                                }
                             }
-                        })
-                    }, modifier = Modifier
+                        )
+                    },
+                    modifier = Modifier
                         .weight(1f),
                     colors = ButtonDefaults.buttonColors()
                 ) {
@@ -284,7 +288,7 @@ fun TransactionItemView(transactionInfo: Transaction, decimal: Int, click: (Tran
             Text(
                 textAlign = TextAlign.End,
                 text = "${if (transactionInfo.isReceive) "+" else "-"} ${
-                    transactionInfo.value.toBigInteger().byDecimal(decimal, 8)
+                transactionInfo.value.toBigInteger().byDecimal(decimal, 8)
                 }",
                 color = if (transactionInfo.isReceive) Color.Green else Color.Red,
                 overflow = TextOverflow.Ellipsis

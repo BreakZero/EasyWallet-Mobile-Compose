@@ -1,7 +1,6 @@
 package com.easy.assets.domain.repository
 
 import com.easy.assets.domain.model.AssetInfo
-import com.easy.assets.domain.model.ValidationResult
 import com.easy.core.consts.NetworkChain
 import wallet.core.jni.CoinType
 

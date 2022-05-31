@@ -33,11 +33,13 @@ class AssetsWithBalance @Inject constructor(
                 }
             }
             val balanceList = balances.awaitAll()
-            Result.success(it.map { item ->
-                val sureBalance = balanceList.find { it.first == item.slug }?.second
-                    ?: BigInteger.ZERO
-                item.copy(balance = sureBalance.byDecimal(item.decimal, 8))
-            })
+            Result.success(
+                it.map { item ->
+                    val sureBalance = balanceList.find { it.first == item.slug }?.second
+                        ?: BigInteger.ZERO
+                    item.copy(balance = sureBalance.byDecimal(item.decimal, 8))
+                }
+            )
         }
     }
 }

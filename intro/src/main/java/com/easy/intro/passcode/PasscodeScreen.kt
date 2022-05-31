@@ -18,7 +18,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.easy.core.ui.components.ActionType
 import com.easy.core.ui.components.NumberKeyboard
 import com.easy.intro.R
-import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 @Composable
 fun PasscodeScreen(
@@ -104,7 +103,8 @@ fun PasscodeScreen(
                 }
                 viewModel.passcodeState.error?.let {
                     Text(
-                        text = it, color = Color.Red, modifier = Modifier
+                        text = it, color = Color.Red,
+                        modifier = Modifier
                             .fillMaxWidth()
                             .padding(top = 20.dp),
                         textAlign = TextAlign.Center
@@ -116,12 +116,13 @@ fun PasscodeScreen(
                     .fillMaxWidth()
                     .background(Color.White),
                 onNumberClick = {
-                    when(it.actionType) {
+                    when (it.actionType) {
                         ActionType.NUMBER -> viewModel.onEvent(PasscodeEvent.Insert(it.number))
                         ActionType.BACKSPACE -> viewModel.onEvent(PasscodeEvent.Delete)
                         else -> Unit
                     }
-                })
+                }
+            )
         }
     }
 }

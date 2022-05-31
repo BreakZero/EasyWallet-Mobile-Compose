@@ -10,7 +10,6 @@ internal object HttpRoutes {
     const val RINKEBY_RPC = "https://rinkeby.infura.io/v3/${BuildConfig.INFURA_APIKEY}"
     const val RINKEBY_EXPLORER = "https://api-rinkeby.etherscan.io/api"
 
-
     const val CRONOS_MAINNET_RPC = "https://rpc.tectonic.finance"
     const val CRONOS_MAINNET_EXPLORER = "https://cronos.org/explorer/api"
     const val CRONOS_TESTNET_RPC = "https://rpc.tectonic.finance"

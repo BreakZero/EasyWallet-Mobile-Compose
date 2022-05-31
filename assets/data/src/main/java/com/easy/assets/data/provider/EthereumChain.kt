@@ -136,7 +136,8 @@ internal class EthereumChain(
                             from = address(),
                             to = contract,
                             data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
-                        ), "latest"
+                        ),
+                        "latest"
                     )
                 )
             }
@@ -172,9 +173,11 @@ internal class EthereumChain(
                     parameter("contractaddress", contract)
                 }
             }.body()
-            NetworkResponse.Success(response.result.map {
-                it.toTransaction(address())
-            })
+            NetworkResponse.Success(
+                response.result.map {
+                    it.toTransaction(address())
+                }
+            )
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
@@ -212,11 +215,14 @@ internal class EthereumChain(
                 id = 1,
                 jsonrpc = "2.0",
                 method = "eth_estimateGas",
-                params = listOf(EthCall(
-                    from = address(),
-                    to = plan.contract ?: plan.to,
-                    data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
-                ), "latest")
+                params = listOf(
+                    EthCall(
+                        from = address(),
+                        to = plan.contract ?: plan.to,
+                        data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
+                    ),
+                    "latest"
+                )
             )
             val response: BaseRpcResponseDto<String> = ktorClient.post {
                 url(getRpc())

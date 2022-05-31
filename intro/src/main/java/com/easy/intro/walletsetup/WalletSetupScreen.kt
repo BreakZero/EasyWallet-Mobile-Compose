@@ -61,7 +61,8 @@ fun WalletSetupScreen(
                 onClick = {
                     // navController.navigate(Routers.ROUTER_WALLET_CREATE)
                     onNavigateTo.invoke("import a wallet")
-                }) {
+                }
+            ) {
                 Text(text = "Import using Secret Recovery Phrase")
             }
             Button(
@@ -74,7 +75,8 @@ fun WalletSetupScreen(
                 onClick = {
                     // create wallet
                     onNavigateTo.invoke("to wallet create")
-                }) {
+                }
+            ) {
                 Text(text = "Create a new wallet")
             }
             Spacer(modifier = Modifier.height(32.dp))

@@ -1,7 +1,6 @@
 package com.easy.wallets.data
 
 import androidx.room.*
-import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WalletDao {

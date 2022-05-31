@@ -1,6 +1,5 @@
 package com.easy.assets.data.model.remote.dto
 
-
 import androidx.annotation.Keep
 import com.google.gson.annotations.SerializedName
 

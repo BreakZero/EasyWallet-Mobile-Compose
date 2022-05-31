@@ -1,7 +1,6 @@
 package com.easy.assets.data
 
 import com.easy.core.ext._16toNumber
-import com.easy.core.ext.clearHexPrefix
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -74,7 +74,8 @@ class MainActivity : ComponentActivity() {
                             },
                             popExitTransition = {
                                 fadeOut(animationSpec = tween(500))
-                            }) {
+                            }
+                        ) {
                             SplashScreen { created ->
                                 navController.navigate(if (created) "main-screen" else IntroRouter.ROUTER_INTRO_INDEX) {
                                     popUpTo("splash-screen") {
@@ -96,7 +97,8 @@ class MainActivity : ComponentActivity() {
                             },
                             popExitTransition = {
                                 fadeOut(animationSpec = tween(500))
-                            }) {
+                            }
+                        ) {
                             MainScreen {
                                 if (it.router == DAppRouter.ROUTER_DETAIL) {
                                     navController.navigate(it.routerWithParameter())

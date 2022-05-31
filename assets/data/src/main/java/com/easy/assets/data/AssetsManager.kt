@@ -6,8 +6,8 @@ import com.easy.assets.data.model.remote.dto.CoinConfigDto
 import com.easy.assets.data.model.remote.dto.CoinConfigResponseDto
 import com.easy.assets.data.provider.*
 import com.easy.assets.domain.model.AssetInfo
-import com.easy.core.consts.NetworkChain
 import com.easy.core.consts.AssetTag
+import com.easy.core.consts.NetworkChain
 import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import io.ktor.client.*
@@ -82,7 +82,7 @@ class AssetsManager @Inject constructor(
         if (chains[chain] == null) {
             when {
                 chain == NetworkChain.Ethereum ||
-                        config.tag == AssetTag.ERC20 -> {
+                    config.tag == AssetTag.ERC20 -> {
                     chains[chain] = EthereumChain(appSettings, ktorClient, walletRepository)
                 }
                 chain == NetworkChain.Bitcoin -> {

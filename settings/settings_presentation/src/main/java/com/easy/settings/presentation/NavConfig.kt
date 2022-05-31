@@ -31,7 +31,8 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
-            }) {
+            }
+        ) {
             SettingsScreen(
                 title = "Settings",
                 navigateUp = {
@@ -42,7 +43,8 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
                 }
             )
         }
-        composable(SettingsRouter.SETTINGS_CHAINS,
+        composable(
+            SettingsRouter.SETTINGS_CHAINS,
             enterTransition = {
                 fadeIn(animationSpec = tween(700))
             },
@@ -54,12 +56,14 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
-            }) {
+            }
+        ) {
             SupportChainScreen(onNavigateUp = {
                 navController.navigateUp()
             })
         }
-        composable(SettingsRouter.SETTINGS_CURRENCY,
+        composable(
+            SettingsRouter.SETTINGS_CURRENCY,
             enterTransition = {
                 fadeIn(animationSpec = tween(700))
             },
@@ -71,12 +75,14 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
-            }) {
+            }
+        ) {
             CurrencyScreen(onNavigateUp = {
                 navController.navigateUp()
             })
         }
-        composable(SettingsRouter.SETTINGS_WEB + "?url={url}",
+        composable(
+            SettingsRouter.SETTINGS_WEB + "?url={url}",
             arguments = listOf(
                 navArgument("url") {
                     type = NavType.StringType
@@ -93,7 +99,8 @@ fun NavGraphBuilder.settingsGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
-            }) {
+            }
+        ) {
             val url = it.arguments?.getString("url")!!
             EasyWebScreen(url = url) {
                 navController.navigateUp()

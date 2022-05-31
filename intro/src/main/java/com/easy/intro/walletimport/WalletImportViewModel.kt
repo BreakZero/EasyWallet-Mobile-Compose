@@ -19,7 +19,7 @@ import javax.inject.Inject
 @HiltViewModel
 class WalletImportViewModel @Inject constructor(
     private val walletRepository: WalletRepositoryImpl
-): ViewModel() {
+) : ViewModel() {
     var state by mutableStateOf(ImportState())
         private set
 

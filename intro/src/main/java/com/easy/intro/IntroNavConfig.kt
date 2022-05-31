@@ -2,7 +2,6 @@ package com.easy.intro
 
 import androidx.compose.animation.*
 import androidx.compose.animation.core.tween
-import androidx.compose.material.ScaffoldState
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -35,9 +34,11 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(500))
-            }) {
+            }
+        ) {
             IntroMainScreen(
-                title = stringResource(id = com.easy.core.ui.R.string.app_name), intros = listOf<IntroInfo>(
+                title = stringResource(id = com.easy.core.ui.R.string.app_name),
+                intros = listOf<IntroInfo>(
                     IntroInfo(
                         "Welcome to EasyWallet",
                         "Trusted by millions, MetaMask is a secure wallet making the world of web3",
@@ -47,7 +48,8 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
                         "Welcome to EasyWallet",
                         "Trusted by millions, MetaMask is a secure wallet making the world of web3",
                         R.mipmap.banner_swap_tutorial_dialog
-                    ), IntroInfo(
+                    ),
+                    IntroInfo(
                         "Welcome to EasyWallet",
                         "Trusted by millions, MetaMask is a secure wallet making the world of web3",
                         R.mipmap.banner_swap_cross_chain
@@ -70,7 +72,8 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(500))
-            }) {
+            }
+        ) {
             WalletSetupScreen(title = stringResource(id = com.easy.core.ui.R.string.app_name)) {
                 when (it) {
                     "back" -> navController.navigateUp()
@@ -92,12 +95,13 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(500))
-            }) {
+            }
+        ) {
             WalletCreateScreen(onNavigate = {
                 navController.navigate(it.router())
             }, onNavigateUp = {
-                navController.navigateUp()
-            })
+                    navController.navigateUp()
+                })
         }
         composable(
             IntroRouter.ROUTER_WALLET_IMPORT,
@@ -112,7 +116,8 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(500))
-            }) {
+            }
+        ) {
             WalletImportScreen(
                 onNavigateUp = {
                     navController.navigateUp()
@@ -139,7 +144,8 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(500))
-            }) { it->
+            }
+        ) { it ->
             val passcode = it.savedStateHandle.get<String>("passcode")
             WalletProtectScreen(
                 passcode = passcode,
@@ -172,7 +178,8 @@ fun NavGraphBuilder.introGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(500))
-            }) {
+            }
+        ) {
             PasscodeScreen {
                 navController.previousBackStackEntry?.savedStateHandle?.set("passcode", it)
                 navController.navigateUp()

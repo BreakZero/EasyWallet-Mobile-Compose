@@ -2,7 +2,6 @@ package com.easy.assets.data.model.remote.dto
 
 import com.google.gson.annotations.SerializedName
 
-
 internal data class SolBalanceDto(
     @SerializedName("context")
     val context: SolContext,
@@ -14,7 +13,6 @@ internal data class SolContext(
     @SerializedName("slot")
     val slot: Long
 )
-
 
 internal data class RecentBlockHashResult(
     @SerializedName("context")
@@ -62,4 +60,3 @@ internal data class ParsedInstruction(
     @SerializedName("type")
     val type: String
 )
-

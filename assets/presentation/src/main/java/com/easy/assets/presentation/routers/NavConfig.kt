@@ -35,7 +35,8 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
-            }) {
+            }
+        ) {
             val slug = it.arguments?.getString("slug")!!
             AssetDetailScreen(
                 slug = slug,
@@ -51,7 +52,8 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             arguments = listOf(
                 navArgument("address") {
                     type = NavType.StringType
-                }),
+                }
+            ),
             enterTransition = {
                 fadeIn(animationSpec = tween(700))
             },
@@ -63,7 +65,8 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
-            }) {
+            }
+        ) {
             val address = it.arguments?.getString("address")!!
             ReceiveScreen(address = address) {
                 navController.navigateUp()
@@ -74,7 +77,8 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             arguments = listOf(
                 navArgument("slug") {
                     type = NavType.StringType
-                }),
+                }
+            ),
             enterTransition = {
                 fadeIn(animationSpec = tween(700))
             },
@@ -86,7 +90,8 @@ fun NavGraphBuilder.assetsGraph(navController: NavController) {
             },
             popExitTransition = {
                 fadeOut(animationSpec = tween(700))
-            }) {
+            }
+        ) {
             val slug = it.arguments?.getString("slug")!!
             SendingScreen(
                 slug = slug,

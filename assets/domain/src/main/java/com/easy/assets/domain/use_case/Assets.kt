@@ -1,7 +1,6 @@
 package com.easy.assets.domain.use_case
 
 import com.easy.assets.domain.model.AssetInfo
-import com.easy.assets.domain.repository.AssetRepository
 import com.easy.assets.domain.repository.CoinRepository
 import javax.inject.Inject
 

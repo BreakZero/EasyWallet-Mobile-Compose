@@ -33,16 +33,16 @@ fun DAppPagerScreen(
             .background(MaterialTheme.colorScheme.background)
             .fillMaxSize()
     ) {
-        EasyActionBar(navIcon = com.easy.core.ui.R.drawable.ic_bottom_menu_dapps,
+        EasyActionBar(
+            navIcon = com.easy.core.ui.R.drawable.ic_bottom_menu_dapps,
             menuIcons = listOf(com.easy.core.ui.R.drawable.ic_scan_white),
             backgroundColor = MaterialTheme.colorScheme.primary,
             tint = MaterialTheme.colorScheme.onPrimary,
             onNavClick = {
-
             },
             onMenuClick = {
-
-            })
+            }
+        )
         if (viewModel.dAppState.isLoading) {
             CircularProgressIndicator()
         } else {
@@ -62,13 +62,15 @@ fun DAppPagerScreen(
                         Column(
                             modifier = Modifier
                                 .clickable {
-                                    onNavigateTo.invoke(Navigator(DAppRouter.ROUTER_DETAIL) {
-                                        parameter {
-                                            "url" to it.url
-                                            "chain" to it.chain.toString()
-                                            "rpc" to it.rpc
+                                    onNavigateTo.invoke(
+                                        Navigator(DAppRouter.ROUTER_DETAIL) {
+                                            parameter {
+                                                "url" to it.url
+                                                "chain" to it.chain.toString()
+                                                "rpc" to it.rpc
+                                            }
                                         }
-                                    })
+                                    )
                                 }
                                 .padding(horizontal = 4.dp, vertical = 8.dp),
                             horizontalAlignment = Alignment.CenterHorizontally

@@ -10,9 +10,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class DAppViewModel @Inject constructor(): ViewModel() {
+class DAppViewModel @Inject constructor() : ViewModel() {
     var dAppState by mutableStateOf(DAppState(dApps = Result.success(emptyList()), isLoading = true))
-    private set
+        private set
 
     init {
         dAppState = dAppState.copy(
@@ -47,7 +47,8 @@ class DAppViewModel @Inject constructor(): ViewModel() {
                         rpc = "https://bsc-dataseed2.binance.org"
                     )
                 )
-            ), isLoading = false
+            ),
+            isLoading = false
         )
     }
 }

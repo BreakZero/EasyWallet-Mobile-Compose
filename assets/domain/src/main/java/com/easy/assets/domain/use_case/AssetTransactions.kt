@@ -9,8 +9,10 @@ class AssetTransactions @Inject constructor(
     private val repository: AssetRepository
 ) {
     suspend operator fun invoke(
-        chain: NetworkChain, offset: Int,
-        limit: Int, contract: String?
+        chain: NetworkChain,
+        offset: Int,
+        limit: Int,
+        contract: String?
     ): Result<List<Transaction>> {
         return repository.transactions(chain, offset, limit, contract)
     }

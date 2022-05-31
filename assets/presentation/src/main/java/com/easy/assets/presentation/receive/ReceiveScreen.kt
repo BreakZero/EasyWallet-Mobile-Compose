@@ -35,12 +35,13 @@ fun ReceiveScreen(
                 title = "Receive",
                 actions = {
                     DropdownMenu(expanded = showMenu, onDismissRequest = { /*TODO*/ }) {
-
                     }
-                }) {
+                }
+            ) {
                 navigateUp()
             }
-        }) { paddingValue ->
+        }
+    ) { paddingValue ->
         QRCodeGenerate.genQRCode(address)?.let {
             Card(
                 modifier = Modifier
@@ -68,8 +69,8 @@ fun ReceiveScreen(
                             .fillMaxWidth()
                             .height(48.dp)
                             .clickable {
-
-                            }) {
+                            }
+                    ) {
                         Text(
                             text = "Copy",
                             lineHeight = 48.sp,

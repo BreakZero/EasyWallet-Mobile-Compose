@@ -96,7 +96,8 @@ fun WalletImportScreen(
                 onClick = {
                     viewModel.onEvent(ImportEvent.OnImportClick)
                     keyboardController?.hide()
-                }) {
+                }
+            ) {
                 Text(text = "Import")
             }
         }

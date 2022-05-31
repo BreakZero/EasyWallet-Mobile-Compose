@@ -124,13 +124,15 @@ internal class SolanaChain(
         val explorerUrl = getExplorerUrl()
         return try {
             val response: List<SolTransactionDto> = ktorClient.get {
-                url("${explorerUrl}/account/transactions")
+                url("$explorerUrl/account/transactions")
                 parameter("account", address())
                 parameter("limit", limit)
             }.body()
-            NetworkResponse.Success(response.map {
-                it.toTransaction(address())
-            })
+            NetworkResponse.Success(
+                response.map {
+                    it.toTransaction(address())
+                }
+            )
         } catch (e: Throwable) {
             e.printStackTrace()
             NetworkResponse.Error(NetworkResponseCode.checkError(e))

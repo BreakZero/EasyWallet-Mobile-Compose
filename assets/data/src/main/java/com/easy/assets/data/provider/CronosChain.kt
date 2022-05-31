@@ -2,13 +2,13 @@ package com.easy.assets.data.provider
 
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
-import com.easy.assets.domain.errors.InsufficientBalanceException
-import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.model.remote.BaseRpcRequest
 import com.easy.assets.data.model.remote.EthCall
 import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.model.remote.dto.EthTxResponseDto
+import com.easy.assets.domain.errors.InsufficientBalanceException
+import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.BuildConfig
@@ -119,7 +119,8 @@ internal class CronosChain(
                             from = address(),
                             to = contract,
                             data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
-                        ), "latest"
+                        ),
+                        "latest"
                     )
                 )
             }
@@ -154,11 +155,13 @@ internal class CronosChain(
                     parameter("contractaddress", contract)
                 }
             }.body()
-            NetworkResponse.Success(response.result.map {
-                it.toTransaction(
-                    address()
-                )
-            })
+            NetworkResponse.Success(
+                response.result.map {
+                    it.toTransaction(
+                        address()
+                    )
+                }
+            )
         } catch (e: Throwable) {
             NetworkResponse.Error(NetworkResponseCode.checkError(e))
         }
