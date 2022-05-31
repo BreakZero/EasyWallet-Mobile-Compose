@@ -14,7 +14,7 @@ else
     echo "*********************************************************"
     echo "       ********************************************      "
     echo 1>&2 "Static analysis found violations it could not fix."
-    echo "Run ./gradlew ktlintFormat to fix formatting related issues..."
+    echo "Run ./gradlew formatKotlin to fix formatting related issues..."
     echo "       ********************************************      "
     echo "*********************************************************"
     exit 1
