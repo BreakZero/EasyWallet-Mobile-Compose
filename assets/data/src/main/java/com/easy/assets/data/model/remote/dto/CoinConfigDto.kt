@@ -2,14 +2,14 @@ package com.easy.assets.data.model.remote.dto
 
 
 import androidx.annotation.Keep
-import com.easy.core.consts.AssetChain
+import com.easy.core.consts.NetworkChain
 import com.easy.core.consts.AssetTag
 import com.google.gson.annotations.SerializedName
 
 @Keep
 internal data class CoinConfigDto(
     @SerializedName("chain")
-    val chain: AssetChain,
+    val chain: NetworkChain,
     @SerializedName("coinSymbol")
     val coinSymbol: String,
     @SerializedName("contractAddress")

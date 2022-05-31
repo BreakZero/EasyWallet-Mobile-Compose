@@ -2,13 +2,14 @@ package com.easy.assets.domain.use_case
 
 import com.easy.assets.domain.model.ValidationResult
 import com.easy.assets.domain.repository.CoinRepository
+import com.easy.core.consts.NetworkChain
 import javax.inject.Inject
 
 class ValidateAddress @Inject constructor(
     private val coinRepository: CoinRepository
 ) {
-    operator fun invoke(slug: String, address: String): ValidationResult {
-        val coinType = coinRepository.coinType(slug)
+    operator fun invoke(chain: NetworkChain, address: String): ValidationResult {
+        val coinType = coinRepository.coinType(chain)
         if (address.isBlank()) {
             return ValidationResult(
                 successful = false,

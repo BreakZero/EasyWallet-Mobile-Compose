@@ -11,7 +11,7 @@ object EasyAssetSlug {
     const val SLUG_SOLANA = "solana"
 }
 
-enum class AssetChain {
+enum class NetworkChain {
     @SerializedName("ethereum")
     Ethereum,
     @SerializedName("bitcoin")

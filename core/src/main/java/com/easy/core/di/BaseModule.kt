@@ -54,7 +54,7 @@ object BaseModule {
             install(Logging) {
                 logger = object : Logger {
                     override fun log(message: String) {
-                        Timber.d(message)
+                        Timber.tag("Easy-Http-Info").d(message)
                     }
                 }
                 level = LogLevel.BODY

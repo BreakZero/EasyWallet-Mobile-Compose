@@ -24,7 +24,7 @@ class AssetsWithBalance @Inject constructor(
                         Pair(
                             item.slug,
                             assetRepository.balance(
-                                item.slug,
+                                item.chain,
                                 item.contractAddress
                             )
                         )

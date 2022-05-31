@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.assets.domain.use_case.AssetsUseCases
-import com.easy.core.consts.EasyAssetSlug
+import com.easy.core.consts.NetworkChain
 import com.easy.dapp.presentation.common.MessageInfo
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -32,7 +32,7 @@ class DAppDetailViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            val balance = assetsUseCases.balance.invoke(EasyAssetSlug.SLUG_ETHEREUM, null)
+            val balance = assetsUseCases.balance.invoke(NetworkChain.Ethereum, null)
             Timber.tag("Easy").d("===== balance: $balance")
         }
     }
@@ -51,7 +51,7 @@ class DAppDetailViewModel @Inject constructor(
 
     private suspend fun signTransaction(to: String, data: String) {
         assetsUseCases.signTransaction(
-            EasyAssetSlug.SLUG_ETHEREUM, TransactionPlan(
+            NetworkChain.Ethereum, TransactionPlan(
                 amount = BigInteger.ZERO,
                 to = to,
                 payload = data

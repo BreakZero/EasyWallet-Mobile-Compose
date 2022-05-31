@@ -20,7 +20,7 @@ class TransactionPagingSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Transaction> {
         val nextPage = params.key ?: 1
-        val result = assetTransactions(asset.slug, 20, nextPage, asset.contractAddress)
+        val result = assetTransactions(asset.chain, 20, nextPage, asset.contractAddress)
         return if (result.isFailure) {
             LoadResult.Error(result.exceptionOrNull() ?: RuntimeException("loading paging error"))
         } else {

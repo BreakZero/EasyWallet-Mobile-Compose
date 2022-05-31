@@ -2,6 +2,7 @@ package com.easy.assets.data
 
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.provider.DefaultChain
+import com.easy.core.consts.NetworkChain
 import com.easy.core.enums.ChainNetwork
 import com.easy.core.model.AppSettings
 import com.easy.core.model.EasyCurrency
@@ -76,8 +77,8 @@ class AssetsManagerTest {
     @Test
     fun `Given asserts and check find method`() = runTest {
         assetManager.fetchAssets()
-        assertNotEquals(DefaultChain, assetManager.find("erc20-uni"))
-        assertEquals(DefaultChain, assetManager.find("erc20-uni1"))
+        assertNotEquals(DefaultChain, assetManager.find(NetworkChain.Bitcoin))
+        assertEquals(DefaultChain, assetManager.find(NetworkChain.Ethereum))
     }
 
     @Test

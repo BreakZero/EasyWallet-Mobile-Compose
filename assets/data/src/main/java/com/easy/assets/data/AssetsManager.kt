@@ -6,9 +6,8 @@ import com.easy.assets.data.model.remote.dto.CoinConfigDto
 import com.easy.assets.data.model.remote.dto.CoinConfigResponseDto
 import com.easy.assets.data.provider.*
 import com.easy.assets.domain.model.AssetInfo
-import com.easy.core.consts.AssetChain
+import com.easy.core.consts.NetworkChain
 import com.easy.core.consts.AssetTag
-import com.easy.core.consts.EasyAssetSlug
 import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import io.ktor.client.*
@@ -21,7 +20,7 @@ import kotlin.collections.set
 
 private val default_coins = listOf(
     CoinConfigDto(
-        chain = AssetChain.Ethereum,
+        chain = NetworkChain.Ethereum,
         coinSymbol = "ETH",
         contractAddress = null,
         decimal = 18,
@@ -29,7 +28,7 @@ private val default_coins = listOf(
         tag = null
     ),
     CoinConfigDto(
-        chain = AssetChain.Ethereum,
+        chain = NetworkChain.Ethereum,
         coinSymbol = "DAI",
         contractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f",
         decimal = 18,
@@ -37,15 +36,15 @@ private val default_coins = listOf(
         tag = AssetTag.ERC20
     ),
     CoinConfigDto(
-        chain = AssetChain.Ethereum,
+        chain = NetworkChain.Ethereum,
         coinSymbol = "CRO",
         contractAddress = "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
-        decimal = 18,
+        decimal = 8,
         iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/cro.png",
         tag = AssetTag.ERC20
     ),
     CoinConfigDto(
-        chain = AssetChain.Solana,
+        chain = NetworkChain.Solana,
         coinSymbol = "SOL",
         contractAddress = null,
         decimal = 9,
@@ -60,7 +59,7 @@ class AssetsManager @Inject constructor(
     private val walletRepository: WalletRepositoryImpl
 ) {
     private val mutex = Mutex()
-    private val chains: MutableMap<String, IChain> = mutableMapOf()
+    private val chains: MutableMap<NetworkChain, IChain> = mutableMapOf()
 
     internal suspend fun fetchAssets(): List<AssetInfo> {
         return kotlin.runCatching {
@@ -79,35 +78,34 @@ class AssetsManager @Inject constructor(
     }
 
     private fun syncChains(config: CoinConfigDto) {
-        val slug = config.slug()
         val chain = config.chain
-        if (chains[slug] == null) {
+        if (chains[chain] == null) {
             when {
-                chain == AssetChain.Ethereum ||
+                chain == NetworkChain.Ethereum ||
                         config.tag == AssetTag.ERC20 -> {
-                    chains[slug] = EthereumChain(appSettings, ktorClient, walletRepository)
+                    chains[chain] = EthereumChain(appSettings, ktorClient, walletRepository)
                 }
-                chain == AssetChain.Bitcoin -> {
-                    chains[slug] = BitcoinChain(ktorClient, walletRepository)
+                chain == NetworkChain.Bitcoin -> {
+                    chains[chain] = BitcoinChain(ktorClient, walletRepository)
                 }
-                chain == AssetChain.Cardano -> {
-                    chains[slug] = CardanoChain(ktorClient, walletRepository)
+                chain == NetworkChain.Cardano -> {
+                    chains[chain] = CardanoChain(ktorClient, walletRepository)
                 }
-                chain == AssetChain.Polygon -> {
-                    chains[slug] = PolygonChain(appSettings, ktorClient, walletRepository)
+                chain == NetworkChain.Polygon -> {
+                    chains[chain] = PolygonChain(appSettings, ktorClient, walletRepository)
                 }
-                chain == AssetChain.Cronos -> {
-                    chains[slug] = CronosChain(appSettings, ktorClient, walletRepository)
+                chain == NetworkChain.Cronos -> {
+                    chains[chain] = CronosChain(appSettings, ktorClient, walletRepository)
                 }
-                chain == AssetChain.Solana -> {
-                    chains[slug] = SolanaChain(appSettings, ktorClient, walletRepository)
+                chain == NetworkChain.Solana -> {
+                    chains[chain] = SolanaChain(appSettings, ktorClient, walletRepository)
                 }
                 else -> Unit
             }
         }
     }
 
-    internal fun find(slug: String): IChain {
-        return chains[slug] ?: DefaultChain
+    internal fun find(chain: NetworkChain): IChain {
+        return chains[chain] ?: DefaultChain
     }
 }

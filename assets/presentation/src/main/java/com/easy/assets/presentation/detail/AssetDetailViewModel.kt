@@ -55,7 +55,7 @@ class AssetDetailViewModel @AssistedInject constructor(
                 state = state.copy(assetInfo = it)
                 val balance = async {
                     assetsUseCases.balance(
-                        it.slug,
+                        it.chain,
                         it.contractAddress
                     )
                 }
@@ -88,6 +88,8 @@ class AssetDetailViewModel @AssistedInject constructor(
     }
 
     fun address(): String {
-        return assetsUseCases.address(slug)
+        return currAsset?.let {
+            assetsUseCases.address(it.chain)
+        }.orEmpty()
     }
 }

@@ -58,7 +58,7 @@ class SendingViewModel @AssistedInject constructor(
     }
 
     fun onEvent(event: SendingFormEvent) {
-        when(event) {
+        when (event) {
             is SendingFormEvent.AmountChanged -> {
                 sendingState = sendingState.copy(amount = event.amount)
             }
@@ -81,61 +81,67 @@ class SendingViewModel @AssistedInject constructor(
 
     private fun signTransaction() {
         val amountResult = validateAmount.execute(sendingState.amount)
-        val addressResult = assetsUseCases.validateAddress.invoke(slug, sendingState.toAddress)
+        sendingState.assetInfo?.let {
+            val addressResult =
+                assetsUseCases.validateAddress.invoke(it.chain, sendingState.toAddress)
+            val hasError = listOf(amountResult, addressResult).any {
+                !it.successful
+            }
+            sendingState = sendingState.copy(
+                amountError = amountResult.errorMessage,
+                addressError = addressResult.errorMessage
+            )
+            if (hasError) {
+                return
+            }
 
-        val hasError = listOf(amountResult, addressResult).any {
-            !it.successful
-        }
-        sendingState = sendingState.copy(
-            amountError = amountResult.errorMessage,
-            addressError = addressResult.errorMessage
-        )
-        if (hasError) {
-            return
-        }
-
-        viewModelScope.launch {
-            assetsUseCases.assets().find { it.slug == slug }?.run {
+            viewModelScope.launch {
                 try {
                     rawData = assetsUseCases.signTransaction(
-                        slug, TransactionPlan(
-                            amount = sendingState.amount.toBigDecimal().movePointRight(this.decimal)
+                        it.chain, TransactionPlan(
+                            amount = sendingState.amount.toBigDecimal().movePointRight(it.decimal)
                                 .toBigInteger(),
                             to = sendingState.toAddress,
-                            contract = this.contractAddress
+                            contract = it.contractAddress
                         )
                     )
                     _uiEvent.send(UiEvent.Success)
                 } catch (e: Exception) {
                     when (e) {
                         is InsufficientBalanceException -> {
-                            _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString(e.message ?: "insufficient balance")))
+                            _uiEvent.send(
+                                UiEvent.ShowSnackbar(
+                                    UiText.DynamicString(
+                                        e.message ?: "insufficient balance"
+                                    )
+                                )
+                            )
                         }
                         else -> {
                             _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("signing transaction with unknown error")))
                         }
                     }
                 }
-            } ?: kotlin.run {
-                _uiEvent.send(UiEvent.ShowSnackbar(UiText.DynamicString("somethings went wrong")))
             }
         }
     }
 
     private fun broadcastTransaction(rawData: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val result = assetsUseCases.broadcast.invoke(slug, rawData)
-            if (result.isSuccess) {
-                Timber.tag("Easy").d("===${result.getOrNull().orEmpty()}")
-                _uiEvent.send(UiEvent.NavigateUp)
-            } else {
-                _uiEvent.send(
-                    UiEvent.ShowSnackbar(
-                        UiText.DynamicString(
-                            result.exceptionOrNull()?.message ?: "broadcast transaction failed"
+            sendingState.assetInfo?.run {
+                val result = assetsUseCases.broadcast.invoke(this.chain, rawData)
+                if (result.isSuccess) {
+                    Timber.tag("Easy").d("===${result.getOrNull().orEmpty()}")
+                    _uiEvent.send(UiEvent.NavigateUp)
+                } else {
+                    _uiEvent.send(
+                        UiEvent.ShowSnackbar(
+                            UiText.DynamicString(
+                                result.exceptionOrNull()?.message ?: "broadcast transaction failed"
+                            )
                         )
                     )
-                )
+                }
             }
         }
     }

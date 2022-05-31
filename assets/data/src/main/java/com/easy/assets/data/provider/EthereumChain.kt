@@ -154,16 +154,17 @@ internal class EthereumChain(
     ): NetworkResponse<List<Transaction>> = withContext(Dispatchers.IO) {
         val explorerUrl = getExplorerUrl()
         try {
+            val isToken = !contract.isNullOrEmpty()
             val response: EthTxResponseDto = ktorClient.get {
                 url(explorerUrl)
                 parameter("module", "account")
-                parameter("action", "txlist")
+                parameter("action", if (isToken) "tokentx" else "txlist")
                 parameter("address", address())
                 parameter("page", limit)
                 parameter("offset", offset)
                 parameter("sort", "desc")
                 parameter("apikey", BuildConfig.ETHERSCAN_APIKEY)
-                if (!contract.isNullOrEmpty()) {
+                if (isToken) {
                     parameter("contractaddress", contract)
                 }
             }.body()
