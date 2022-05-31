@@ -147,16 +147,20 @@ fun AssetDetailScreen(
                         }
                     }
                     stickyHeader {
-                        Text(
-                            text = "Tx history",
-                            textAlign = TextAlign.Start,
+                        Box(
                             modifier = Modifier
                                 .height(24.dp)
                                 .fillMaxWidth()
                                 .background(Color(0x22888888))
                                 .padding(start = 16.dp),
-                            color = Color.Gray
-                        )
+                            contentAlignment = Alignment.CenterStart
+                        ) {
+                            Text(
+                                text = "Tx history",
+                                textAlign = TextAlign.Start
+                            )
+                        }
+
                     }
                     lazyPagingItems?.let {
 
