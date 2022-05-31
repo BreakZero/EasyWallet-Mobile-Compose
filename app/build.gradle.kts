@@ -79,6 +79,8 @@ kotlinter {
     disabledRules = arrayOf("no-wildcard-imports","filename")
 }
 
+
+
 dependencies {
     implementation(com.easy.version.dependencies.AndroidX.coreKtx)
     implementation("androidx.appcompat:appcompat:1.4.1")
@@ -111,6 +113,14 @@ dependencies {
     unitTestDependencies()
     androidTestDependencies()
 }
+
+tasks.register("installGitHook", Copy::class.java) {
+    from(File(rootProject.rootDir, "scripts/pre-commit"))
+    to(File(rootProject.rootDir, ".git/hooks"))
+    fileMode = 777
+}
+
+tasks.getByPath(":app:preBuild").dependsOn("installGitHook")
 
 //tasks.register("gitVersion", GitVersionTask::class.java) {
 //    println(project.name)
