@@ -117,7 +117,6 @@ dependencies {
 tasks.register("installGitHook", Copy::class.java) {
     from(File(rootProject.rootDir, "scripts/pre-commit"))
     into(File(rootProject.rootDir, ".git/hooks"))
-    fileMode = "0777".toInt()
 }
 
 tasks.getByPath(":app:preBuild").dependsOn("installGitHook")
