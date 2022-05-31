@@ -1,10 +1,21 @@
 #!/bin/bash
-command="./gradlew lintKotlin"
-echo "Executing tests before commit"
-$command
-result=$?
-if [ "$result" -ne 0 ]; then
- echo "Failed execution of tests"
- exit 1
+echo "*********************************************************"
+echo "Running git pre-commit hook. Running Static analysis... "
+echo "*********************************************************"
+
+./gradlew lintKotlin
+
+status=$?
+
+if [ "$status" = 0 ] ; then
+    echo "Static analysis found no problems."
+    exit 0
+else
+    echo "*********************************************************"
+    echo "       ********************************************      "
+    echo 1>&2 "Static analysis found violations it could not fix."
+    echo "Run ./gradlew ktlintFormat to fix formatting related issues..."
+    echo "       ********************************************      "
+    echo "*********************************************************"
+    exit 1
 fi
-exit 0
