@@ -7,7 +7,8 @@ internal fun CoinConfigDto.toAsset(
     balance: String = "0.0"
 ): AssetInfo {
     return AssetInfo(
-        slug = this.coinSlug,
+        slug = this.slug(),
+        chain = this.chain,
         symbol = this.coinSymbol,
         decimal = this.decimal,
         contractAddress = this.contractAddress,

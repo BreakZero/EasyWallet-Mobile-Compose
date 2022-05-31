@@ -2,13 +2,13 @@ package com.easy.assets.data.provider
 
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
-import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.model.remote.BaseRpcRequest
 import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.model.remote.dto.RecentBlockHashResult
 import com.easy.assets.data.model.remote.dto.SolBalanceDto
 import com.easy.assets.data.model.remote.dto.SolTransactionDto
+import com.easy.assets.domain.errors.UnSupportChainException
 import com.easy.assets.domain.model.Transaction
 import com.easy.assets.domain.model.TransactionPlan
 import com.easy.core.common.NetworkResponse
@@ -52,12 +52,29 @@ internal class SolanaChain(
                 val prvKey = ByteString.copyFrom(
                     walletRepository.hdWallet.getKeyForCoin(CoinType.SOLANA).data()
                 )
-                val transferMessage = Solana.Transfer.newBuilder().apply {
+                val tokenTransfer = Solana.TokenTransfer.newBuilder().apply {
+                    this.amount = 100L
+                    this.decimals = 2
+                    this.tokenMintAddress = "AAzFMWxQxqypxSzrKZi8in43Cdwb9Zd2akc12pUBFqCn"
+                    this.senderTokenAddress = "EoFannXdytn52ECbXVH2GcCJsnh83gTz72Y4yoacq1MG"
+                    this.recipientTokenAddress = "G3CevsdXfi2BsLWGgQ5LSfRjciAN5HgdzC5fk2ApbyX8"
+                }.build()
+                val tokenAddress = ""
+                val createAddress = SolanaAddress(address()).defaultTokenAddress(tokenAddress)
+                val tokenCreateAndTransfer = Solana.CreateAndTransferToken.newBuilder().apply {
+                    this.tokenMintAddress = ""
+                    this.recipientMainAddress = createAddress
+                    this.senderTokenAddress = ""
+                    this.recipientTokenAddress = ""
+                    this.amount = 100L
+                    this.decimals = 6
+                }
+                /*val transferMessage = Solana.Transfer.newBuilder().apply {
                     recipient = plan.to
                     value = plan.amount.toLong()
-                }.build()
+                }.build()*/
                 val signingInput = Solana.SigningInput.newBuilder().apply {
-                    transferTransaction = transferMessage
+                    this.tokenTransferTransaction = tokenTransfer
                     recentBlockhash = recentBlock
                     privateKey = prvKey
                 }.build()
@@ -88,14 +105,14 @@ internal class SolanaChain(
             method = "getBalance",
             params = listOf(address())
         )
-        try {
+        return try {
             val resp: BaseRpcResponseDto<SolBalanceDto> = ktorClient.post {
                 url(getRpc())
                 setBody(reqbody)
             }.body()
-            return resp.result.value.toBigInteger()
+            resp.result.value.toBigInteger()
         } catch (e: java.lang.Exception) {
-            return BigInteger.ZERO
+            BigInteger.ZERO
         }
     }
 

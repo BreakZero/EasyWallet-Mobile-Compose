@@ -6,6 +6,8 @@ import com.easy.assets.data.model.remote.dto.CoinConfigDto
 import com.easy.assets.data.model.remote.dto.CoinConfigResponseDto
 import com.easy.assets.data.provider.*
 import com.easy.assets.domain.model.AssetInfo
+import com.easy.core.consts.AssetChain
+import com.easy.core.consts.AssetTag
 import com.easy.core.consts.EasyAssetSlug
 import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
@@ -19,7 +21,7 @@ import kotlin.collections.set
 
 private val default_coins = listOf(
     CoinConfigDto(
-        coinSlug = "ethereum",
+        chain = AssetChain.Ethereum,
         coinSymbol = "ETH",
         contractAddress = null,
         decimal = 18,
@@ -27,23 +29,23 @@ private val default_coins = listOf(
         tag = null
     ),
     CoinConfigDto(
-        coinSlug = "erc20-dai",
+        chain = AssetChain.Ethereum,
         coinSymbol = "DAI",
         contractAddress = "0x6b175474e89094c44da98b954eedeac495271d0f",
         decimal = 18,
         iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/DAIxxxhdpi.png",
-        tag = "ERC20"
+        tag = AssetTag.ERC20
     ),
     CoinConfigDto(
-        coinSlug = "erc20-cro",
+        chain = AssetChain.Ethereum,
         coinSymbol = "CRO",
         contractAddress = "0xa0b73e1ff0b80914ab6fe0444e65848c4c34450b",
         decimal = 18,
         iconUrl = "https://easywallet.s3.amazonaws.com/wallet-icons/cro.png",
-        tag = "ERC20"
+        tag = AssetTag.ERC20
     ),
     CoinConfigDto(
-        coinSlug = "solana",
+        chain = AssetChain.Solana,
         coinSymbol = "SOL",
         contractAddress = null,
         decimal = 9,
@@ -77,29 +79,27 @@ class AssetsManager @Inject constructor(
     }
 
     private fun syncChains(config: CoinConfigDto) {
-        val slug = config.coinSlug
+        val slug = config.slug()
+        val chain = config.chain
         if (chains[slug] == null) {
             when {
-                slug == EasyAssetSlug.SLUG_ETHEREUM ||
-                        config.tag.equals(
-                            EasyAssetSlug.TAG_ERC20,
-                            true
-                        ) -> {
+                chain == AssetChain.Ethereum ||
+                        config.tag == AssetTag.ERC20 -> {
                     chains[slug] = EthereumChain(appSettings, ktorClient, walletRepository)
                 }
-                slug == EasyAssetSlug.SLUG_BITCOIN -> {
+                chain == AssetChain.Bitcoin -> {
                     chains[slug] = BitcoinChain(ktorClient, walletRepository)
                 }
-                slug == EasyAssetSlug.SLUG_CARDANO -> {
+                chain == AssetChain.Cardano -> {
                     chains[slug] = CardanoChain(ktorClient, walletRepository)
                 }
-                slug == EasyAssetSlug.SLUG_POLYGON -> {
+                chain == AssetChain.Polygon -> {
                     chains[slug] = PolygonChain(appSettings, ktorClient, walletRepository)
                 }
-                slug == EasyAssetSlug.SLUG_CRONOS -> {
+                chain == AssetChain.Cronos -> {
                     chains[slug] = CronosChain(appSettings, ktorClient, walletRepository)
                 }
-                slug == EasyAssetSlug.SLUG_SOLANA -> {
+                chain == AssetChain.Solana -> {
                     chains[slug] = SolanaChain(appSettings, ktorClient, walletRepository)
                 }
                 else -> Unit

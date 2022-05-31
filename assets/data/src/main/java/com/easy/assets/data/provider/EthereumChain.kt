@@ -51,9 +51,7 @@ internal class EthereumChain(
             val chainId = getChainId()
             val (baseFee, priorityFee) = feeHistory()
             Timber.d(message = "base: $baseFee, priority: $priorityFee")
-            val gasLimit = estimateGasLimit(plan).also {
-                Timber.tag("Easy").d("===== $it")
-            }
+            val gasLimit = estimateGasLimit(plan)
             if (balance < plan.amount) throw InsufficientBalanceException()
             val prvKey =
                 ByteString.copyFrom(walletRepository.hdWallet.getKeyForCoin(CoinType.ETHEREUM).data())

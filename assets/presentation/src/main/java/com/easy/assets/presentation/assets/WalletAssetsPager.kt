@@ -171,9 +171,9 @@ private fun AssetItemView(
                     text = data.symbol,
                     modifier = Modifier.padding(start = 8.dp)
                 )
-                if (!data.tag.isNullOrEmpty()) {
+                data.tag?.let {
                     Text(
-                        text = data.tag!!,
+                        text = it.name,
                         modifier = Modifier
                             .padding(start = 8.dp)
                             .background(
