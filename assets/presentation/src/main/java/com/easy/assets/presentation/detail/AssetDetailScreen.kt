@@ -160,7 +160,6 @@ fun AssetDetailScreen(
                                 textAlign = TextAlign.Start
                             )
                         }
-
                     }
                     lazyPagingItems?.let {
 
