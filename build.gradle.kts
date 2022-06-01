@@ -4,7 +4,6 @@ plugins {
     id("version-plugin") apply false
     id("org.jetbrains.kotlin.android") version "1.6.21" apply false
     kotlin("plugin.serialization") version "1.6.21" apply false
-    id("org.jmailen.kotlinter") version "3.10.0" apply false
 }
 
 buildscript {
@@ -14,6 +13,7 @@ buildscript {
 }
 
 subprojects {
+    this.apply(from = "${rootProject.rootDir}/lint.gradle.kts")
     this.apply(plugin = "version-plugin")
     tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class.java) {
         kotlinOptions {

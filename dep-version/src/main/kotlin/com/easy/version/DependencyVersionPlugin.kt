@@ -27,7 +27,6 @@ class DependencyVersionPlugin : Plugin<Project> {
     }
 
     private fun Project.applyPlugin() {
-        apply(plugin = "org.jmailen.kotlinter")
         apply(plugin = "com.android.library")
         apply(plugin = "kotlin-android")
         apply(plugin = "kotlin-kapt")

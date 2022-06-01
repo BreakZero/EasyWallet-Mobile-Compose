@@ -6,7 +6,6 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("dagger.hilt.android.plugin")
-    id("org.jmailen.kotlinter")
 }
 apply<MergeManifestPlugin>()
 android {
@@ -74,12 +73,6 @@ android {
         }
     }
 }
-
-kotlinter {
-    disabledRules = arrayOf("no-wildcard-imports","filename")
-}
-
-
 
 dependencies {
     implementation(com.easy.version.dependencies.AndroidX.coreKtx)

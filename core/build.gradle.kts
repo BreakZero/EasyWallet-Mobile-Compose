@@ -9,10 +9,6 @@ plugins {
     kotlin("plugin.serialization") version "1.6.21"
 }
 
-kotlinter {
-    disabledRules = arrayOf("no-wildcard-imports", "filename")
-}
-
 dependencies {
     implementation(kotlin("stdlib-jdk8", BuildConfig.kotlin_version))
     api(AndroidX.coreKtx)
