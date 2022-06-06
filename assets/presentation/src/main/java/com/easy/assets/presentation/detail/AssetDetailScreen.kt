@@ -162,7 +162,6 @@ fun AssetDetailScreen(
                         }
                     }
                     lazyPagingItems?.let {
-
                         items(lazyPagingItems) {
                             it?.let {
                                 TransactionItemView(
@@ -187,34 +186,6 @@ fun AssetDetailScreen(
                             }
                         }
                     }
-                    /*state.transactions.getOrNull()?.let {
-                        items(it) {
-                            TransactionItemView(
-                                transactionInfo = it,
-                                state.assetInfo?.decimal ?: 0
-                            ) {
-
-                            }
-                            Divider(
-                                modifier = Modifier
-                                    .height(0.2.dp)
-                                    .padding(start = 16.dp)
-                            )
-                        }
-                    } ?: item {
-                        Box(
-                            modifier = Modifier.fillParentMaxSize(),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Text(
-                                text = "empty...",
-                                modifier = Modifier
-                                    .clickable {
-                                    }
-                                    .padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                        }
-                    }*/
                 }
             }
             Row(
@@ -278,6 +249,7 @@ fun TransactionItemView(transactionInfo: Transaction, decimal: Int, click: (Tran
                 tint = if (transactionInfo.isReceive) Color.Green else Color.Red,
                 contentDescription = null,
             )
+            Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = if (transactionInfo.isReceive) "Received" else "Send",
                 color = if (transactionInfo.isReceive) Color.Green else Color.Red
