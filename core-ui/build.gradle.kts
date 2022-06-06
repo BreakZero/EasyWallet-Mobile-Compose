@@ -2,10 +2,6 @@ import com.easy.version.androidTestDependencies
 import com.easy.version.composeUI
 import com.easy.version.unitTestDependencies
 
-kotlinter {
-    disabledRules = arrayOf("no-wildcard-imports", "filename")
-}
-
 dependencies {
     implementation(com.easy.version.dependencies.Other.zxing)
 

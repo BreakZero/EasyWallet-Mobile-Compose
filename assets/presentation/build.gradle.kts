@@ -3,10 +3,6 @@ import com.easy.version.composeUI
 import com.easy.version.hiltDependencies
 import com.easy.version.unitTestDependencies
 
-kotlinter {
-    disabledRules = arrayOf("no-wildcard-imports", "filename")
-}
-
 dependencies {
     implementation(project(":core"))
     implementation(project(":core-ui"))
