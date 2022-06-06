@@ -87,9 +87,8 @@ fun AssetDetailScreen(
                 navigateUp.invoke()
             }
         }
-    ) {
-        val isRefreshing = lazyPagingItems?.loadState == null ||
-            lazyPagingItems.loadState.refresh == LoadState.Loading
+    ) { it ->
+        val isRefreshing = lazyPagingItems?.loadState?.refresh is LoadState.Loading
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -101,7 +100,7 @@ fun AssetDetailScreen(
                     .weight(1f),
                 state = rememberSwipeRefreshState(isRefreshing),
                 onRefresh = {
-                    viewModel.onEvent(AssetDetailEvent.OnRefresh)
+                    lazyPagingItems?.refresh()
                 }
             ) {
                 LazyColumn(
@@ -161,28 +160,32 @@ fun AssetDetailScreen(
                             )
                         }
                     }
-                    lazyPagingItems?.let {
-                        items(lazyPagingItems) {
-                            it?.let {
-                                TransactionItemView(
-                                    transactionInfo = it,
-                                    state.assetInfo?.decimal ?: 0
-                                ) {
+                    lazyPagingItems?.let { items ->
+                        if (items.loadState.refresh is LoadState.NotLoading) {
+                            items(items) {
+                                it?.let {
+                                    TransactionItemView(
+                                        transactionInfo = it,
+                                        state.assetInfo?.decimal ?: 0
+                                    ) {
+                                    }
+                                    Divider(
+                                        modifier = Modifier
+                                            .height(0.2.dp)
+                                            .padding(start = 16.dp)
+                                    )
                                 }
-                                Divider(
-                                    modifier = Modifier
-                                        .height(0.2.dp)
-                                        .padding(start = 16.dp)
-                                )
                             }
                         }
                         if (lazyPagingItems.loadState.append == LoadState.Loading) {
                             item {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .wrapContentWidth(Alignment.CenterHorizontally)
-                                )
+                                Box(modifier = Modifier.fillMaxWidth()) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .wrapContentWidth(Alignment.CenterHorizontally)
+                                    )
+                                }
                             }
                         }
                     }

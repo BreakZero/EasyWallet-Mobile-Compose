@@ -108,7 +108,6 @@ internal class EthereumChain(
     override fun address(): String {
         val publicKey = walletRepository.hdWallet.getDerivedKey(coinType(), 0, 0, 2).getPublicKeySecp256k1(false)
         val address = AnyAddress(publicKey, coinType()).description()
-        Timber.tag("HELLO").d(address)
         return walletRepository.hdWallet.getAddressForCoin(coinType())
     }
 

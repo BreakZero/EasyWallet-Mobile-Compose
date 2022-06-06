@@ -73,22 +73,6 @@ class AssetDetailViewModel @AssistedInject constructor(
         }
     }
 
-    fun onEvent(event: AssetDetailEvent) {
-        when (event) {
-            is AssetDetailEvent.OnRefresh -> {
-                currAsset?.let {
-                    state = state.copy(
-                        pager = Pager(
-                            PagingConfig(pageSize = 20)
-                        ) {
-                            TransactionPagingSource(assetsUseCases.transactions, it)
-                        }
-                    )
-                }
-            }
-        }
-    }
-
     fun address(): String {
         return currAsset?.let {
             assetsUseCases.address(it.chain)
