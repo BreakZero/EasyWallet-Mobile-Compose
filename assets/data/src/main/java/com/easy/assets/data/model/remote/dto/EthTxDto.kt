@@ -28,7 +28,7 @@ internal data class EthTxDto(
     @SerialName("input")
     val input: String,
     @SerialName("isError")
-    val isError: String,
+    val isError: String? = null,
     @SerialName("nonce")
     val nonce: String,
     @SerialName("timeStamp")
@@ -38,7 +38,7 @@ internal data class EthTxDto(
     @SerialName("transactionIndex")
     val transactionIndex: String,
     @SerialName("txreceipt_status")
-    val txreceiptStatus: String,
+    val txreceiptStatus: String? = null,
     @SerialName("value")
     val value: String
 )

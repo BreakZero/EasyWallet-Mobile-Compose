@@ -45,9 +45,6 @@ class ExampleUnitTest {
             prettyPrint = true
             allowStructuredMapKeys = true
             serializersModule = SerializersModule {
-                polymorphic(List::class) {
-                    ListSerializer(ParameterSerialize)
-                }
                 polymorphic(Parameter::class) {
                     subclass(TestCaller::class, TestCaller.serializer())
                     subclass(StringParameter::class, StringParameterSerializer)

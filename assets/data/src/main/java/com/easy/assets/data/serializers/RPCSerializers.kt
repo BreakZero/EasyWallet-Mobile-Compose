@@ -63,7 +63,7 @@ internal object IntListParameterSerializer : KSerializer<IntListParameter> {
     }
 
     override val descriptor: SerialDescriptor
-        get() = buildClassSerialDescriptor("ListParameter") {
+        get() = buildClassSerialDescriptor("IntListParameter") {
             this.element<List<Int>>("items")
         }
 
@@ -101,7 +101,7 @@ internal object RpcRequestBodySerializer : KSerializer<BaseRpcRequest> {
     }
 
     override val descriptor: SerialDescriptor
-        get() = buildClassSerialDescriptor("TestBaseRpc") {
+        get() = buildClassSerialDescriptor("BaseRpcRequest") {
             this.element<String>("jsonrpc")
             this.element<String>("method")
             this.element<List<Parameter>>("params")

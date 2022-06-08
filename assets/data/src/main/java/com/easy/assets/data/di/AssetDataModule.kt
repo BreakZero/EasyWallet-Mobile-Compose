@@ -70,9 +70,6 @@ abstract class AssetDataModule {
                             ignoreUnknownKeys = true
                             allowStructuredMapKeys = true
                             serializersModule = SerializersModule {
-                                polymorphic(List::class) {
-                                    ListSerializer(ParameterSerialize)
-                                }
                                 polymorphic(Parameter::class) {
                                     subclass(CallParameter::class, CallParameter.serializer())
                                     subclass(StringParameter::class, StringParameterSerializer)
