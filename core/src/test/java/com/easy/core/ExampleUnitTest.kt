@@ -1,9 +1,14 @@
 package com.easy.core
 
-import kotlinx.serialization.*
+import kotlinx.serialization.DeserializationStrategy
+import kotlinx.serialization.KSerializer
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
-import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.descriptors.SerialDescriptor
+import kotlinx.serialization.descriptors.buildClassSerialDescriptor
+import kotlinx.serialization.descriptors.element
 import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
 import kotlinx.serialization.encoding.Decoder
 import kotlinx.serialization.encoding.Encoder
@@ -47,6 +52,7 @@ class ExampleUnitTest {
                 polymorphic(Parameter::class) {
                     subclass(TestCaller::class, TestCaller.serializer())
                     subclass(StringParameter::class, StringParameterSerializer)
+                    subclass(IntListParameter::class, ListParameterSerializer)
                 }
             }
         }
@@ -65,10 +71,24 @@ class ExampleUnitTest {
             )
         )
 
-        val jsonContent = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_call\",\"params\":[{\"data\":\"0x70a08231000000000000000000000000\",\"from\":\"from address\",\"to\":\"to address\"},{\"content\":\"latest\"}],\"id\":1}"
+        val jsonContent =
+            "{\"jsonrpc\":\"2.0\",\"method\":\"eth_call\",\"params\":[{\"data\":\"0x70a08231000000000000000000000000\",\"from\":\"from address\",\"to\":\"to address\"},{\"content\":\"latest\"}],\"id\":1}"
         val jsonS = json.encodeToString(RpcSerializer, request)
         println(jsonS)
         println(json.decodeFromString(RpcSerializer, jsonContent))
+
+        val listReq = TestBaseRpc(
+            id = 1,
+            jsonrpc = "2.0",
+            method = "eth_call",
+            params = listOf(
+                IntListParameter(
+                    listOf(25, 50, 75)
+                ),
+                StringParameter("latest")
+            )
+        )
+        println(json.encodeToString(RpcSerializer, listReq))
 //        assertEquals("====", json.encodeToString(TestBaseRpc.serializer(), request))
     }
 }
@@ -77,8 +97,11 @@ interface Parameter
 
 object ParameterSerialize : JsonContentPolymorphicSerializer<Parameter>(Parameter::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out Parameter> {
+        println("element: $element, obj: ${element.jsonObject}")
+
         return when {
             "content" in element.jsonObject -> StringParameterSerializer
+            "items" in element.jsonObject -> ListParameterSerializer
             else -> TestCaller.serializer()
         }
     }
@@ -103,10 +126,29 @@ object StringParameterSerializer: KSerializer<StringParameter> {
             encodeStringElement(descriptor, 0, value.content)
         }*/
     }
-
 }
 
-object RpcSerializer: KSerializer<TestBaseRpc> {
+object ListParameterSerializer : KSerializer<IntListParameter> {
+    override fun deserialize(decoder: Decoder): IntListParameter {
+        return decoder.decodeStructure(descriptor) {
+            val items = decodeSerializableElement(descriptor, 0, ListSerializer(Int.serializer()))
+            IntListParameter(
+                items = items
+            )
+        }
+    }
+
+    override val descriptor: SerialDescriptor
+        get() = buildClassSerialDescriptor("ListParameter") {
+            this.element<List<Int>>("items")
+        }
+
+    override fun serialize(encoder: Encoder, value: IntListParameter) {
+        encoder.encodeSerializableValue(ListSerializer(Int.serializer()), value.items)
+    }
+}
+
+object RpcSerializer : KSerializer<TestBaseRpc> {
     override fun deserialize(decoder: Decoder): TestBaseRpc {
         return decoder.decodeStructure(descriptor) {
             var rpc: String? = null
@@ -114,7 +156,7 @@ object RpcSerializer: KSerializer<TestBaseRpc> {
             var params: List<Parameter> = emptyList()
             var id: Int? = null
             loop@ while (true) {
-                when(decodeElementIndex(descriptor)) {
+                when (decodeElementIndex(descriptor)) {
                     DECODE_DONE -> break@loop
 
                     0 -> rpc = decodeStringElement(descriptor, 0)
@@ -168,4 +210,9 @@ data class TestCaller(
     val data: String,
     val from: String,
     val to: String
+) : Parameter
+
+@Serializable
+data class IntListParameter(
+    val items: List<Int>
 ) : Parameter

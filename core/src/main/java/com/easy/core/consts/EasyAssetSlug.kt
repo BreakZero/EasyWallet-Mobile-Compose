@@ -1,32 +1,25 @@
 package com.easy.core.consts
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
 
-object EasyAssetSlug {
-    const val SLUG_ETHEREUM = "ethereum"
-    const val SLUG_BITCOIN = "bitcoin"
-    const val SLUG_CARDANO = "cardano"
-    const val SLUG_POLYGON = "polygon"
-    const val SLUG_CRONOS = "cronos"
-    const val SLUG_SOLANA = "solana"
-}
-
+@kotlinx.serialization.Serializable
 enum class NetworkChain {
-    @SerializedName("ethereum")
+    @SerialName("ethereum")
     Ethereum,
-    @SerializedName("bitcoin")
+    @SerialName("bitcoin")
     Bitcoin,
-    @SerializedName("cardano")
+    @SerialName("cardano")
     Cardano,
-    @SerializedName("polygon")
+    @SerialName("polygon")
     Polygon,
-    @SerializedName("cronos")
+    @SerialName("cronos")
     Cronos,
-    @SerializedName("solana")
+    @SerialName("solana")
     Solana
 }
 
+@kotlinx.serialization.Serializable
 enum class AssetTag {
-    @SerializedName("ERC20")
+    @SerialName("ERC20")
     ERC20
 }

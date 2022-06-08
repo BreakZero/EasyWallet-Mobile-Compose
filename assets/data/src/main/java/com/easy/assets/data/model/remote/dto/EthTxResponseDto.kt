@@ -1,14 +1,15 @@
 package com.easy.assets.data.model.remote.dto
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Keep
+@Serializable
 internal data class EthTxResponseDto(
-    @SerializedName("status")
+    @SerialName("status")
     val status: String,
-    @SerializedName("message")
+    @SerialName("message")
     val message: String,
-    @SerializedName("result")
+    @SerialName("result")
     val result: List<EthTxDto>
 )

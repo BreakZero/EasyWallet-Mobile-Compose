@@ -1,20 +1,31 @@
 package com.easy.assets.data.model.remote
 
-import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import com.easy.assets.data.serializers.RpcRequestBodySerializer
+import kotlinx.serialization.Serializable
 
-@Keep
+@Serializable(with = RpcRequestBodySerializer::class)
 internal data class BaseRpcRequest(
     val jsonrpc: String,
     val method: String,
-    @SerializedName("params")
-    val params: List<Any>,
+    val params: List<Parameter>,
     val id: Int
 )
 
-@Keep
-internal data class EthCall(
+internal interface Parameter
+
+@Serializable
+internal data class StringParameter(
+    val content: String
+): Parameter
+
+@Serializable
+internal data class CallParameter(
     val data: String,
     val from: String,
     val to: String
-)
+): Parameter
+
+@Serializable
+internal data class IntListParameter(
+    val items: List<Int>
+): Parameter

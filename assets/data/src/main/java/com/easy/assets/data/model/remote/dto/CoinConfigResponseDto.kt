@@ -1,14 +1,14 @@
 package com.easy.assets.data.model.remote.dto
 
-import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Keep
+@Serializable
 internal data class CoinConfigResponseDto(
-    @SerializedName("code")
+    @SerialName("code")
     val code: Int,
-    @SerializedName("data")
+    @SerialName("data")
     val result: List<CoinConfigDto>,
-    @SerializedName("error")
-    val error: String?
+    @SerialName("error")
+    val error: String? = null
 )

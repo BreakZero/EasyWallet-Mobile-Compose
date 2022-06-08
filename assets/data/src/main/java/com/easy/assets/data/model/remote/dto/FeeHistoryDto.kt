@@ -1,14 +1,16 @@
 package com.easy.assets.data.model.remote.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 internal data class FeeHistoryDto(
-    @SerializedName("baseFeePerGas")
+    @SerialName("baseFeePerGas")
     val baseFeePerGas: List<String>,
-    @SerializedName("gasUsedRatio")
+    @SerialName("gasUsedRatio")
     val gasUsedRatio: List<Double>,
-    @SerializedName("oldestBlock")
+    @SerialName("oldestBlock")
     val oldestBlock: String,
-    @SerializedName("reward")
+    @SerialName("reward")
     val reward: List<List<String>>
 )

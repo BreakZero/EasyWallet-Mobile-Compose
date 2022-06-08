@@ -4,8 +4,10 @@ import androidx.annotation.Keep
 import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.mapper.toTransaction
+import com.easy.assets.data.model.remote.*
 import com.easy.assets.data.model.remote.BaseRpcRequest
-import com.easy.assets.data.model.remote.EthCall
+import com.easy.assets.data.model.remote.IntListParameter
+import com.easy.assets.data.model.remote.StringParameter
 import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.model.remote.dto.EthTxResponseDto
 import com.easy.assets.data.model.remote.dto.FeeHistoryDto
@@ -123,7 +125,10 @@ internal class EthereumChain(
                     id = 1,
                     jsonrpc = "2.0",
                     method = "eth_getBalance",
-                    params = listOf(address(), "latest")
+                    params = listOf(
+                        StringParameter(address()),
+                        StringParameter("latest")
+                    )
                 )
             } else {
                 BaseRpcRequest(
@@ -131,12 +136,12 @@ internal class EthereumChain(
                     jsonrpc = "2.0",
                     method = "eth_call",
                     params = listOf(
-                        EthCall(
+                        CallParameter(
                             from = address(),
                             to = contract,
                             data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
                         ),
-                        "latest"
+                        StringParameter("latest")
                     )
                 )
             }
@@ -187,7 +192,9 @@ internal class EthereumChain(
             id = 1,
             jsonrpc = "2.0",
             method = "eth_sendRawTransaction",
-            params = listOf(Numeric.formatWithHexPrefix(data))
+            params = listOf(
+                StringParameter(Numeric.formatWithHexPrefix(data))
+            )
         )
 
         return try {
@@ -215,12 +222,12 @@ internal class EthereumChain(
                 jsonrpc = "2.0",
                 method = "eth_estimateGas",
                 params = listOf(
-                    EthCall(
+                    CallParameter(
                         from = address(),
                         to = plan.contract ?: plan.to,
                         data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
                     ),
-                    "latest"
+                    StringParameter("latest")
                 )
             )
             val response: BaseRpcResponseDto<String> = ktorClient.post {
@@ -261,7 +268,13 @@ internal class EthereumChain(
             id = 1,
             jsonrpc = "2.0",
             method = "eth_feeHistory",
-            params = listOf("0xF", "latest", listOf(25, 50, 75))
+            params = listOf(
+                StringParameter("0xF"),
+                StringParameter("latest"),
+                IntListParameter(
+                    items = listOf(25, 50, 75)
+                )
+            )
         )
         val feeHistoryDto: BaseRpcResponseDto<FeeHistoryDto> = ktorClient.post {
             url(rpc)
@@ -277,7 +290,10 @@ internal class EthereumChain(
             id = 1,
             jsonrpc = "2.0",
             method = "eth_getTransactionCount",
-            params = listOf(address(), "latest")
+            params = listOf(
+                StringParameter(address()),
+                StringParameter("latest")
+            )
         )
         val nonce = ktorClient.post() {
             url(rpc)

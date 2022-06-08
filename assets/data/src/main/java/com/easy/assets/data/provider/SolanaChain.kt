@@ -4,6 +4,7 @@ import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.model.remote.BaseRpcRequest
+import com.easy.assets.data.model.remote.StringParameter
 import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.model.remote.dto.RecentBlockHashResult
 import com.easy.assets.data.model.remote.dto.SolBalanceDto
@@ -41,7 +42,7 @@ internal class SolanaChain(
                 jsonrpc = "2.0",
                 id = 1,
                 method = "getRecentBlockhash",
-                params = emptyList<String>()
+                params = emptyList()
             )
             try {
                 val result: BaseRpcResponseDto<RecentBlockHashResult> = ktorClient.post {
@@ -103,7 +104,9 @@ internal class SolanaChain(
             jsonrpc = "2.0",
             id = 1,
             method = "getBalance",
-            params = listOf(address())
+            params = listOf(
+                StringParameter(address())
+            )
         )
         return try {
             val resp: BaseRpcResponseDto<SolBalanceDto> = ktorClient.post {
@@ -144,7 +147,9 @@ internal class SolanaChain(
             id = 1,
             jsonrpc = "2.0",
             method = "sendTransaction",
-            params = listOf(data)
+            params = listOf(
+                StringParameter(data)
+            )
         )
 
         return try {

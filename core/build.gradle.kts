@@ -25,7 +25,7 @@ dependencies {
     api(Other.Ktor.client_android)
     api(Other.Ktor.client_log)
     api(Other.Ktor.client_negotiation)
-    api(Other.Ktor.client_gson)
+    api(Other.Ktor.client_serializer)
     api("org.jetbrains.kotlinx:kotlinx-serialization-json:1.3.2")
 
     api("com.trustwallet:wallet-core:2.7.7") {

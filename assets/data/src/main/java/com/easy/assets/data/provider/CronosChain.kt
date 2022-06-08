@@ -4,7 +4,8 @@ import androidx.datastore.core.DataStore
 import com.easy.assets.data.HttpRoutes
 import com.easy.assets.data.mapper.toTransaction
 import com.easy.assets.data.model.remote.BaseRpcRequest
-import com.easy.assets.data.model.remote.EthCall
+import com.easy.assets.data.model.remote.CallParameter
+import com.easy.assets.data.model.remote.StringParameter
 import com.easy.assets.data.model.remote.dto.BaseRpcResponseDto
 import com.easy.assets.data.model.remote.dto.EthTxResponseDto
 import com.easy.assets.domain.errors.InsufficientBalanceException
@@ -107,7 +108,10 @@ internal class CronosChain(
                     id = 1,
                     jsonrpc = "2.0",
                     method = "eth_getBalance",
-                    params = listOf(address(), "latest")
+                    params = listOf(
+                        StringParameter(address()),
+                        StringParameter("latest")
+                    )
                 )
             } else {
                 BaseRpcRequest(
@@ -115,12 +119,12 @@ internal class CronosChain(
                     jsonrpc = "2.0",
                     method = "eth_call",
                     params = listOf(
-                        EthCall(
+                        CallParameter(
                             from = address(),
                             to = contract,
                             data = "0x70a08231000000000000000000000000${address().clearHexPrefix()}"
                         ),
-                        "latest"
+                        StringParameter("latest")
                     )
                 )
             }
@@ -181,7 +185,10 @@ internal class CronosChain(
             id = 1,
             jsonrpc = "2.0",
             method = "eth_getTransactionCount",
-            params = listOf(address(), "latest")
+            params = listOf(
+                StringParameter(address()),
+                StringParameter("latest")
+            )
         )
         val nonce = ktorClient.post() {
             url(rpc)

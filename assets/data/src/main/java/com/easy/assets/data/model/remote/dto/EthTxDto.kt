@@ -1,44 +1,45 @@
 package com.easy.assets.data.model.remote.dto
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Keep
+@Serializable
 internal data class EthTxDto(
-    @SerializedName("blockHash")
+    @SerialName("blockHash")
     val blockHash: String,
-    @SerializedName("blockNumber")
+    @SerialName("blockNumber")
     val blockNumber: String,
-    @SerializedName("confirmations")
+    @SerialName("confirmations")
     val confirmations: String,
-    @SerializedName("contractAddress")
+    @SerialName("contractAddress")
     val contractAddress: String,
-    @SerializedName("cumulativeGasUsed")
+    @SerialName("cumulativeGasUsed")
     val cumulativeGasUsed: String,
-    @SerializedName("from")
+    @SerialName("from")
     val from: String,
-    @SerializedName("gas")
+    @SerialName("gas")
     val gas: String,
-    @SerializedName("gasPrice")
+    @SerialName("gasPrice")
     val gasPrice: String,
-    @SerializedName("gasUsed")
+    @SerialName("gasUsed")
     val gasUsed: String,
-    @SerializedName("hash")
+    @SerialName("hash")
     val hash: String,
-    @SerializedName("input")
+    @SerialName("input")
     val input: String,
-    @SerializedName("isError")
+    @SerialName("isError")
     val isError: String,
-    @SerializedName("nonce")
+    @SerialName("nonce")
     val nonce: String,
-    @SerializedName("timeStamp")
+    @SerialName("timeStamp")
     val timeStamp: String,
-    @SerializedName("to")
+    @SerialName("to")
     val to: String,
-    @SerializedName("transactionIndex")
+    @SerialName("transactionIndex")
     val transactionIndex: String,
-    @SerializedName("txreceipt_status")
+    @SerialName("txreceipt_status")
     val txreceiptStatus: String,
-    @SerializedName("value")
+    @SerialName("value")
     val value: String
 )

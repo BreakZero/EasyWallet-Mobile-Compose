@@ -1,62 +1,70 @@
 package com.easy.assets.data.model.remote.dto
 
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
+@Serializable
 internal data class SolBalanceDto(
-    @SerializedName("context")
+    @SerialName("context")
     val context: SolContext,
-    @SerializedName("value")
+    @SerialName("value")
     val value: Long
 )
 
+@Serializable
 internal data class SolContext(
-    @SerializedName("slot")
+    @SerialName("slot")
     val slot: Long
 )
 
+@Serializable
 internal data class RecentBlockHashResult(
-    @SerializedName("context")
+    @SerialName("context")
     val context: SolContext,
-    @SerializedName("value")
+    @SerialName("value")
     val value: RecentBlockHashValue
 )
 
+@Serializable
 internal data class RecentBlockHashValue(
-    @SerializedName("blockhash")
+    @SerialName("blockhash")
     val blockhash: String,
-    @SerializedName("feeCalculator")
+    @SerialName("feeCalculator")
     val feeCalculator: FeeCalculator
 )
 
+@Serializable
 internal data class FeeCalculator(
-    @SerializedName("lamportsPerSignature")
+    @SerialName("lamportsPerSignature")
     val lamportsPerSignature: Int
 )
 
+@Serializable
 internal data class SolTransactionDto(
-    @SerializedName("blockTime")
+    @SerialName("blockTime")
     val blockTime: Int,
-    @SerializedName("fee")
+    @SerialName("fee")
     val fee: Int,
-    @SerializedName("lamport")
+    @SerialName("lamport")
     val lamport: Int,
-    @SerializedName("parsedInstruction")
+    @SerialName("parsedInstruction")
     val parsedInstruction: List<ParsedInstruction>,
-    @SerializedName("signer")
+    @SerialName("signer")
     val signer: List<String>,
-    @SerializedName("slot")
+    @SerialName("slot")
     val slot: Int,
-    @SerializedName("status")
+    @SerialName("status")
     val status: String,
-    @SerializedName("txHash")
+    @SerialName("txHash")
     val txHash: String
 )
 
+@Serializable
 internal data class ParsedInstruction(
-    @SerializedName("program")
+    @SerialName("program")
     val program: String,
-    @SerializedName("programId")
+    @SerialName("programId")
     val programId: String,
-    @SerializedName("type")
+    @SerialName("type")
     val type: String
 )

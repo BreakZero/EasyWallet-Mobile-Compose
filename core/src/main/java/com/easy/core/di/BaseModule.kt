@@ -24,14 +24,11 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.plugins.logging.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import io.ktor.serialization.gson.*
+import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.modules.SerializersModule
-import kotlinx.serialization.modules.polymorphic
 import timber.log.Timber
 import javax.inject.Singleton
 
@@ -52,10 +49,14 @@ object BaseModule {
                 contentType(ContentType.Application.Json)
             }
             install(ContentNegotiation) {
-                gson {
-                    setPrettyPrinting()
-                    serializeNulls()
-                }
+                json(
+                    Json {
+                        ignoreUnknownKeys = true
+                        useArrayPolymorphism = true
+                        prettyPrint = true
+                        allowStructuredMapKeys = true
+                    }
+                )
             }
             install(Logging) {
                 logger = object : Logger {

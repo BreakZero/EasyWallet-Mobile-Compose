@@ -1,21 +1,23 @@
 package com.easy.assets.data.model.remote.dto
 
 import androidx.annotation.Keep
-import com.google.gson.annotations.SerializedName
+import kotlinx.serialization.Required
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
 
-@Keep
+@Serializable
 internal data class BaseRpcResponseDto<T>(
-    @SerializedName("id")
+    @SerialName("id")
     val id: Int,
-    @SerializedName("jsonrpc")
+    @SerialName("jsonrpc")
     val jsonrpc: String,
-    @SerializedName("result")
+    @SerialName("result")
     val result: T,
-    @SerializedName("error")
-    val error: RpcError?
+    @SerialName("error")
+    val error: RpcError? = null
 )
 
-@Keep
+@Serializable
 internal data class RpcError(
     val code: Int,
     val message: String
