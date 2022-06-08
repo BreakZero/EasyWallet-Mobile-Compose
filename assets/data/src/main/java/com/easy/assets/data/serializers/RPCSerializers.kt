@@ -31,7 +31,7 @@ internal object ParameterSerialize : JsonContentPolymorphicSerializer<Parameter>
     }
 }
 
-internal object StringParameterSerializer: KSerializer<StringParameter> {
+internal object StringParameterSerializer : KSerializer<StringParameter> {
     override fun deserialize(decoder: Decoder): StringParameter {
         return decoder.decodeStructure(descriptor) {
             val content = decodeStringElement(descriptor, 0)

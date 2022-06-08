@@ -1,7 +1,5 @@
 package com.easy.assets.data.model.remote.dto
 
-import androidx.annotation.Keep
-import kotlinx.serialization.Required
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 

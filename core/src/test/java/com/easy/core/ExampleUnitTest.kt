@@ -3,7 +3,6 @@ package com.easy.core
 import kotlinx.serialization.DeserializationStrategy
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.builtins.IntArraySerializer
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -107,7 +106,7 @@ object ParameterSerialize : JsonContentPolymorphicSerializer<Parameter>(Paramete
     }
 }
 
-object StringParameterSerializer: KSerializer<StringParameter> {
+object StringParameterSerializer : KSerializer<StringParameter> {
     override fun deserialize(decoder: Decoder): StringParameter {
         return decoder.decodeStructure(descriptor) {
             val content = decodeStringElement(descriptor, 0)

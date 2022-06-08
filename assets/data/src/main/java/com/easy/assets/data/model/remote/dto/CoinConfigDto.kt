@@ -1,6 +1,5 @@
 package com.easy.assets.data.model.remote.dto
 
-import androidx.annotation.Keep
 import com.easy.core.consts.AssetTag
 import com.easy.core.consts.NetworkChain
 import kotlinx.serialization.SerialName

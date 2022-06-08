@@ -16,16 +16,16 @@ internal interface Parameter
 @Serializable
 internal data class StringParameter(
     val content: String
-): Parameter
+) : Parameter
 
 @Serializable
 internal data class CallParameter(
     val data: String,
     val from: String,
     val to: String
-): Parameter
+) : Parameter
 
 @Serializable
 internal data class IntListParameter(
     val items: List<Int>
-): Parameter
+) : Parameter
