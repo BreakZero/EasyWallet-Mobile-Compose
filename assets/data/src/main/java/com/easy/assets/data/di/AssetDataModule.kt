@@ -9,6 +9,7 @@ import com.easy.assets.data.repository.AssetRepositoryImpl
 import com.easy.assets.data.repository.CoinRepositoryImpl
 import com.easy.assets.domain.repository.AssetRepository
 import com.easy.assets.domain.repository.CoinRepository
+import com.easy.core.di.BasicHttpClient
 import com.easy.core.model.AppSettings
 import com.easy.wallets.repository.WalletRepositoryImpl
 import dagger.Binds
@@ -36,7 +37,7 @@ abstract class AssetDataModule {
         @Provides
         @Singleton
         fun provideChains(
-            ktorClient: HttpClient,
+            @BasicHttpClient ktorClient: HttpClient,
             appSettings: DataStore<AppSettings>,
             walletRepositoryImpl: WalletRepositoryImpl
         ): AssetsManager {

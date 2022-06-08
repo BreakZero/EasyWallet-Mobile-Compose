@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +41,7 @@ import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import dagger.hilt.android.EntryPointAccessors
+import timber.log.Timber
 
 @Composable
 fun assetDetailViewModel(
@@ -150,7 +152,8 @@ fun AssetDetailScreen(
                             modifier = Modifier
                                 .height(24.dp)
                                 .fillMaxWidth()
-                                .background(Color(0x22888888))
+                                .background(Color(0xFF888888))
+                                .alpha(0.3F)
                                 .padding(start = 16.dp),
                             contentAlignment = Alignment.CenterStart
                         ) {
@@ -168,6 +171,7 @@ fun AssetDetailScreen(
                                         transactionInfo = it,
                                         state.assetInfo?.decimal ?: 0
                                     ) {
+                                        Timber.d("clicked: ${it.txHash}")
                                     }
                                     Divider(
                                         modifier = Modifier

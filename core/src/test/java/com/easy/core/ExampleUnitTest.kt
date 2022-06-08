@@ -3,6 +3,12 @@ package com.easy.core
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
 import kotlinx.serialization.builtins.serializer
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.CompositeDecoder.Companion.DECODE_DONE
+import kotlinx.serialization.encoding.Decoder
+import kotlinx.serialization.encoding.Encoder
+import kotlinx.serialization.encoding.decodeStructure
+import kotlinx.serialization.encoding.encodeStructure
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonContentPolymorphicSerializer
 import kotlinx.serialization.json.JsonElement
@@ -40,7 +46,7 @@ class ExampleUnitTest {
                 }
                 polymorphic(Parameter::class) {
                     subclass(TestCaller::class, TestCaller.serializer())
-                    subclass(StringParameter::class, StringParameter.serializer())
+                    subclass(StringParameter::class, StringParameterSerializer)
                 }
             }
         }
@@ -59,7 +65,10 @@ class ExampleUnitTest {
             )
         )
 
-        println(json.encodeToString(TestBaseRpc.serializer(), request))
+        val jsonContent = "{\"jsonrpc\":\"2.0\",\"method\":\"eth_call\",\"params\":[{\"data\":\"0x70a08231000000000000000000000000\",\"from\":\"from address\",\"to\":\"to address\"},{\"content\":\"latest\"}],\"id\":1}"
+        val jsonS = json.encodeToString(RpcSerializer, request)
+        println(jsonS)
+        println(json.decodeFromString(RpcSerializer, jsonContent))
 //        assertEquals("====", json.encodeToString(TestBaseRpc.serializer(), request))
     }
 }
@@ -69,8 +78,74 @@ interface Parameter
 object ParameterSerialize : JsonContentPolymorphicSerializer<Parameter>(Parameter::class) {
     override fun selectDeserializer(element: JsonElement): DeserializationStrategy<out Parameter> {
         return when {
-            "content" in element.jsonObject -> StringParameter.serializer()
+            "content" in element.jsonObject -> StringParameterSerializer
             else -> TestCaller.serializer()
+        }
+    }
+}
+
+object StringParameterSerializer: KSerializer<StringParameter> {
+    override fun deserialize(decoder: Decoder): StringParameter {
+        return decoder.decodeStructure(descriptor) {
+            val content = decodeStringElement(descriptor, 0)
+            StringParameter(content)
+        }
+    }
+
+    override val descriptor: SerialDescriptor
+        get() = buildClassSerialDescriptor("StringParameter") {
+            this.element<String>("content")
+        }
+
+    override fun serialize(encoder: Encoder, value: StringParameter) {
+        encoder.encodeString(value.content)
+        /*encoder.encodeStructure(descriptor) {
+            encodeStringElement(descriptor, 0, value.content)
+        }*/
+    }
+
+}
+
+object RpcSerializer: KSerializer<TestBaseRpc> {
+    override fun deserialize(decoder: Decoder): TestBaseRpc {
+        return decoder.decodeStructure(descriptor) {
+            var rpc: String? = null
+            var method: String? = null
+            var params: List<Parameter> = emptyList()
+            var id: Int? = null
+            loop@ while (true) {
+                when(decodeElementIndex(descriptor)) {
+                    DECODE_DONE -> break@loop
+
+                    0 -> rpc = decodeStringElement(descriptor, 0)
+                    1 -> method = decodeStringElement(descriptor, 1)
+                    2 -> params = decodeSerializableElement(descriptor, 2, ListSerializer(ParameterSerialize))
+                    3 -> id = decodeIntElement(descriptor, 3)
+                }
+            }
+            TestBaseRpc(
+                jsonrpc = rpc.orEmpty(),
+                method = method.orEmpty(),
+                params = params,
+                id = id ?: 1
+            )
+        }
+    }
+
+    override val descriptor: SerialDescriptor
+        get() = buildClassSerialDescriptor("TestBaseRpc") {
+            this.element<String>("jsonrpc")
+            this.element<String>("method")
+            this.element<List<Parameter>>("params")
+            this.element<Int>("id")
+        }
+
+    override fun serialize(encoder: Encoder, value: TestBaseRpc) {
+        encoder.encodeStructure(descriptor) {
+            encodeStringElement(descriptor, 0, value.jsonrpc)
+            encodeStringElement(descriptor, 1, value.method)
+            encodeSerializableElement(descriptor, 2, ListSerializer(ParameterSerialize), value.params)
+            encodeIntElement(descriptor, 3, value.id)
         }
     }
 }

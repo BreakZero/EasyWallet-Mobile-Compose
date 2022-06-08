@@ -28,6 +28,10 @@ import io.ktor.serialization.gson.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.modules.SerializersModule
+import kotlinx.serialization.modules.polymorphic
 import timber.log.Timber
 import javax.inject.Singleton
 
@@ -37,6 +41,8 @@ private const val SETTINS_PREFERENCES = "app_settings"
 @Module
 @InstallIn(SingletonComponent::class)
 object BaseModule {
+
+    @BasicHttpClient
     @Provides
     @Singleton
     fun ktorClient(): HttpClient {

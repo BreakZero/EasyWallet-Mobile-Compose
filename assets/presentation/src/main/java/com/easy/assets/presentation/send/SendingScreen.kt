@@ -6,14 +6,18 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetLayout
-import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.QrCode
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.*
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
@@ -68,8 +72,11 @@ fun SendingScreen(
     onNavigateTo: (Navigator) -> Unit
 ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    val bottomSheetState = rememberModalBottomSheetState(
-        initialValue = ModalBottomSheetValue.Hidden
+    val bottomSheetState = rememberBottomSheetState(
+        initialValue = BottomSheetValue.Collapsed
+    )
+    val scaffoldState = rememberBottomSheetScaffoldState(
+        bottomSheetState = bottomSheetState
     )
     val uiState = sendViewModel.sendingState
     val snackbarHostState = remember { SnackbarHostState() }
@@ -88,7 +95,7 @@ fun SendingScreen(
         sendViewModel.uiEvent.collect {
             when (it) {
                 UiEvent.Success -> {
-                    bottomSheetState.show()
+                    bottomSheetState.expand()
                 }
                 is UiEvent.ShowSnackbar -> {
                     snackbarHostState.showSnackbar(
@@ -103,14 +110,26 @@ fun SendingScreen(
         }
     }
 
-    ModalBottomSheetLayout(
+    BottomSheetScaffold(
         modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding()
+            .imePadding()
             .fillMaxSize(),
-        sheetState = bottomSheetState,
+        snackbarHost = {
+            SnackbarHost(snackbarHostState)
+        },
+        topBar = {
+            EasyAppBar(title = "Send $slug") {
+                onBackPressed()
+            }
+        },
         sheetShape = RoundedCornerShape(
             topStart = 24.dp,
             topEnd = 24.dp
         ),
+        scaffoldState = scaffoldState,
+        sheetPeekHeight = 0.dp,
         sheetContent = {
             when (uiState.action) {
                 Action.ADVANCED -> {
@@ -133,7 +152,7 @@ fun SendingScreen(
                                 ),
                             onClick = {
                                 scope.launch {
-                                    bottomSheetState.hide()
+                                    bottomSheetState.collapse()
                                 }
                                 sendViewModel.onEvent(SendingFormEvent.Broadcast)
                             }
@@ -147,166 +166,151 @@ fun SendingScreen(
             }
         }
     ) {
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
+        Column(
             modifier = Modifier
-                .navigationBarsPadding()
-                .imePadding()
-                .fillMaxSize(),
-            topBar = {
-                EasyAppBar(title = "Send $slug") {
-                    onBackPressed()
-                }
-            }
+                .fillMaxSize()
+                .padding(it),
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(it),
-                verticalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    AsyncImage(
-                        modifier = Modifier.size(MaterialTheme.spacing.spaceExtraLarge),
-                        model = ImageRequest.Builder(LocalContext.current)
-                            .data(sendViewModel.sendingState.assetInfo?.icon)
-                            .transformations(CircleCropTransformation()).build(),
-                        contentDescription = null
-                    )
-                    Text(text = "Enter Amount")
-                    TextField(
-                        modifier = Modifier
-                            .padding(
-                                start = MaterialTheme.spacing.spaceMedium,
-                                end = MaterialTheme.spacing.spaceMedium
-                            )
-                            .fillMaxWidth()
-                            .align(Alignment.CenterHorizontally),
-                        value = uiState.amount,
-                        keyboardOptions = KeyboardOptions(
-                            keyboardType = KeyboardType.Number,
-                            imeAction = ImeAction.Done
-                        ),
-                        keyboardActions = KeyboardActions(
-                            onDone = {
-                                keyboardController?.hide()
-                            }
-                        ),
-                        isError = uiState.amountError != null,
-                        onValueChange = {
-                            sendViewModel.onEvent(SendingFormEvent.AmountChanged(it))
-                        }
-                    )
-                    if (uiState.amountError != null) {
-                        Text(
-                            text = uiState.amountError,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                }
-                Column(
+                AsyncImage(
+                    modifier = Modifier.size(MaterialTheme.spacing.spaceExtraLarge),
+                    model = ImageRequest.Builder(LocalContext.current)
+                        .data(sendViewModel.sendingState.assetInfo?.icon)
+                        .transformations(CircleCropTransformation()).build(),
+                    contentDescription = null
+                )
+                Text(text = "Enter Amount")
+                TextField(
                     modifier = Modifier
+                        .padding(
+                            start = MaterialTheme.spacing.spaceMedium,
+                            end = MaterialTheme.spacing.spaceMedium
+                        )
                         .fillMaxWidth()
-                        .wrapContentWidth(),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .align(Alignment.CenterHorizontally),
+                    value = uiState.amount,
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        imeAction = ImeAction.Done
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                        }
+                    ),
+                    isError = uiState.amountError != null,
+                    onValueChange = {
+                        sendViewModel.onEvent(SendingFormEvent.AmountChanged(it))
+                    }
+                )
+                if (uiState.amountError != null) {
+                    Text(
+                        text = uiState.amountError,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Row(
+                    modifier = Modifier
+                        .padding(MaterialTheme.spacing.spaceExtraSmall)
+                        .clickable {
+                            keyboardController?.hide()
+                            sendViewModel.onEvent(SendingFormEvent.ActionChanged(Action.ADVANCED))
+                            scope.launch {
+                                bottomSheetState.collapse()
+                            }
+                        },
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(text = "Advanced")
+                    Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
+                }
+
+                if (uiState.addressError != null) {
+                    Text(
+                        modifier = Modifier.padding(MaterialTheme.spacing.spaceLarge),
+                        text = uiState.addressError,
+                        color = MaterialTheme.colorScheme.error
+                    )
+                }
+                Card(
+                    modifier = Modifier
+                        .padding(top = MaterialTheme.spacing.spaceSmall)
+                        .fillMaxWidth()
+                        .padding(
+                            start = MaterialTheme.spacing.spaceMedium,
+                            end = MaterialTheme.spacing.spaceMedium
+                        )
                 ) {
                     Row(
                         modifier = Modifier
-                            .padding(MaterialTheme.spacing.spaceExtraSmall)
-                            .clickable {
-                                keyboardController?.hide()
-                                sendViewModel.onEvent(SendingFormEvent.ActionChanged(Action.ADVANCED))
-                                scope.launch {
-                                    bottomSheetState.show()
-                                }
-                            },
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Min),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Text(text = "Advanced")
-                        Icon(imageVector = Icons.Filled.ArrowDropDown, contentDescription = null)
-                    }
-
-                    if (uiState.addressError != null) {
-                        Text(
-                            modifier = Modifier.padding(MaterialTheme.spacing.spaceLarge),
-                            text = uiState.addressError,
-                            color = MaterialTheme.colorScheme.error
-                        )
-                    }
-                    Card(
-                        modifier = Modifier
-                            .padding(top = MaterialTheme.spacing.spaceSmall)
-                            .fillMaxWidth()
-                            .padding(
-                                start = MaterialTheme.spacing.spaceMedium,
-                                end = MaterialTheme.spacing.spaceMedium
-                            )
-                    ) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(IntrinsicSize.Min),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            TextField(
-                                modifier = Modifier.weight(1F),
-                                isError = uiState.addressError != null,
-                                value = uiState.toAddress,
-                                keyboardActions = KeyboardActions(
-                                    onDone = {
-                                        keyboardController?.hide()
-                                    }
-                                ),
-                                keyboardOptions = KeyboardOptions(
-                                    keyboardType = KeyboardType.Text,
-                                    imeAction = ImeAction.Done
-                                ),
-                                onValueChange = {
-                                    sendViewModel.onEvent(SendingFormEvent.AddressChanged(it))
+                        TextField(
+                            modifier = Modifier.weight(1F),
+                            isError = uiState.addressError != null,
+                            value = uiState.toAddress,
+                            keyboardActions = KeyboardActions(
+                                onDone = {
+                                    keyboardController?.hide()
                                 }
-                            )
-                            Box(
-                                modifier = Modifier
-                                    .fillMaxHeight()
-                                    .clickable {
-                                        onNavigateTo.invoke(Navigator(GlobalRouter.GLOBAL_SCAN))
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                Icon(
-                                    modifier = Modifier
-                                        .padding(
-                                            end = MaterialTheme.spacing.space12,
-                                            start = MaterialTheme.spacing.space12
-                                        )
-                                        .size(MaterialTheme.spacing.spaceLarge),
-                                    imageVector = Icons.Filled.QrCode,
-                                    contentDescription = null
-                                )
-                            }
-                        }
-                    }
-                    OutlinedButton(
-                        modifier = Modifier
-                            .padding(top = MaterialTheme.spacing.spaceSmall)
-                            .fillMaxWidth()
-                            .padding(
-                                start = MaterialTheme.spacing.spaceMedium,
-                                end = MaterialTheme.spacing.spaceMedium
                             ),
-                        onClick = {
-                            keyboardController?.hide()
-                            sendViewModel.onEvent(SendingFormEvent.ActionChanged(Action.MODEL_INFO))
-                            sendViewModel.onEvent(SendingFormEvent.Submit)
+                            keyboardOptions = KeyboardOptions(
+                                keyboardType = KeyboardType.Text,
+                                imeAction = ImeAction.Done
+                            ),
+                            onValueChange = {
+                                sendViewModel.onEvent(SendingFormEvent.AddressChanged(it))
+                            }
+                        )
+                        Box(
+                            modifier = Modifier
+                                .fillMaxHeight()
+                                .clickable {
+                                    onNavigateTo.invoke(Navigator(GlobalRouter.GLOBAL_SCAN))
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                modifier = Modifier
+                                    .padding(
+                                        end = MaterialTheme.spacing.space12,
+                                        start = MaterialTheme.spacing.space12
+                                    )
+                                    .size(MaterialTheme.spacing.spaceLarge),
+                                imageVector = Icons.Filled.QrCode,
+                                contentDescription = null
+                            )
                         }
-                    ) {
-                        Text(text = "Send")
                     }
+                }
+                OutlinedButton(
+                    modifier = Modifier
+                        .padding(top = MaterialTheme.spacing.spaceSmall)
+                        .fillMaxWidth()
+                        .padding(
+                            start = MaterialTheme.spacing.spaceMedium,
+                            end = MaterialTheme.spacing.spaceMedium
+                        ),
+                    onClick = {
+                        keyboardController?.hide()
+                        sendViewModel.onEvent(SendingFormEvent.ActionChanged(Action.MODEL_INFO))
+                        sendViewModel.onEvent(SendingFormEvent.Submit)
+                    }
+                ) {
+                    Text(text = "Send")
                 }
             }
         }
